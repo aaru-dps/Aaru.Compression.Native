@@ -22,7 +22,7 @@ IF(APPLE)
     ENDIF()
 ENDIF(APPLE)
 
-project("Aaru.Checksums.Native" C)
+project("Aaru.Compression.Native" C)
 
 if("${CMAKE_C_COMPILER_ID}" MATCHES "MSVC" AND "${CMAKE_C_COMPILER_ARCHITECTURE_ID}" MATCHES "ARMV7")
     set(CMAKE_C_STANDARD 11)
