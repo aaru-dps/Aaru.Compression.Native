@@ -71,6 +71,6 @@ if("${CMAKE_BUILD_TYPE}" MATCHES "Release")
     endif()
 endif()
 
-add_library("Aaru.Compression.Native" SHARED library.c)
+add_library("Aaru.Compression.Native" SHARED library.c apple_rle.c apple_rle.h)
 
-#add_subdirectory(tests)
+add_subdirectory(tests)

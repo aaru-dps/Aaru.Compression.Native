@@ -16,8 +16,12 @@
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
+#ifndef AARU_CHECKSUMS_NATIVE__APPLE_RLE_H_
+#define AARU_CHECKSUMS_NATIVE__APPLE_RLE_H_
 
-#include "library.h"
+#define DART_CHUNK 20960
 
-void hello(void) { printf("Hello, World!\n"); }
+AARU_EXPORT void AARU_CALL    apple_rle_reset();
+AARU_EXPORT int32_t AARU_CALL apple_rle_produce_byte(const uint8_t* buffer, int32_t length, int32_t* position);
+
+#endif // AARU_CHECKSUMS_NATIVE__APPLE_RLE_H_

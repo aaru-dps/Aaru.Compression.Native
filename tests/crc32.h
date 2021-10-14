@@ -16,8 +16,15 @@
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
+#ifndef AARU_CHECKSUMS_NATIVE_TESTS_CRC32_H_
+#define AARU_CHECKSUMS_NATIVE_TESTS_CRC32_H_
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
-#include "library.h"
-
-void hello(void) { printf("Hello, World!\n"); }
+    uint32_t crc32_data(const uint8_t* data, uint32_t len);
+#ifdef __cplusplus
+}
+#endif
+#endif // AARU_CHECKSUMS_NATIVE_TESTS_CRC32_H_
