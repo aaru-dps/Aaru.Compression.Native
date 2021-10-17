@@ -71,6 +71,29 @@ if("${CMAKE_BUILD_TYPE}" MATCHES "Release")
     endif()
 endif()
 
+add_subdirectory(3rdparty)
+
 add_library("Aaru.Compression.Native" SHARED library.c apple_rle.c apple_rle.h adc.c adc.h)
+
+MACRO (TARGET_LINK_LIBRARIES_WHOLE_ARCHIVE target)
+    if("${CMAKE_C_COMPILER_ID}" MATCHES "MSVC")
+        FOREACH (arg IN LISTS ARGN)
+            SET_TARGET_PROPERTIES(
+                    ${target} PROPERTIES LINK_FLAGS "/WHOLEARCHIVE:${lib}"
+            )
+        ENDFOREACH ()
+    ELSE ()
+        if("${CMAKE_C_COMPILER_ID}" MATCHES "AppleClang")
+            SET(LINK_FLAGS "-Wl,-all_load")
+            SET(UNDO_FLAGS "-Wl,-noall_load")
+        ELSE ()
+            SET(LINK_FLAGS "-Wl,--whole-archive")
+            SET(UNDO_FLAGS "-Wl,--no-whole-archive")
+        ENDIF ()
+        TARGET_LINK_LIBRARIES(${target} ${LINK_FLAGS} ${ARGN} ${UNDO_FLAGS})
+    ENDIF ()
+ENDMACRO ()
+
+TARGET_LINK_LIBRARIES_WHOLE_ARCHIVE("Aaru.Compression.Native" bz2_static)
 
 add_subdirectory(tests)

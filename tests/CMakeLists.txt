@@ -15,7 +15,10 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/apple_rle.bin
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/adc.bin
      DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data/)
 
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/bzip2.bz2
+     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data/)
+
 # 'Google_Tests_run' is the target name
 # 'test1.cpp tests2.cpp' are source files with tests
-add_executable(tests_run apple_rle.cpp crc32.c crc32.h adc.cpp)
+add_executable(tests_run apple_rle.cpp crc32.c crc32.h adc.cpp bzip2.cpp)
 target_link_libraries(tests_run gtest gtest_main "Aaru.Compression.Native")
