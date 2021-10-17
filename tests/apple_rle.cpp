@@ -67,13 +67,11 @@ class apple_rleFixture : public ::testing::Test
 
 TEST_F(apple_rleFixture, apple_rle)
 {
-    auto *outBuf = (uint8_t*)malloc(20960);
-int32_t position = 0;
+    auto *outBuf = (uint8_t*)malloc(32768);
 
-    apple_rle_reset();
+    auto decoded = apple_rle_decode_buffer(outBuf, 32768, buffer, 1102);
 
-    for(int i = 0; i < 20960; i++)
-        outBuf[i] = (uint8_t)apple_rle_produce_byte(buffer, 1102, &position);
+    EXPECT_EQ(decoded, 20960);
 
     auto crc = crc32_data(outBuf, 20960);
 

@@ -23,75 +23,74 @@
 #include "library.h"
 #include "apple_rle.h"
 
-// readonly Stream _inStream;
-static int32_t count;
-static bool    nextA; // true if A, false if B
-static uint8_t repeatedByteA, repeatedByteB;
-static bool    repeatMode; // true if we're repeating, false if we're just copying
-
-/// <summary>Initializes a decompressor for the specified stream</summary>
-/// <param name="stream">Stream containing the compressed data</param>
-AARU_EXPORT void AARU_CALL apple_rle_reset()
+AARU_EXPORT int32_t AARU_CALL apple_rle_decode_buffer(uint8_t*       dst_buffer,
+                                                      int32_t        dst_size,
+                                                      const uint8_t* src_buffer,
+                                                      int32_t        src_size)
 {
-    repeatedByteA = repeatedByteB = 0;
-    count                         = 0;
-    nextA                         = true;
-    repeatMode                    = false;
-}
+    static int32_t count         = 0;
+    static bool    nextA         = true; // true if A, false if B
+    static uint8_t repeatedByteA = 0, repeatedByteB = 0;
+    static bool    repeatMode = false; // true if we're repeating, false if we're just copying
+    int32_t        in_pos = 0, out_pos = 0;
 
-/// <summary>Decompresses a byte</summary>
-/// <returns>Decompressed byte</returns>
-AARU_EXPORT int32_t AARU_CALL apple_rle_produce_byte(const uint8_t* buffer, int32_t length, int32_t* position)
-{
-    if(repeatMode && count > 0)
+    while(in_pos <= src_size && out_pos <= dst_size)
     {
-        count--;
-
-        if(nextA)
+        if(repeatMode && count > 0)
         {
-            nextA = false;
+            (count)--;
 
-            return repeatedByteA;
+            if(nextA)
+            {
+                nextA = false;
+
+                dst_buffer[out_pos++] = repeatedByteA;
+                continue;
+            }
+
+            nextA = true;
+
+            dst_buffer[out_pos++] = repeatedByteB;
+            continue;
         }
 
-        nextA = true;
-
-        return repeatedByteB;
-    }
-
-    if(!repeatMode && count > 0)
-    {
-        count--;
-
-        return buffer[(*position)++];
-    }
-
-    if(*position == length) return -1;
-
-    while(true)
-    {
-        uint8_t b1 = buffer[(*position)++];
-        uint8_t b2 = buffer[(*position)++];
-        int16_t s  = (int16_t)((b1 << 8) | b2);
-
-        if(s == 0 || s >= DART_CHUNK || s <= -DART_CHUNK) continue;
-
-        if(s < 0)
+        if(!repeatMode && count > 0)
         {
-            repeatMode    = true;
-            repeatedByteA = buffer[(*position)++];
-            repeatedByteB = buffer[(*position)++];
-            count         = (-s * 2) - 1;
-            nextA         = false;
+            count--;
 
-            return repeatedByteA;
+            dst_buffer[out_pos++] = src_buffer[in_pos++];
+            continue;
         }
 
-        if(s <= 0) continue;
+        if(in_pos == src_size) break;
 
-        repeatMode = false;
-        count      = (s * 2) - 1;
+        while(true)
+        {
+            uint8_t b1 = src_buffer[in_pos++];
+            uint8_t b2 = src_buffer[in_pos++];
+            int16_t s  = (int16_t)((b1 << 8) | b2);
 
-        return buffer[(*position)++];
+            if(s == 0 || s >= DART_CHUNK || s <= -DART_CHUNK) continue;
+
+            if(s < 0)
+            {
+                repeatMode    = true;
+                repeatedByteA = src_buffer[in_pos++];
+                repeatedByteB = src_buffer[in_pos++];
+                count         = (-s * 2) - 1;
+                nextA         = false;
+
+                dst_buffer[out_pos++] = repeatedByteA;
+                break;
+            }
+
+            repeatMode = false;
+            count      = (s * 2) - 1;
+
+            dst_buffer[out_pos++] = src_buffer[in_pos++];
+            break;
+        }
     }
+
+    return out_pos;
 }

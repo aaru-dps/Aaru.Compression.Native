@@ -21,7 +21,9 @@
 
 #define DART_CHUNK 20960
 
-AARU_EXPORT void AARU_CALL    apple_rle_reset();
-AARU_EXPORT int32_t AARU_CALL apple_rle_produce_byte(const uint8_t* buffer, int32_t length, int32_t* position);
+AARU_EXPORT int32_t AARU_CALL apple_rle_decode_buffer(uint8_t*       dst_buffer,
+                                                      int32_t        dst_size,
+                                                      const uint8_t* src_buffer,
+                                                      int32_t        src_size);
 
 #endif // AARU_CHECKSUMS_NATIVE__APPLE_RLE_H_
