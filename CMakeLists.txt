@@ -73,7 +73,7 @@ endif()
 
 add_subdirectory(3rdparty)
 
-add_library("Aaru.Compression.Native" SHARED library.c apple_rle.c apple_rle.h adc.c adc.h)
+add_library("Aaru.Compression.Native" SHARED library.c apple_rle.c apple_rle.h adc.c adc.h lzip.c lzip.h)
 
 MACRO (TARGET_LINK_LIBRARIES_WHOLE_ARCHIVE target)
     if("${CMAKE_C_COMPILER_ID}" MATCHES "MSVC")
@@ -94,6 +94,6 @@ MACRO (TARGET_LINK_LIBRARIES_WHOLE_ARCHIVE target)
     ENDIF ()
 ENDMACRO ()
 
-TARGET_LINK_LIBRARIES_WHOLE_ARCHIVE("Aaru.Compression.Native" bz2_static)
+TARGET_LINK_LIBRARIES_WHOLE_ARCHIVE("Aaru.Compression.Native" bz2_static lzlib)
 
 add_subdirectory(tests)
