@@ -14,3 +14,5 @@ set(ZSTD_BUILD_SHARED OFF)
 set(ZSTD_MULTITHREAD_SUPPORT OFF) # Not really sure if it works properly
 set(ZSTD_LEGACY_SUPPORT ON) # Unsure if may ever be needed, just in case
 add_subdirectory(zstd-1.5.0/build/cmake)
+
+include(lzma.cmake)
