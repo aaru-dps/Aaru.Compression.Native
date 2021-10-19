@@ -94,6 +94,6 @@ MACRO(TARGET_LINK_LIBRARIES_WHOLE_ARCHIVE target)
     ENDIF()
 ENDMACRO()
 
-TARGET_LINK_LIBRARIES_WHOLE_ARCHIVE("Aaru.Compression.Native" bz2_static lzlib lzfse)
+TARGET_LINK_LIBRARIES_WHOLE_ARCHIVE("Aaru.Compression.Native" bz2_static lzlib lzfse libzstd_static)
 
 add_subdirectory(tests)
