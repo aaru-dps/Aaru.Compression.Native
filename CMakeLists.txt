@@ -36,6 +36,8 @@ message("Detected compiler: ${CMAKE_C_COMPILER_ID}")
 message("Detected build type: ${CMAKE_BUILD_TYPE}")
 message("Detected platform: ${CMAKE_C_PLATFORM_ID}")
 
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 if("${CMAKE_BUILD_TYPE}" MATCHES "Release")
     if("${CMAKE_C_COMPILER_ID}" MATCHES "MSVC")
         add_compile_options("/O2" "/fp:fast")
@@ -73,7 +75,7 @@ endif()
 
 add_subdirectory(3rdparty)
 
-add_library("Aaru.Compression.Native" SHARED library.c apple_rle.c apple_rle.h adc.c adc.h lzip.c lzip.h)
+add_library("Aaru.Compression.Native" SHARED library.c apple_rle.c apple_rle.h adc.c adc.h lzip.c lzip.h flac.c flac.h)
 
 MACRO(TARGET_LINK_LIBRARIES_WHOLE_ARCHIVE target)
     if("${CMAKE_C_COMPILER_ID}" MATCHES "MSVC")
@@ -94,6 +96,6 @@ MACRO(TARGET_LINK_LIBRARIES_WHOLE_ARCHIVE target)
     ENDIF()
 ENDMACRO()
 
-TARGET_LINK_LIBRARIES_WHOLE_ARCHIVE("Aaru.Compression.Native" bz2_static lzlib lzfse libzstd_static lzma)
+TARGET_LINK_LIBRARIES_WHOLE_ARCHIVE("Aaru.Compression.Native" bz2_static lzlib lzfse libzstd_static lzma FLAC)
 
 add_subdirectory(tests)

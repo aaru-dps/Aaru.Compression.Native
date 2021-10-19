@@ -16,3 +16,14 @@ set(ZSTD_LEGACY_SUPPORT ON) # Unsure if may ever be needed, just in case
 add_subdirectory(zstd-1.5.0/build/cmake)
 
 include(lzma.cmake)
+
+cmake_policy(SET CMP0077 NEW)
+set(BUILD_CXXLIBS OFF)
+set(BUILD_PROGRAMS OFF)
+set(BUILD_EXAMPLES OFF)
+set(BUILD_DOCS OFF)
+set(INSTALL_MANPAGES OFF)
+set(INSTALL_PKGCONFIG_MODULES OFF)
+set(INSTALL_CMAKE_CONFIG_MODULE OFF)
+set(WITH_OGG OFF)
+add_subdirectory(flac)
