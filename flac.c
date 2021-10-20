@@ -88,20 +88,31 @@ static FLAC__StreamDecoderReadStatus
 
 static FLAC__StreamDecoderWriteStatus write_callback(const FLAC__StreamDecoder* decoder,
                                                      const FLAC__Frame*         frame,
-                                                     const FLAC__int32* const   bufffer[],
+                                                     const FLAC__int32* const   buffer[],
                                                      void*                      client_data)
 {
     aaru_flac_ctx* ctx = (aaru_flac_ctx*)client_data;
     size_t         i;
+    uint16_t*      buffer16 = (uint16_t*)(ctx->dst_buffer + ctx->dst_pos);
 
+    // Why FLAC does not interleave the channels as PCM do, oh the mistery, we could use memcpy instead of looping
     for(i = 0; i < frame->header.blocksize && ctx->dst_pos < ctx->dst_len; i++)
     {
         // Left channel
-        ctx->dst_buffer[ctx->dst_pos++] = (FLAC__uint16)(FLAC__int16)bufffer[0][i];
-        ctx->dst_buffer[ctx->dst_pos++] = (FLAC__uint16)(FLAC__int16)bufffer[0][i] >> 8;
+        *(buffer16++) = (FLAC__int16)buffer[0][i];
         // Right channel
-        ctx->dst_buffer[ctx->dst_pos++] = (FLAC__uint16)(FLAC__int16)bufffer[1][i];
-        ctx->dst_buffer[ctx->dst_pos++] = (FLAC__uint16)(FLAC__int16)bufffer[1][i] >> 8;
+        *(buffer16++) = (FLAC__int16)buffer[1][i];
+
+        ctx->dst_pos += 4;
+
+        /* TODO: Big-endian (use bswap?)
+        // Left channel
+        ctx->dst_buffer[ctx->dst_pos++] = (FLAC__uint16)(FLAC__int16)buffer[0][i];
+        ctx->dst_buffer[ctx->dst_pos++] = (FLAC__uint16)(FLAC__int16)buffer[0][i] >> 8;
+        // Right channel
+        ctx->dst_buffer[ctx->dst_pos++] = (FLAC__uint16)(FLAC__int16)buffer[1][i];
+        ctx->dst_buffer[ctx->dst_pos++] = (FLAC__uint16)(FLAC__int16)buffer[1][i] >> 8;
+        */
     }
 
     return FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE;
