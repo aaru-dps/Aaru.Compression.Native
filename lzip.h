@@ -24,4 +24,10 @@ AARU_EXPORT int32_t AARU_CALL lzip_decode_buffer(uint8_t*       dst_buffer,
                                                  const uint8_t* src_buffer,
                                                  int32_t        src_size);
 
+AARU_EXPORT int32_t AARU_CALL lzip_encode_buffer(uint8_t*       dst_buffer,
+                                                 int32_t        dst_size,
+                                                 const uint8_t* src_buffer,
+                                                 int32_t        src_size,
+                                                 int32_t dictionary_size,
+                                                 int32_t match_len_limit);
 #endif // AARU_CHECKSUMS_NATIVE__LZIP_H_
