@@ -7,7 +7,9 @@
 #include <string.h>
 
 #include "library.h"
+#include "FLAC/metadata.h"
 #include "FLAC/stream_decoder.h"
+#include "FLAC/stream_encoder.h"
 #include "flac.h"
 
 static FLAC__StreamDecoderReadStatus
@@ -125,4 +127,138 @@ static void error_callback(const FLAC__StreamDecoder* decoder, FLAC__StreamDecod
     fprintf(stderr, "Got error callback: %s\n", FLAC__StreamDecoderErrorStatusString[status]);
 
     ctx->error = 1;
+}
+
+static FLAC__StreamEncoderWriteStatus encoder_write_callback(const FLAC__StreamEncoder* encoder,
+                                                             const FLAC__byte           buffer[],
+                                                             size_t                     bytes,
+                                                             uint32_t                   samples,
+                                                             uint32_t                   current_frame,
+                                                             void*                      client_data);
+
+AARU_EXPORT size_t AARU_CALL flac_encode_redbook_buffer(uint8_t*       dst_buffer,
+                                                        size_t         dst_size,
+                                                        const uint8_t* src_buffer,
+                                                        size_t         src_size,
+                                                        uint32_t       blocksize,
+                                                        int32_t        do_mid_side_stereo,
+                                                        int32_t        loose_mid_side_stereo,
+                                                        const char*    apodization,
+                                                        uint32_t       qlp_coeff_precision,
+                                                        int32_t        do_qlp_coeff_prec_search,
+                                                        int32_t        do_exhaustive_model_search,
+                                                        uint32_t       min_residual_partition_order,
+                                                        uint32_t       max_residual_partition_order,
+                                                        const char*    application_id,
+                                                        uint32_t       application_id_len)
+{
+    FLAC__StreamEncoder*          encoder;
+    aaru_flac_ctx*                ctx = (aaru_flac_ctx*)malloc(sizeof(aaru_flac_ctx));
+    FLAC__StreamEncoderInitStatus init_status;
+    size_t                        ret_size;
+    FLAC__int32*                  pcm;
+    int                           i;
+    int16_t*                      buffer16 = (int16_t*)src_buffer;
+    FLAC__StreamMetadata*         metadata[1];
+
+    memset(ctx, 0, sizeof(aaru_flac_ctx));
+
+    ctx->src_buffer = src_buffer;
+    ctx->src_len    = src_size;
+    ctx->src_pos    = 0;
+    ctx->dst_buffer = dst_buffer;
+    ctx->dst_len    = dst_size;
+    ctx->dst_pos    = 0;
+    ctx->error      = 0;
+
+    encoder = FLAC__stream_encoder_new();
+
+    if(!encoder)
+    {
+        free(ctx);
+        return -1;
+    }
+
+    // TODO: Error detection here
+    FLAC__stream_encoder_set_verify(encoder, false);
+    FLAC__stream_encoder_set_streamable_subset(encoder, false);
+    FLAC__stream_encoder_set_channels(encoder, 2);
+    FLAC__stream_encoder_set_bits_per_sample(encoder, 16);
+    FLAC__stream_encoder_set_sample_rate(encoder, 44100);
+    FLAC__stream_encoder_set_blocksize(encoder, blocksize);
+    // true compresses more
+    FLAC__stream_encoder_set_do_mid_side_stereo(encoder, do_mid_side_stereo);
+    // false compresses more
+    FLAC__stream_encoder_set_loose_mid_side_stereo(encoder, loose_mid_side_stereo);
+    // Apodization
+    FLAC__stream_encoder_set_apodization(encoder, apodization);
+    FLAC__stream_encoder_set_max_lpc_order(encoder, qlp_coeff_precision);
+    FLAC__stream_encoder_set_qlp_coeff_precision(encoder, qlp_coeff_precision);
+    FLAC__stream_encoder_set_do_qlp_coeff_prec_search(encoder, do_qlp_coeff_prec_search);
+    FLAC__stream_encoder_set_do_exhaustive_model_search(encoder, do_exhaustive_model_search);
+    FLAC__stream_encoder_set_min_residual_partition_order(encoder, min_residual_partition_order);
+    FLAC__stream_encoder_set_max_residual_partition_order(encoder, max_residual_partition_order);
+    FLAC__stream_encoder_set_total_samples_estimate(encoder, src_size / 4);
+
+    /* TODO: This is ignored by FLAC, need to replace it
+    if((metadata[0] = FLAC__metadata_object_new(FLAC__METADATA_TYPE_VORBIS_COMMENT)) != NULL)
+    {
+        memset(&vorbis_entry, 0, sizeof(FLAC__StreamMetadata_VorbisComment_Entry));
+        vorbis_entry.entry = (unsigned char *)"Aaru.Compression.Native";
+        vorbis_entry.length = strlen("Aaru.Compression.Native");
+
+        FLAC__metadata_object_vorbiscomment_set_vendor_string(metadata[0], vorbis_entry, true);
+    }
+    */
+
+    if(application_id_len > 0 && application_id != NULL)
+        if((metadata[0] = FLAC__metadata_object_new(FLAC__METADATA_TYPE_APPLICATION)) != NULL)
+            FLAC__metadata_object_application_set_data(
+                metadata[0], (unsigned char*)application_id, application_id_len, true);
+
+    FLAC__stream_encoder_set_metadata(encoder, metadata, 1);
+
+    init_status = FLAC__stream_encoder_init_stream(encoder, encoder_write_callback, NULL, NULL, NULL, ctx);
+
+    if(init_status != FLAC__STREAM_ENCODER_INIT_STATUS_OK)
+    {
+        free(ctx);
+        return -1;
+    }
+
+    pcm = malloc((src_size / 2) * sizeof(FLAC__int32));
+
+    for(i = 0; i < src_size / 2; i++) pcm[i] = (FLAC__int32) * (buffer16++);
+
+    FLAC__stream_encoder_process_interleaved(encoder, pcm, src_size / 4);
+
+    FLAC__stream_encoder_finish(encoder);
+
+    FLAC__stream_encoder_delete(encoder);
+
+    ret_size = ctx->dst_pos;
+
+    free(ctx);
+    free(pcm);
+    FLAC__metadata_object_delete(metadata[0]);
+
+    return ret_size;
+}
+
+static FLAC__StreamEncoderWriteStatus encoder_write_callback(const FLAC__StreamEncoder* encoder,
+                                                             const FLAC__byte           buffer[],
+                                                             size_t                     bytes,
+                                                             uint32_t                   samples,
+                                                             uint32_t                   current_frame,
+                                                             void*                      client_data)
+{
+    aaru_flac_ctx* ctx = (aaru_flac_ctx*)client_data;
+
+    if(bytes > ctx->dst_len - ctx->dst_pos) bytes = ctx->dst_len - ctx->dst_pos;
+
+    memcpy(ctx->dst_buffer + ctx->dst_pos, buffer, bytes);
+
+    ctx->dst_pos += bytes;
+
+    return FLAC__STREAM_ENCODER_WRITE_STATUS_OK;
 }
