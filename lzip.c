@@ -32,7 +32,7 @@ AARU_EXPORT int32_t AARU_CALL lzip_decode_buffer(uint8_t*       dst_buffer,
     void*         ctx;
     enum LZ_Errno lz_err;
     int32_t       in_pos = 0, out_pos = 0, in_size;
-
+    int           rd;
     // Initialize the decoder
     ctx    = LZ_decompress_open();
     lz_err = LZ_decompress_errno(ctx);
@@ -57,11 +57,24 @@ AARU_EXPORT int32_t AARU_CALL lzip_decode_buffer(uint8_t*       dst_buffer,
 
         in_pos += in_size;
 
-        int rd = LZ_decompress_read(ctx, dst_buffer + out_pos, dst_size);
+        rd = LZ_decompress_read(ctx, dst_buffer + out_pos, dst_size);
 
         out_pos += rd;
 
         if(LZ_decompress_finished(ctx) == 1) break;
+    }
+
+    LZ_decompress_finish(ctx);
+
+    if(out_pos < dst_size)
+    {
+        do {
+            rd = LZ_decompress_read(ctx, dst_buffer + out_pos, dst_size);
+
+            out_pos += rd;
+
+            if(LZ_compress_finished(ctx) == 1) break;
+        } while(rd > 0 && out_pos < dst_size);
     }
 
     // Free buffers
