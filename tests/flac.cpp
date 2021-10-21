@@ -17,8 +17,8 @@
  */
 
 #include <climits>
-#include <cstdint>
 #include <cstddef>
+#include <cstdint>
 
 #include "../library.h"
 #include "../flac.h"
@@ -109,11 +109,25 @@ TEST_F(flacFixture, flacCompress)
     original_crc = crc32_data(original, original_len);
 
     // Compress
-    newSize = flac_encode_redbook_buffer(cmp_buffer, cmp_len, original, original_len,4608,                                         1,                                         0,                                         "partial_tukey(0/1.0/1.0)",                                         0,                                         1,                                         false,                                          0,                                          8, "Aaru.Compression.Native.Tests", strlen("Aaru.Compression.Native.Tests"));
+    newSize = flac_encode_redbook_buffer(cmp_buffer,
+                                         cmp_len,
+                                         original,
+                                         original_len,
+                                         4608,
+                                         1,
+                                         0,
+                                         "partial_tukey(0/1.0/1.0)",
+                                         0,
+                                         1,
+                                         false,
+                                         0,
+                                         8,
+                                         "Aaru.Compression.Native.Tests",
+                                         strlen("Aaru.Compression.Native.Tests"));
     cmp_len = newSize;
 
     // Decompress
-    newSize = flac_decode_redbook_buffer(decmp_buffer, decmp_len, cmp_buffer, cmp_len);
+    newSize   = flac_decode_redbook_buffer(decmp_buffer, decmp_len, cmp_buffer, cmp_len);
     decmp_len = newSize;
 
     EXPECT_EQ(decmp_len, original_len);
