@@ -80,3 +80,55 @@ TEST_F(lzmaFixture, lzma)
 
     EXPECT_EQ(crc, EXPECTED_CRC32);
 }
+
+TEST_F(lzmaFixture, lzmaCompress)
+{
+    size_t         original_len = 8388608;
+    size_t         cmp_len      = original_len;
+    size_t         decmp_len    = original_len;
+    char           path[PATH_MAX];
+    char           filename[PATH_MAX * 2];
+    FILE*          file;
+    uint32_t       original_crc, decmp_crc;
+    const uint8_t* original;
+    uint8_t*       cmp_buffer;
+    uint8_t*       decmp_buffer;
+    int            err;
+    uint8_t        props[5];
+    size_t         props_len = 5;
+
+    // Allocate buffers
+    original     = (const uint8_t*)malloc(original_len);
+    cmp_buffer   = (uint8_t*)malloc(cmp_len);
+    decmp_buffer = (uint8_t*)malloc(decmp_len);
+
+    // Read the file
+    getcwd(path, PATH_MAX);
+    snprintf(filename, PATH_MAX, "%s/data/data.bin", path);
+
+    file = fopen(filename, "rb");
+    fread((void*)original, 1, original_len, file);
+    fclose(file);
+
+    // Calculate the CRC
+    original_crc = crc32_data(original, original_len);
+
+    // Compress
+    err = LzmaCompress(cmp_buffer, &cmp_len, original, original_len, props, &props_len, 9, 1048576, 3, 0, 2, 273, 2);
+    EXPECT_EQ(err, 0);
+
+    // Decompress
+    err = LzmaUncompress(decmp_buffer, &decmp_len, cmp_buffer, &cmp_len, props, props_len);
+    EXPECT_EQ(err, 0);
+
+    EXPECT_EQ(decmp_len, original_len);
+
+    decmp_crc = crc32_data(decmp_buffer, decmp_len);
+
+    // Free buffers
+    free((void*)original);
+    free(cmp_buffer);
+    free(decmp_buffer);
+
+    EXPECT_EQ(decmp_crc, original_crc);
+}
