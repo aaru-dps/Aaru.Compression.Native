@@ -92,12 +92,13 @@ mv libAaru.Compression.Native.so runtimes/linux-mips64/native/
 
 ## Linux (ARM), musl
 # Detected system processor: arm
-# /work/3rdparty/lzma-21.03beta/C/7zCrc.c:159:1: error: ‘-mfloat-abi=hard’: selected processor lacks an FPU
 rm -f CMakeCache.txt
 mkdir -p runtimes/linux-musl-arm/native
 docker run --rm dockcross/linux-armv7l-musl >docker/dockcross-linux-musl-arm
 chmod +x docker/dockcross-linux-musl-arm
 docker/dockcross-linux-musl-arm cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 -DCMAKE_POLICY_DEFAULT_CMP0077=NEW -DCMAKE_POLICY_DEFAULT_CMP0069=NEW .
+sed -e 's/\-fno-fat-lto-objects\s//g' ./3rdparty/lzfse/CMakeFiles/lzfse.dir/flags.make > flags.make
+mv flags.make ./3rdparty/lzfse/CMakeFiles/lzfse.dir/flags.make
 docker/dockcross-linux-musl-arm make Aaru.Compression.Native
 mv libAaru.Compression.Native.so runtimes/linux-musl-arm/native/
 
