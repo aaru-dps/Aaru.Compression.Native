@@ -215,7 +215,7 @@ void MY_FAST_CALL Sha256_UpdateBlocks_HW(UInt32 state[8], const Byte *data, size
 #elif defined(MY_CPU_ARM_OR_ARM64)
 
   #if defined(__clang__)
-    #if (__clang_major__ >= 8) // fix that check
+    #if (__clang_major__ >= 8) && !defined(__ANDROID__) // fix that version check, Android with clang12 doesn't work
       #define USE_HW_SHA
     #endif
   #elif defined(__GNUC__)
