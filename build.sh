@@ -109,7 +109,6 @@ mkdir -p runtimes/linux-musl-arm64/native
 docker run --rm dockcross/linux-arm64-musl >docker/dockcross-linux-musl-arm64
 chmod +x docker/dockcross-linux-musl-arm64
 docker/dockcross-linux-musl-arm64 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 -DCMAKE_POLICY_DEFAULT_CMP0077=NEW -DCMAKE_POLICY_DEFAULT_CMP0069=NEW .
-docker/dockcross-linux-musl-arm cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 -DCMAKE_POLICY_DEFAULT_CMP0077=NEW -DCMAKE_POLICY_DEFAULT_CMP0069=NEW .
 sed -e 's/\-fno-fat-lto-objects\s//g' ./3rdparty/lzfse/CMakeFiles/lzfse.dir/flags.make > flags.make
 mv flags.make ./3rdparty/lzfse/CMakeFiles/lzfse.dir/flags.make
 docker/dockcross-linux-musl-arm64 make Aaru.Compression.Native
@@ -167,6 +166,8 @@ sed -e 's/CMAKE_C_COMPILER_RANLIB\-NOTFOUND/\/usr\/xcc\/armv7-w64-mingw32-cross\
 mv link.txt ./3rdparty/lzfse/CMakeFiles/lzfse.dir/link.txt
 sed -e 's/\-fPIC\s//g' ./3rdparty/zstd-1.5.0/build/cmake/lib/CMakeFiles/libzstd_static.dir/flags.make > flags.make
 mv flags.make ./3rdparty/zstd-1.5.0/build/cmake/lib/CMakeFiles/libzstd_static.dir/flags.make
+sed -e 's/\C_DEFINES\ \=/C_DEFINES\ \=\ \-D_FORTIFY_SOURCE\=0/g' ./3rdparty/flac/src/libFLAC/CMakeFiles/FLAC.dir/flags.make > flags.make
+mv flags.make ./3rdparty/flac/src/libFLAC/CMakeFiles/FLAC.dir/flags.make
 sed -e 's/\-fPIC\s//g' ./CMakeFiles/Aaru.Compression.Native.dir/link.txt > link.txt
 mv link.txt ./CMakeFiles/Aaru.Compression.Native.dir/link.txt
 sed -e 's/\-fPIC\s//g' ./CMakeFiles/Aaru.Compression.Native.dir/flags.make > flags.make
@@ -194,6 +195,8 @@ sed -e 's/CMAKE_C_COMPILER_RANLIB\-NOTFOUND/\/usr\/xcc\/aarch64-w64-mingw32-cros
 mv link.txt ./3rdparty/lzfse/CMakeFiles/lzfse.dir/link.txt
 sed -e 's/\-fPIC\s//g' ./3rdparty/zstd-1.5.0/build/cmake/lib/CMakeFiles/libzstd_static.dir/flags.make > flags.make
 mv flags.make ./3rdparty/zstd-1.5.0/build/cmake/lib/CMakeFiles/libzstd_static.dir/flags.make
+sed -e 's/\C_DEFINES\ \=/C_DEFINES\ \=\ \-D_FORTIFY_SOURCE\=0/g' ./3rdparty/flac/src/libFLAC/CMakeFiles/FLAC.dir/flags.make > flags.make
+mv flags.make ./3rdparty/flac/src/libFLAC/CMakeFiles/FLAC.dir/flags.make
 sed -e 's/\-fPIC\s//g' ./CMakeFiles/Aaru.Compression.Native.dir/link.txt > link.txt
 mv link.txt ./CMakeFiles/Aaru.Compression.Native.dir/link.txt
 sed -e 's/\-fPIC\s//g' ./CMakeFiles/Aaru.Compression.Native.dir/flags.make > flags.make

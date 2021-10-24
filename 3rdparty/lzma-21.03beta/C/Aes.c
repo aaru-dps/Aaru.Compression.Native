@@ -57,7 +57,7 @@ static Byte InvS[256];
   #define USE_HW_AES
 #elif defined(MY_CPU_ARM_OR_ARM64) && defined(MY_CPU_LE)
   #if defined(__clang__)
-    #if (__clang_major__ >= 8) // fix that check
+    #if (__clang_major__ >= 8) && !defined(__MINGW32__) // fix that check
       #define USE_HW_AES
     #endif
   #elif defined(__GNUC__)
