@@ -104,12 +104,14 @@ mv libAaru.Compression.Native.so runtimes/linux-musl-arm/native/
 
 ## Linux (ARM64), musl
 # Detected system processor: aarch64
-# cc1: error: ‘-fno-fat-lto-objects’ are supported only with linker plugin
 rm -f CMakeCache.txt
 mkdir -p runtimes/linux-musl-arm64/native
 docker run --rm dockcross/linux-arm64-musl >docker/dockcross-linux-musl-arm64
 chmod +x docker/dockcross-linux-musl-arm64
 docker/dockcross-linux-musl-arm64 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 -DCMAKE_POLICY_DEFAULT_CMP0077=NEW -DCMAKE_POLICY_DEFAULT_CMP0069=NEW .
+docker/dockcross-linux-musl-arm cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 -DCMAKE_POLICY_DEFAULT_CMP0077=NEW -DCMAKE_POLICY_DEFAULT_CMP0069=NEW .
+sed -e 's/\-fno-fat-lto-objects\s//g' ./3rdparty/lzfse/CMakeFiles/lzfse.dir/flags.make > flags.make
+mv flags.make ./3rdparty/lzfse/CMakeFiles/lzfse.dir/flags.make
 docker/dockcross-linux-musl-arm64 make Aaru.Compression.Native
 mv libAaru.Compression.Native.so runtimes/linux-musl-arm64/native/
 
