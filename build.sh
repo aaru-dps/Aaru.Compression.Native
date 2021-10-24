@@ -137,24 +137,36 @@ mv libAaru.Compression.Native.so runtimes/linux-x64/native/
 
 ## Linux (x86)
 # Detected system processor: i686
-# [ 62%] Linking C static library liblzfse.a
-# Error running link command: No such file or directory
 rm -f CMakeCache.txt
 mkdir -p runtimes/linux-x86/native
 docker run --rm dockcross/linux-x86 > docker/dockcross-linux-x86
 chmod +x docker/dockcross-linux-x86
 docker/dockcross-linux-x86 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 -DCMAKE_POLICY_DEFAULT_CMP0077=NEW -DCMAKE_POLICY_DEFAULT_CMP0069=NEW .
+sed -e 's/CMAKE_C_COMPILER_AR\-NOTFOUND/\/usr\/i686-linux-gnu\/bin\/i686-linux-gnu-ar/g' ./3rdparty/lzfse/CMakeFiles/lzfse.dir/link.txt > link.txt
+mv link.txt ./3rdparty/lzfse/CMakeFiles/lzfse.dir/link.txt
+sed -e 's/CMAKE_C_COMPILER_RANLIB\-NOTFOUND/ranlib/g' ./3rdparty/lzfse/CMakeFiles/lzfse.dir/link.txt > link.txt
+mv link.txt ./3rdparty/lzfse/CMakeFiles/lzfse.dir/link.txt
 docker/dockcross-linux-x86 make Aaru.Compression.Native
 mv libAaru.Compression.Native.so runtimes/linux-x86/native/
 
 ## Windows (ARM)
 # Detected system processor: arm
-# -fPIE incompatible
+# undefined symbols in lzma/aes and flac
 rm -f CMakeCache.txt
 mkdir -p runtimes/win-arm/native
 docker run --rm dockcross/windows-armv7 > docker/dockcross-win-arm
 chmod +x docker/dockcross-win-arm
 docker/dockcross-win-arm cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 -DCMAKE_POLICY_DEFAULT_CMP0077=NEW -DCMAKE_POLICY_DEFAULT_CMP0069=NEW .
+sed -e 's/\-fPIC\s//g' ./3rdparty/bzip2/CMakeFiles/bz2_static.dir/flags.make > flags.make
+mv flags.make ./3rdparty/bzip2/CMakeFiles/bz2_static.dir/flags.make
+sed -e 's/\-fPIC\s//g' ./3rdparty/lzfse/CMakeFiles/lzfse.dir/flags.make > flags.make
+mv flags.make ./3rdparty/lzfse/CMakeFiles/lzfse.dir/flags.make
+sed -e 's/CMAKE_C_COMPILER_AR\-NOTFOUND/\/usr\/xcc\/armv7-w64-mingw32-cross\/bin\/aarch64-w64-mingw32-ar/g' ./3rdparty/lzfse/CMakeFiles/lzfse.dir/link.txt > link.txt
+mv link.txt ./3rdparty/lzfse/CMakeFiles/lzfse.dir/link.txt
+sed -e 's/CMAKE_C_COMPILER_RANLIB\-NOTFOUND/\/usr\/xcc\/armv7-w64-mingw32-cross\/bin\/aarch64-w64-mingw32-ranlib/g' ./3rdparty/lzfse/CMakeFiles/lzfse.dir/link.txt > link.txt
+mv link.txt ./3rdparty/lzfse/CMakeFiles/lzfse.dir/link.txt
+sed -e 's/\-fPIC\s//g' ./3rdparty/zstd-1.5.0/build/cmake/lib/CMakeFiles/libzstd_static.dir/flags.make > flags.make
+mv flags.make ./3rdparty/zstd-1.5.0/build/cmake/lib/CMakeFiles/libzstd_static.dir/flags.make
 sed -e 's/\-fPIC\s//g' ./CMakeFiles/Aaru.Compression.Native.dir/link.txt > link.txt
 mv link.txt ./CMakeFiles/Aaru.Compression.Native.dir/link.txt
 sed -e 's/\-fPIC\s//g' ./CMakeFiles/Aaru.Compression.Native.dir/flags.make > flags.make
@@ -166,12 +178,22 @@ mv libAaru.Compression.Native.so runtimes/win-arm/native/libAaru.Compression.Nat
 
 ## Windows (ARM64)
 # Detected system processor: aarch64
-# -fPIE incompatible
+# undefined symbols in lzma/aes and flac
 rm -f CMakeCache.txt
 mkdir -p runtimes/win-arm64/native
 docker run --rm dockcross/windows-arm64 > docker/dockcross-win-arm64
 chmod +x docker/dockcross-win-arm64
 docker/dockcross-win-arm64 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 -DCMAKE_POLICY_DEFAULT_CMP0077=NEW -DCMAKE_POLICY_DEFAULT_CMP0069=NEW .
+sed -e 's/\-fPIC\s//g' ./3rdparty/bzip2/CMakeFiles/bz2_static.dir/flags.make > flags.make
+mv flags.make ./3rdparty/bzip2/CMakeFiles/bz2_static.dir/flags.make
+sed -e 's/\-fPIC\s//g' ./3rdparty/lzfse/CMakeFiles/lzfse.dir/flags.make > flags.make
+mv flags.make ./3rdparty/lzfse/CMakeFiles/lzfse.dir/flags.make
+sed -e 's/CMAKE_C_COMPILER_AR\-NOTFOUND/\/usr\/xcc\/aarch64-w64-mingw32-cross\/bin\/aarch64-w64-mingw32-ar/g' ./3rdparty/lzfse/CMakeFiles/lzfse.dir/link.txt > link.txt
+mv link.txt ./3rdparty/lzfse/CMakeFiles/lzfse.dir/link.txt
+sed -e 's/CMAKE_C_COMPILER_RANLIB\-NOTFOUND/\/usr\/xcc\/aarch64-w64-mingw32-cross\/bin\/aarch64-w64-mingw32-ranlib/g' ./3rdparty/lzfse/CMakeFiles/lzfse.dir/link.txt > link.txt
+mv link.txt ./3rdparty/lzfse/CMakeFiles/lzfse.dir/link.txt
+sed -e 's/\-fPIC\s//g' ./3rdparty/zstd-1.5.0/build/cmake/lib/CMakeFiles/libzstd_static.dir/flags.make > flags.make
+mv flags.make ./3rdparty/zstd-1.5.0/build/cmake/lib/CMakeFiles/libzstd_static.dir/flags.make
 sed -e 's/\-fPIC\s//g' ./CMakeFiles/Aaru.Compression.Native.dir/link.txt > link.txt
 mv link.txt ./CMakeFiles/Aaru.Compression.Native.dir/link.txt
 sed -e 's/\-fPIC\s//g' ./CMakeFiles/Aaru.Compression.Native.dir/flags.make > flags.make

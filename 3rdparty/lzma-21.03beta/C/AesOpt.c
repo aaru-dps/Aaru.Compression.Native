@@ -509,7 +509,7 @@ VAES_COMPAT_STUB (AesCtr_Code_HW)
 #elif defined(MY_CPU_ARM_OR_ARM64) && defined(MY_CPU_LE)
 
   #if defined(__clang__)
-    #if (__clang_major__ >= 8) && !defined(__ANDROID__) // fix that version check, Android with clang12 doesn't work
+    #if (__clang_major__ >= 8) && !defined(__ANDROID__) && !defined(__MINGW32__) // fix that version check, Android with clang12 doesn't work, neither does MingW
       #define USE_HW_AES
     #endif
   #elif defined(__GNUC__)

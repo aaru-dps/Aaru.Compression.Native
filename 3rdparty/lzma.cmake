@@ -5,7 +5,9 @@ set("LZMA_ASM_DIRECTORY" "lzma-21.03beta/Asm")
 
 add_library(lzma STATIC)
 
-set_property(TARGET lzma PROPERTY POSITION_INDEPENDENT_CODE ON)
+if(NOT "${CMAKE_C_PLATFORM_ID}" MATCHES "MinGW" OR (NOT ${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm" AND NOT ${CMAKE_SYSTEM_PROCESSOR} MATCHES "aarch64"))
+    set_property(TARGET lzma PROPERTY POSITION_INDEPENDENT_CODE ON)
+endif()
 
 target_compile_definitions(lzma PUBLIC _REENTRANT)
 target_compile_definitions(lzma PUBLIC _FILE_OFFSET_BITS)
