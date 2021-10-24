@@ -217,7 +217,6 @@ mv libAaru.Compression.Native.dll runtimes/win-x64/native/
 ## Windows (x86)
 # Detected system processor: i686
 # TODO: Requires MSVCRT.DLL
-# /work/3rdparty/lzma-21.03beta/C/Alloc.c:9:10: fatal error: Windows.h: No such file or directory
 rm -f CMakeCache.txt
 mkdir -p runtimes/win-x86/native
 docker run --rm dockcross/windows-shared-x86 > docker/dockcross-win-x86
