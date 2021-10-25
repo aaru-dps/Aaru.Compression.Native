@@ -40,7 +40,7 @@ if("${CMAKE_C_COMPILER_ID}" MATCHES "AppleClang" OR "${CMAKE_C_COMPILER_ID}" MAT
     target_compile_definitions(lzma PUBLIC USE_CLANG)
 endif()
 
-target_compile_options(lzma PUBLIC -Wall)
+#target_compile_options(lzma PUBLIC -Wall)
 #target_compile_options(lzma PUBLIC -Werror)
 
 target_compile_definitions(lzma PUBLIC $<$<COMPILE_LANGUAGE:ASM>:-DABI_LINUX>)
