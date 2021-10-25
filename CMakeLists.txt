@@ -30,8 +30,12 @@ else()
     set(CMAKE_C_STANDARD 90)
 endif()
 
-if("${CMAKE_C_PLATFORM_ID}" MATCHES "MinGW" AND ("${CMAKE_SYSTEM_PROCESSOR}" MATCHES "aarch64" OR "${CMAKE_SYSTEM_PROCESSOR}" MATCHES "arm"))
-    set(WIN32 TRUE)
+if("${CMAKE_C_PLATFORM_ID}" MATCHES "MinGW")
+    if("${CMAKE_SYSTEM_PROCESSOR}" MATCHES "aarch64" OR "${CMAKE_SYSTEM_PROCESSOR}" MATCHES "arm")
+        set(WIN32 TRUE)
+    endif()
+
+    add_link_options(-static-libgcc)
 endif()
 
 message("Detected system processor: ${CMAKE_SYSTEM_PROCESSOR}")

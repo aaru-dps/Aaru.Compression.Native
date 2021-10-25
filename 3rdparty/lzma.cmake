@@ -3,6 +3,8 @@ project(lzma C ASM)
 set("LZMA_C_DIRECTORY" "lzma-21.03beta/C")
 set("LZMA_ASM_DIRECTORY" "lzma-21.03beta/Asm")
 
+message(STATUS "LZMA VERSION: 21.03beta")
+
 add_library(lzma STATIC)
 
 if(NOT "${CMAKE_C_PLATFORM_ID}" MATCHES "MinGW" OR (NOT ${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm" AND NOT ${CMAKE_SYSTEM_PROCESSOR} MATCHES "aarch64"))

@@ -29,7 +29,6 @@ AARU_EXPORT size_t AARU_CALL flac_decode_redbook_buffer(uint8_t*       dst_buffe
     FLAC__StreamDecoder*          decoder;
     FLAC__StreamDecoderInitStatus init_status;
     aaru_flac_ctx*                ctx = (aaru_flac_ctx*)malloc(sizeof(aaru_flac_ctx));
-    FLAC__bool                    ok  = true;
     size_t                        ret_size;
 
     memset(ctx, 0, sizeof(aaru_flac_ctx));
@@ -62,7 +61,7 @@ AARU_EXPORT size_t AARU_CALL flac_decode_redbook_buffer(uint8_t*       dst_buffe
     }
 
     // TODO: Return error somehow
-    ok = FLAC__stream_decoder_process_until_end_of_stream(decoder);
+    FLAC__stream_decoder_process_until_end_of_stream(decoder);
 
     FLAC__stream_decoder_delete(decoder);
 
