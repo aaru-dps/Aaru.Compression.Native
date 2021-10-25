@@ -9,11 +9,10 @@ set(LT_CURRENT  1)
 set(LT_REVISION 7)
 set(LT_AGE      0)
 
-set(CMAKE_CURRENT_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/bzip2/")
 set(PROJECT_SOURCE_DIR "${PROJECT_SOURCE_DIR}/bzip2/")
 set(PROJECT_BINARY_DIR "${PROJECT_BINARY_DIR}/bzip2/")
 
-set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/bzip2/cmake")
 include(Version)
 include(SymLink)
 
@@ -58,7 +57,7 @@ include(GNUInstallDirs)
 find_package(Python3)
 
 # Always use '-fPIC'/'-fPIE' option, except when using MingW to compile for WoA.
-if("${CMAKE_C_PLATFORM_ID}" MATCHES "MinGW" AND ("${CMAKE_SYSTEM_PROCESSOR}" MATCHES "aarch64" OR "${CMAKE_SYSTEM_PROCESSOR}" MATCHES "arm"))
+if(NOT "${CMAKE_C_PLATFORM_ID}" MATCHES "MinGW" OR (NOT "${CMAKE_SYSTEM_PROCESSOR}" MATCHES "aarch64" AND NOT "${CMAKE_SYSTEM_PROCESSOR}" MATCHES "arm"))
     set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 endif()
 
@@ -122,13 +121,15 @@ set(BZ2_SOURCES
 
 list(TRANSFORM BZ2_SOURCES PREPEND "bzip2/")
 
+add_definitions(-DBZ_DEBUG=0)
+
 #if(ENABLE_STATIC_LIB)
     # The libbz2 static library.
     add_library(bz2_static STATIC)
     target_sources(bz2_static
                    PRIVATE     ${BZ2_SOURCES}
-                   PUBLIC      ${CMAKE_CURRENT_SOURCE_DIR}/bzlib_private.h
-                   INTERFACE   ${CMAKE_CURRENT_SOURCE_DIR}/bzlib.h)
+                   PUBLIC      ${CMAKE_CURRENT_SOURCE_DIR}/bzip2/bzlib_private.h
+                   INTERFACE   ${CMAKE_CURRENT_SOURCE_DIR}/bzip2/bzlib.h)
     set_target_properties(bz2_static PROPERTIES
                           COMPILE_FLAGS       "${WARNCFLAGS}"
                           VERSION             ${LT_VERSION}
