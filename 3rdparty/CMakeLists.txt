@@ -2,7 +2,10 @@ cmake_policy(SET CMP0077 NEW)
 
 include(bzip2.cmake)
 
-#include(lzip.cmake)
+include(lzip.cmake)
+
+include(lzfse.cmake)
+
 #
 #set(LZFSE_BUNDLE_MODE ON)
 #add_subdirectory(lzfse)
