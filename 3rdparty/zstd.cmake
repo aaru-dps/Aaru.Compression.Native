@@ -60,8 +60,6 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
 endif()
 
-include(GNUInstallDirs)
-
 #-----------------------------------------------------------------------------
 # Add extra compilation flags
 #-----------------------------------------------------------------------------
@@ -186,20 +184,6 @@ else ()
     message(STATUS "ZSTD_MULTITHREAD_SUPPORT is disabled")
 endif ()
 
-option(ZSTD_BUILD_PROGRAMS "BUILD PROGRAMS" ON)
-option(ZSTD_BUILD_CONTRIB "BUILD CONTRIB" OFF)
-
-# Respect the conventional CMake option for enabling tests if it was specified on the first configure
-if (BUILD_TESTING)
-    set(ZSTD_BUILD_TESTS_default ON)
-else()
-    set(ZSTD_BUILD_TESTS_default OFF)
-endif()
-option(ZSTD_BUILD_TESTS "BUILD TESTS" ${ZSTD_BUILD_TESTS_default})
-if (MSVC)
-    option(ZSTD_USE_STATIC_RUNTIME "LINK TO STATIC RUN-TIME LIBRARIES" OFF)
-endif ()
-
 #-----------------------------------------------------------------------------
 # External dependencies
 #-----------------------------------------------------------------------------
@@ -216,12 +200,6 @@ endif ()
 project(libzstd C)
 
 set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
-option(ZSTD_BUILD_STATIC "BUILD STATIC LIBRARIES" ON)
-option(ZSTD_BUILD_SHARED "BUILD SHARED LIBRARIES" ON)
-
-if(NOT ZSTD_BUILD_SHARED AND NOT ZSTD_BUILD_STATIC)
-    message(SEND_ERROR "You need to build at least one flavor of libzstd")
-endif()
 
 # Define library directory, where sources and header files are located
 include_directories(${LIBRARY_DIR} ${LIBRARY_DIR}/common)
@@ -280,17 +258,7 @@ endif ()
 
 # Split project to static and shared libraries build
 set(library_targets)
-if (ZSTD_BUILD_SHARED)
-    add_library(libzstd_shared SHARED ${Sources} ${Headers} ${PlatformDependResources})
-    list(APPEND library_targets libzstd_shared)
-    if (ZSTD_MULTITHREAD_SUPPORT)
-        set_property(TARGET libzstd_shared APPEND PROPERTY COMPILE_DEFINITIONS "ZSTD_MULTITHREAD")
-        if (UNIX)
-            target_link_libraries(libzstd_shared ${THREADS_LIBS})
-        endif ()
-    endif()
-endif ()
-if (ZSTD_BUILD_STATIC)
+#if (ZSTD_BUILD_STATIC)
     add_library(libzstd_static STATIC ${Sources} ${Headers})
     list(APPEND library_targets libzstd_static)
     if (ZSTD_MULTITHREAD_SUPPORT)
@@ -299,16 +267,11 @@ if (ZSTD_BUILD_STATIC)
             target_link_libraries(libzstd_static ${THREADS_LIBS})
         endif ()
     endif ()
-endif ()
+#endif ()
 
 # Add specific compile definitions for MSVC project
 if (MSVC)
-    if (ZSTD_BUILD_SHARED)
-        set_property(TARGET libzstd_shared APPEND PROPERTY COMPILE_DEFINITIONS "ZSTD_DLL_EXPORT=1;ZSTD_HEAPMODE=0;_CONSOLE;_CRT_SECURE_NO_WARNINGS")
-    endif ()
-    if (ZSTD_BUILD_STATIC)
-        set_property(TARGET libzstd_static APPEND PROPERTY COMPILE_DEFINITIONS "ZSTD_HEAPMODE=0;_CRT_SECURE_NO_WARNINGS")
-    endif ()
+    set_property(TARGET libzstd_static APPEND PROPERTY COMPILE_DEFINITIONS "ZSTD_HEAPMODE=0;_CRT_SECURE_NO_WARNINGS")
 endif ()
 
 # With MSVC static library needs to be renamed to avoid conflict with import library
@@ -323,6 +286,9 @@ endif ()
     set_target_properties(
             libzstd_static
             PROPERTIES
-            POSITION_INDEPENDENT_CODE On
             OUTPUT_NAME ${STATIC_LIBRARY_BASE_NAME})
 #endif ()
+
+if(NOT "${CMAKE_C_PLATFORM_ID}" MATCHES "MinGW" OR (NOT ${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm" AND NOT ${CMAKE_SYSTEM_PROCESSOR} MATCHES "aarch64"))
+    set_property(TARGET libzstd_static APPEND PROPERTY POSITION_INDEPENDENT_CODE ON)
+endif()

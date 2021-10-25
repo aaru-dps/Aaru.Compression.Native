@@ -26,7 +26,7 @@ rm -f CMakeCache.txt
 mkdir -p runtimes/android-arm/native
 docker run --rm dockcross/android-arm >docker/dockcross-android-arm
 chmod +x docker/dockcross-android-arm
-docker/dockcross-android-arm cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 -DCMAKE_POLICY_DEFAULT_CMP0077=NEW -DCMAKE_POLICY_DEFAULT_CMP0069=NEW .
+docker/dockcross-android-arm cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
 docker/dockcross-android-arm make Aaru.Compression.Native
 mv libAaru.Compression.Native.so runtimes/android-arm/native/
 
@@ -36,7 +36,7 @@ rm -f CMakeCache.txt
 mkdir -p runtimes/android-arm64/native
 docker run --rm dockcross/android-arm64 >docker/dockcross-android-arm64
 chmod +x docker/dockcross-android-arm64
-docker/dockcross-android-arm64 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 -DCMAKE_POLICY_DEFAULT_CMP0077=NEW -DCMAKE_POLICY_DEFAULT_CMP0069=NEW .
+docker/dockcross-android-arm64 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
 docker/dockcross-android-arm64 make Aaru.Compression.Native
 mv libAaru.Compression.Native.so runtimes/android-arm64/native/
 
@@ -46,7 +46,7 @@ rm -f CMakeCache.txt
 mkdir -p runtimes/android-x64/native
 docker run --rm dockcross/android-x86_64 >docker/dockcross-android-x64
 chmod +x docker/dockcross-android-x64
-docker/dockcross-android-x64 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 -DCMAKE_POLICY_DEFAULT_CMP0077=NEW -DCMAKE_POLICY_DEFAULT_CMP0069=NEW .
+docker/dockcross-android-x64 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
 docker/dockcross-android-x64 make Aaru.Compression.Native
 mv libAaru.Compression.Native.so runtimes/android-x64/native/
 
@@ -56,7 +56,7 @@ rm -f CMakeCache.txt
 mkdir -p runtimes/android-x86/native
 docker run --rm dockcross/android-x86 >docker/dockcross-android-x86
 chmod +x docker/dockcross-android-x86
-docker/dockcross-android-x86 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 -DCMAKE_POLICY_DEFAULT_CMP0077=NEW -DCMAKE_POLICY_DEFAULT_CMP0069=NEW .
+docker/dockcross-android-x86 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
 docker/dockcross-android-x86 make Aaru.Compression.Native
 mv libAaru.Compression.Native.so runtimes/android-x86/native/
 
@@ -66,7 +66,7 @@ rm -f CMakeCache.txt
 mkdir -p runtimes/linux-arm/native
 docker run --rm dockcross/linux-armv7a >docker/dockcross-linux-arm
 chmod +x docker/dockcross-linux-arm
-docker/dockcross-linux-arm cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 -DCMAKE_POLICY_DEFAULT_CMP0077=NEW -DCMAKE_POLICY_DEFAULT_CMP0069=NEW .
+docker/dockcross-linux-arm cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
 docker/dockcross-linux-arm make Aaru.Compression.Native
 mv libAaru.Compression.Native.so runtimes/linux-arm/native/
 
@@ -76,7 +76,7 @@ rm -f CMakeCache.txt
 mkdir -p runtimes/linux-arm64/native
 docker run --rm dockcross/linux-arm64-lts >docker/dockcross-linux-arm64
 chmod +x docker/dockcross-linux-arm64
-docker/dockcross-linux-arm64 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 -DCMAKE_POLICY_DEFAULT_CMP0077=NEW -DCMAKE_POLICY_DEFAULT_CMP0069=NEW .
+docker/dockcross-linux-arm64 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
 docker/dockcross-linux-arm64 make Aaru.Compression.Native
 mv libAaru.Compression.Native.so runtimes/linux-arm64/native/
 
@@ -86,7 +86,7 @@ rm -f CMakeCache.txt
 mkdir -p runtimes/linux-mips64/native
 docker run --rm dockcross/linux-mips >docker/dockcross-linux-mips64
 chmod +x docker/dockcross-linux-mips64
-docker/dockcross-linux-mips64 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 -DCMAKE_POLICY_DEFAULT_CMP0077=NEW -DCMAKE_POLICY_DEFAULT_CMP0069=NEW .
+docker/dockcross-linux-mips64 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
 docker/dockcross-linux-mips64 make Aaru.Compression.Native
 mv libAaru.Compression.Native.so runtimes/linux-mips64/native/
 
@@ -96,9 +96,7 @@ rm -f CMakeCache.txt
 mkdir -p runtimes/linux-musl-arm/native
 docker run --rm dockcross/linux-armv7l-musl >docker/dockcross-linux-musl-arm
 chmod +x docker/dockcross-linux-musl-arm
-docker/dockcross-linux-musl-arm cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 -DCMAKE_POLICY_DEFAULT_CMP0077=NEW -DCMAKE_POLICY_DEFAULT_CMP0069=NEW .
-sed -e 's/\-fno-fat-lto-objects\s//g' ./3rdparty/lzfse/CMakeFiles/lzfse.dir/flags.make > flags.make
-mv flags.make ./3rdparty/lzfse/CMakeFiles/lzfse.dir/flags.make
+docker/dockcross-linux-musl-arm cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 -DAARU_MUSL=1 .
 docker/dockcross-linux-musl-arm make Aaru.Compression.Native
 mv libAaru.Compression.Native.so runtimes/linux-musl-arm/native/
 
@@ -108,9 +106,7 @@ rm -f CMakeCache.txt
 mkdir -p runtimes/linux-musl-arm64/native
 docker run --rm dockcross/linux-arm64-musl >docker/dockcross-linux-musl-arm64
 chmod +x docker/dockcross-linux-musl-arm64
-docker/dockcross-linux-musl-arm64 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 -DCMAKE_POLICY_DEFAULT_CMP0077=NEW -DCMAKE_POLICY_DEFAULT_CMP0069=NEW .
-sed -e 's/\-fno-fat-lto-objects\s//g' ./3rdparty/lzfse/CMakeFiles/lzfse.dir/flags.make > flags.make
-mv flags.make ./3rdparty/lzfse/CMakeFiles/lzfse.dir/flags.make
+docker/dockcross-linux-musl-arm64 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 -DAARU_MUSL=1 .
 docker/dockcross-linux-musl-arm64 make Aaru.Compression.Native
 mv libAaru.Compression.Native.so runtimes/linux-musl-arm64/native/
 
@@ -120,7 +116,7 @@ rm -f CMakeCache.txt
 mkdir -p runtimes/linux-s390x/native
 docker run --rm dockcross/linux-s390x >docker/dockcross-linux-s390x
 chmod +x docker/dockcross-linux-s390x
-docker/dockcross-linux-s390x cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 -DCMAKE_POLICY_DEFAULT_CMP0077=NEW -DCMAKE_POLICY_DEFAULT_CMP0069=NEW .
+docker/dockcross-linux-s390x cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
 docker/dockcross-linux-s390x make Aaru.Compression.Native
 mv libAaru.Compression.Native.so runtimes/linux-s390x/native/
 
@@ -130,7 +126,7 @@ rm -f CMakeCache.txt
 mkdir -p runtimes/linux-x64/native
 docker run --rm dockcross/linux-x64 >docker/dockcross-linux-x64
 chmod +x docker/dockcross-linux-x64
-docker/dockcross-linux-x64 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 -DCMAKE_POLICY_DEFAULT_CMP0077=NEW -DCMAKE_POLICY_DEFAULT_CMP0069=NEW .
+docker/dockcross-linux-x64 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
 docker/dockcross-linux-x64 make Aaru.Compression.Native
 mv libAaru.Compression.Native.so runtimes/linux-x64/native/
 
@@ -140,38 +136,25 @@ rm -f CMakeCache.txt
 mkdir -p runtimes/linux-x86/native
 docker run --rm dockcross/linux-x86 > docker/dockcross-linux-x86
 chmod +x docker/dockcross-linux-x86
-docker/dockcross-linux-x86 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 -DCMAKE_POLICY_DEFAULT_CMP0077=NEW -DCMAKE_POLICY_DEFAULT_CMP0069=NEW .
-sed -e 's/CMAKE_C_COMPILER_AR\-NOTFOUND/\/usr\/i686-linux-gnu\/bin\/i686-linux-gnu-ar/g' ./3rdparty/lzfse/CMakeFiles/lzfse.dir/link.txt > link.txt
-mv link.txt ./3rdparty/lzfse/CMakeFiles/lzfse.dir/link.txt
-sed -e 's/CMAKE_C_COMPILER_RANLIB\-NOTFOUND/ranlib/g' ./3rdparty/lzfse/CMakeFiles/lzfse.dir/link.txt > link.txt
-mv link.txt ./3rdparty/lzfse/CMakeFiles/lzfse.dir/link.txt
+docker/dockcross-linux-x86 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
+sed -e 's/CMAKE_C_COMPILER_AR\-NOTFOUND/\/usr\/i686-linux-gnu\/bin\/i686-linux-gnu-ar/g' ./3rdparty/CMakeFiles/lzfse.dir/link.txt > link.txt
+mv link.txt ./3rdparty/CMakeFiles/lzfse.dir/link.txt
+sed -e 's/CMAKE_C_COMPILER_RANLIB\-NOTFOUND/ranlib/g' ./3rdparty/CMakeFiles/lzfse.dir/link.txt > link.txt
+mv link.txt ./3rdparty/CMakeFiles/lzfse.dir/link.txt
 docker/dockcross-linux-x86 make Aaru.Compression.Native
 mv libAaru.Compression.Native.so runtimes/linux-x86/native/
 
 ## Windows (ARM)
 # Detected system processor: arm
-# undefined symbols in lzma/aes and flac
 rm -f CMakeCache.txt
 mkdir -p runtimes/win-arm/native
 docker run --rm dockcross/windows-armv7 > docker/dockcross-win-arm
 chmod +x docker/dockcross-win-arm
-docker/dockcross-win-arm cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 -DCMAKE_POLICY_DEFAULT_CMP0077=NEW -DCMAKE_POLICY_DEFAULT_CMP0069=NEW .
-sed -e 's/\-fPIC\s//g' ./3rdparty/bzip2/CMakeFiles/bz2_static.dir/flags.make > flags.make
-mv flags.make ./3rdparty/bzip2/CMakeFiles/bz2_static.dir/flags.make
-sed -e 's/\-fPIC\s//g' ./3rdparty/lzfse/CMakeFiles/lzfse.dir/flags.make > flags.make
-mv flags.make ./3rdparty/lzfse/CMakeFiles/lzfse.dir/flags.make
-sed -e 's/CMAKE_C_COMPILER_AR\-NOTFOUND/\/usr\/xcc\/armv7-w64-mingw32-cross\/bin\/aarch64-w64-mingw32-ar/g' ./3rdparty/lzfse/CMakeFiles/lzfse.dir/link.txt > link.txt
-mv link.txt ./3rdparty/lzfse/CMakeFiles/lzfse.dir/link.txt
-sed -e 's/CMAKE_C_COMPILER_RANLIB\-NOTFOUND/\/usr\/xcc\/armv7-w64-mingw32-cross\/bin\/aarch64-w64-mingw32-ranlib/g' ./3rdparty/lzfse/CMakeFiles/lzfse.dir/link.txt > link.txt
-mv link.txt ./3rdparty/lzfse/CMakeFiles/lzfse.dir/link.txt
-sed -e 's/\-fPIC\s//g' ./3rdparty/zstd-1.5.0/build/cmake/lib/CMakeFiles/libzstd_static.dir/flags.make > flags.make
-mv flags.make ./3rdparty/zstd-1.5.0/build/cmake/lib/CMakeFiles/libzstd_static.dir/flags.make
-sed -e 's/\C_DEFINES\ \=/C_DEFINES\ \=\ \-D_FORTIFY_SOURCE\=0/g' ./3rdparty/flac/src/libFLAC/CMakeFiles/FLAC.dir/flags.make > flags.make
-mv flags.make ./3rdparty/flac/src/libFLAC/CMakeFiles/FLAC.dir/flags.make
-sed -e 's/\-fPIC\s//g' ./CMakeFiles/Aaru.Compression.Native.dir/link.txt > link.txt
-mv link.txt ./CMakeFiles/Aaru.Compression.Native.dir/link.txt
-sed -e 's/\-fPIC\s//g' ./CMakeFiles/Aaru.Compression.Native.dir/flags.make > flags.make
-mv flags.make ./CMakeFiles/Aaru.Compression.Native.dir/flags.make
+docker/dockcross-win-arm cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
+sed -e 's/CMAKE_C_COMPILER_AR\-NOTFOUND/\/usr\/xcc\/armv7-w64-mingw32-cross\/bin\/armv7-w64-mingw32-ar/g' ./3rdparty/CMakeFiles/lzfse.dir/link.txt > link.txt
+mv link.txt ./3rdparty/CMakeFiles/lzfse.dir/link.txt
+sed -e 's/CMAKE_C_COMPILER_RANLIB\-NOTFOUND/\/usr\/xcc\/armv7-w64-mingw32-cross\/bin\/armv7-w64-mingw32-ranlib/g' ./3rdparty/CMakeFiles/lzfse.dir/link.txt > link.txt
+mv link.txt ./3rdparty/CMakeFiles/lzfse.dir/link.txt
 sed -e 's/\-soname,libAaru\.Compression\.Native\.so//g' ./CMakeFiles/Aaru.Compression.Native.dir/link.txt > link.txt
 mv link.txt ./CMakeFiles/Aaru.Compression.Native.dir/link.txt
 docker/dockcross-win-arm make Aaru.Compression.Native
@@ -179,28 +162,15 @@ mv libAaru.Compression.Native.so runtimes/win-arm/native/libAaru.Compression.Nat
 
 ## Windows (ARM64)
 # Detected system processor: aarch64
-# undefined symbols in lzma/aes and flac
 rm -f CMakeCache.txt
 mkdir -p runtimes/win-arm64/native
 docker run --rm dockcross/windows-arm64 > docker/dockcross-win-arm64
 chmod +x docker/dockcross-win-arm64
-docker/dockcross-win-arm64 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 -DCMAKE_POLICY_DEFAULT_CMP0077=NEW -DCMAKE_POLICY_DEFAULT_CMP0069=NEW .
-sed -e 's/\-fPIC\s//g' ./3rdparty/bzip2/CMakeFiles/bz2_static.dir/flags.make > flags.make
-mv flags.make ./3rdparty/bzip2/CMakeFiles/bz2_static.dir/flags.make
-sed -e 's/\-fPIC\s//g' ./3rdparty/lzfse/CMakeFiles/lzfse.dir/flags.make > flags.make
-mv flags.make ./3rdparty/lzfse/CMakeFiles/lzfse.dir/flags.make
-sed -e 's/CMAKE_C_COMPILER_AR\-NOTFOUND/\/usr\/xcc\/aarch64-w64-mingw32-cross\/bin\/aarch64-w64-mingw32-ar/g' ./3rdparty/lzfse/CMakeFiles/lzfse.dir/link.txt > link.txt
-mv link.txt ./3rdparty/lzfse/CMakeFiles/lzfse.dir/link.txt
-sed -e 's/CMAKE_C_COMPILER_RANLIB\-NOTFOUND/\/usr\/xcc\/aarch64-w64-mingw32-cross\/bin\/aarch64-w64-mingw32-ranlib/g' ./3rdparty/lzfse/CMakeFiles/lzfse.dir/link.txt > link.txt
-mv link.txt ./3rdparty/lzfse/CMakeFiles/lzfse.dir/link.txt
-sed -e 's/\-fPIC\s//g' ./3rdparty/zstd-1.5.0/build/cmake/lib/CMakeFiles/libzstd_static.dir/flags.make > flags.make
-mv flags.make ./3rdparty/zstd-1.5.0/build/cmake/lib/CMakeFiles/libzstd_static.dir/flags.make
-sed -e 's/\C_DEFINES\ \=/C_DEFINES\ \=\ \-D_FORTIFY_SOURCE\=0/g' ./3rdparty/flac/src/libFLAC/CMakeFiles/FLAC.dir/flags.make > flags.make
-mv flags.make ./3rdparty/flac/src/libFLAC/CMakeFiles/FLAC.dir/flags.make
-sed -e 's/\-fPIC\s//g' ./CMakeFiles/Aaru.Compression.Native.dir/link.txt > link.txt
-mv link.txt ./CMakeFiles/Aaru.Compression.Native.dir/link.txt
-sed -e 's/\-fPIC\s//g' ./CMakeFiles/Aaru.Compression.Native.dir/flags.make > flags.make
-mv flags.make ./CMakeFiles/Aaru.Compression.Native.dir/flags.make
+docker/dockcross-win-arm64 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
+sed -e 's/CMAKE_C_COMPILER_AR\-NOTFOUND/\/usr\/xcc\/aarch64-w64-mingw32-cross\/bin\/aarch64-w64-mingw32-ar/g' ./3rdparty/CMakeFiles/lzfse.dir/link.txt > link.txt
+mv link.txt ./3rdparty/CMakeFiles/lzfse.dir/link.txt
+sed -e 's/CMAKE_C_COMPILER_RANLIB\-NOTFOUND/\/usr\/xcc\/aarch64-w64-mingw32-cross\/bin\/aarch64-w64-mingw32-ranlib/g' ./3rdparty/CMakeFiles/lzfse.dir/link.txt > link.txt
+mv link.txt ./3rdparty/CMakeFiles/lzfse.dir/link.txt
 sed -e 's/\-soname,libAaru\.Compression\.Native\.so//g' ./CMakeFiles/Aaru.Compression.Native.dir/link.txt > link.txt
 mv link.txt ./CMakeFiles/Aaru.Compression.Native.dir/link.txt
 docker/dockcross-win-arm64 make Aaru.Compression.Native
@@ -213,7 +183,7 @@ rm -f CMakeCache.txt
 mkdir -p runtimes/win-x64/native
 docker run --rm dockcross/windows-shared-x64 >docker/dockcross-win-x64
 chmod +x docker/dockcross-win-x64
-docker/dockcross-win-x64 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 -DCMAKE_POLICY_DEFAULT_CMP0077=NEW -DCMAKE_POLICY_DEFAULT_CMP0069=NEW .
+docker/dockcross-win-x64 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
 docker/dockcross-win-x64 make Aaru.Compression.Native
 mv libAaru.Compression.Native.dll runtimes/win-x64/native/
 
@@ -224,14 +194,14 @@ rm -f CMakeCache.txt
 mkdir -p runtimes/win-x86/native
 docker run --rm dockcross/windows-shared-x86 > docker/dockcross-win-x86
 chmod +x docker/dockcross-win-x86
-docker/dockcross-win-x86 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 -DCMAKE_POLICY_DEFAULT_CMP0077=NEW -DCMAKE_POLICY_DEFAULT_CMP0069=NEW .
+docker/dockcross-win-x86 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
 docker/dockcross-win-x86 make Aaru.Compression.Native
 mv libAaru.Compression.Native.dll runtimes/win-x86/native/
 
 ## Mac OS X (arm64 and x64)
 if [[ ${OS_NAME} == Darwin ]]; then
   rm -f CMakeCache.txt
-  cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 -DCMAKE_POLICY_DEFAULT_CMP0077=NEW -DCMAKE_POLICY_DEFAULT_CMP0069=NEW . .
+  cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 . .
   make Aaru.Compression.Native
   mkdir -p runtimes/osx-arm64/native
   mkdir -p runtimes/osx-x64/native

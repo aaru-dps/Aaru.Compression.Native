@@ -51,11 +51,6 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
                  None Debug Release MinSizeRel RelWithDebInfo)
 endif()
 
-include(GNUInstallDirs)
-
-# For test scripts and documentation
-find_package(Python3)
-
 # Always use '-fPIC'/'-fPIE' option, except when using MingW to compile for WoA.
 if(NOT "${CMAKE_C_PLATFORM_ID}" MATCHES "MinGW" OR (NOT "${CMAKE_SYSTEM_PROCESSOR}" MATCHES "aarch64" AND NOT "${CMAKE_SYSTEM_PROCESSOR}" MATCHES "arm"))
     set(CMAKE_POSITION_INDEPENDENT_CODE ON)
@@ -79,7 +74,10 @@ check_include_file(unistd.h       HAVE_UNISTD_H)
 include(CheckTypeSize)
 # Checks for typedefs, structures, and compiler characteristics.
 # AC_TYPE_SIZE_T
-check_type_size("ssize_t" SIZEOF_SSIZE_T)
+if(NOT "${CMAKE_C_PLATFORM_ID}" MATCHES "MinGW" OR (NOT ${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm" AND NOT ${CMAKE_SYSTEM_PROCESSOR} MATCHES "aarch64"))
+    check_type_size("ssize_t" SIZEOF_SSIZE_T)
+endif()
+
 if(NOT SIZEOF_SSIZE_T)
     # ssize_t is a signed type in POSIX storing at least -1.
     # Set it to "int" to match the behavior of AC_TYPE_SSIZE_T (autotools).

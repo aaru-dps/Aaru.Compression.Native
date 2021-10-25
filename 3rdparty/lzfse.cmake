@@ -68,7 +68,7 @@ set(LZFSE_SOURCES
 
 list(TRANSFORM LZFSE_SOURCES PREPEND "lzfse/")
 
-add_library(lzfse ${LZFSE_SOURCES})
+add_library(lzfse STATIC ${LZFSE_SOURCES})
 lzfse_add_compiler_flags(lzfse -Wall -Wno-unknown-pragmas -Wno-unused-variable)
 
 
@@ -79,6 +79,12 @@ else()
 endif()
 
 set_target_properties(lzfse PROPERTIES
-                      POSITION_INDEPENDENT_CODE TRUE
-                      C_VISIBILITY_PRESET hidden
-                      INTERPROCEDURAL_OPTIMIZATION TRUE)
+                      C_VISIBILITY_PRESET hidden)
+
+if(NOT AARU_MUSL)
+   set_property(TARGET lzfse APPEND PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
+endif()
+
+if(NOT "${CMAKE_C_PLATFORM_ID}" MATCHES "MinGW" OR (NOT ${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm" AND NOT ${CMAKE_SYSTEM_PROCESSOR} MATCHES "aarch64"))
+    set_property(TARGET lzfse APPEND PROPERTY POSITION_INDEPENDENT_CODE TRUE)
+endif()

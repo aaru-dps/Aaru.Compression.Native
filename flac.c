@@ -7,9 +7,9 @@
 #include <string.h>
 
 #include "library.h"
-#include "FLAC/metadata.h"
-#include "FLAC/stream_decoder.h"
-#include "FLAC/stream_encoder.h"
+#include "3rdparty/flac/include/FLAC/metadata.h"
+#include "3rdparty/flac/include/FLAC/stream_decoder.h"
+#include "3rdparty/flac/include/FLAC/stream_encoder.h"
 #include "flac.h"
 
 static FLAC__StreamDecoderReadStatus
