@@ -8,6 +8,8 @@ include(lzma.cmake)
 
 include(zstd.cmake)
 
+include(flac.cmake)
+
 #cmake_policy(SET CMP0077 NEW)
 #set(BUILD_CXXLIBS OFF)
 #set(BUILD_PROGRAMS OFF)
