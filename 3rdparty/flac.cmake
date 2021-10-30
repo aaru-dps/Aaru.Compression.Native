@@ -159,4 +159,6 @@ if(CMAKE_BUILD_TYPE STREQUAL Debug OR CMAKE_BUILD_TYPE STREQUAL RelWithDebInfo O
     set(DODEFINE_FORTIFY_SOURCE 0)
 endif()
 
+set_property(TARGET FLAC PROPERTY C_VISIBILITY_PRESET hidden)
+
 configure_file(flac/config.cmake.h.in flac/config.h)

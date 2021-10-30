@@ -144,3 +144,5 @@ endif()
 target_sources(lzma PRIVATE ${LZMA_C_DIRECTORY}/XzDec.c)
 target_sources(lzma PRIVATE ${LZMA_C_DIRECTORY}/XzEnc.c)
 target_sources(lzma PRIVATE ${LZMA_C_DIRECTORY}/XzIn.c)
+
+set_property(TARGET lzma PROPERTY C_VISIBILITY_PRESET hidden)

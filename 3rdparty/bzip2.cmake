@@ -137,3 +137,5 @@ add_definitions(-DBZ_DEBUG=0)
 #    install(TARGETS bz2_static DESTINATION ${CMAKE_INSTALL_LIBDIR})
 #    install(FILES bzlib.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 #endif()
+
+set_property(TARGET bz2_static PROPERTY C_VISIBILITY_PRESET hidden)
