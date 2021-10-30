@@ -45,6 +45,8 @@ message("Detected build type: ${CMAKE_BUILD_TYPE}")
 message("Detected platform: ${CMAKE_C_PLATFORM_ID}")
 
 if("${CMAKE_BUILD_TYPE}" MATCHES "Release")
+    add_compile_definitions(NDEBUG)
+
     if("${CMAKE_C_COMPILER_ID}" MATCHES "MSVC")
         add_compile_options("/O2" "/fp:fast")
         if(${CMAKE_C_COMPILER_ARCHITECTURE_ID} MATCHES "X86" OR ${CMAKE_C_COMPILER_ARCHITECTURE_ID} MATCHES "x64")
