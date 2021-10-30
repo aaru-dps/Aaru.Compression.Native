@@ -97,4 +97,59 @@ AARU_EXPORT int32_t AARU_CALL AARU_lzip_encode_buffer(uint8_t*       dst_buffer,
                                                       int32_t        dictionary_size,
                                                       int32_t        match_len_limit);
 
+AARU_EXPORT int32_t AARU_CALL AARU_bzip2_decode_buffer(uint8_t*       dst_buffer,
+                                                       uint32_t*      dst_size,
+                                                       const uint8_t* src_buffer,
+                                                       uint32_t       src_size);
+
+AARU_EXPORT int32_t AARU_CALL AARU_bzip2_encode_buffer(uint8_t*       dst_buffer,
+                                                       uint32_t*      dst_size,
+                                                       const uint8_t* src_buffer,
+                                                       uint32_t       src_size,
+                                                       int32_t        blockSize100k);
+
+AARU_EXPORT size_t AARU_CALL AARU_lzfse_decode_buffer(uint8_t*       dst_buffer,
+                                                      size_t         dst_size,
+                                                      const uint8_t* src_buffer,
+                                                      size_t         src_size,
+                                                      void*          scratch_buffer);
+
+AARU_EXPORT size_t AARU_CALL AARU_lzfse_encode_buffer(uint8_t*       dst_buffer,
+                                                      size_t         dst_size,
+                                                      const uint8_t* src_buffer,
+                                                      size_t         src_size,
+                                                      void*          scratch_buffer);
+
+AARU_EXPORT int32_t AARU_CALL AARU_lzma_decode_buffer(uint8_t*       dst_buffer,
+                                                      size_t*        dst_size,
+                                                      const uint8_t* src_buffer,
+                                                      size_t*        src_size,
+                                                      const uint8_t* props,
+                                                      size_t         propsSize);
+
+AARU_EXPORT int32_t AARU_CALL AARU_lzma_encode_buffer(uint8_t*       dst_buffer,
+                                                      size_t*        dst_size,
+                                                      const uint8_t* src_buffer,
+                                                      size_t         src_size,
+                                                      uint8_t*       outProps,
+                                                      size_t*        outPropsSize,
+                                                      int32_t        level,
+                                                      uint32_t       dictSize,
+                                                      int32_t        lc,
+                                                      int32_t        lp,
+                                                      int32_t        pb,
+                                                      int32_t        fb,
+                                                      int32_t        numThreads);
+
+AARU_EXPORT size_t AARU_CALL AARU_zstd_decode_buffer(void*       dst_buffer,
+                                                     size_t      dst_size,
+                                                     const void* src_buffer,
+                                                     size_t      src_size);
+
+AARU_EXPORT size_t AARU_CALL AARU_zstd_encode_buffer(void*       dst_buffer,
+                                                     size_t      dst_size,
+                                                     const void* src_buffer,
+                                                     size_t      src_size,
+                                                     int32_t     compressionLevel);
+
 #endif // AARU_COMPRESSION_NATIVE_LIBRARY_H

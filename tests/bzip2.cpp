@@ -17,9 +17,10 @@
  */
 
 #include <climits>
+#include <cstddef>
 #include <cstdint>
 
-#include "../3rdparty/bzip2/bzlib.h"
+#include "../library.h"
 #include "crc32.h"
 #include "gtest/gtest.h"
 
@@ -66,9 +67,9 @@ TEST_F(bzip2Fixture, bzip2)
     uint  real_size = 1048576;
     auto* outBuf    = (uint8_t*)malloc(1048576);
 
-    auto bz_err = BZ2_bzBuffToBuffDecompress((char*)outBuf, &real_size, (char*)buffer, 1053934, 0, 0);
+    auto bz_err = AARU_bzip2_decode_buffer(outBuf, &real_size, buffer, 1053934);
 
-    EXPECT_EQ(bz_err, BZ_OK);
+    EXPECT_EQ(bz_err, 0);
 
     EXPECT_EQ(real_size, 1048576);
 
@@ -110,14 +111,14 @@ TEST_F(bzip2Fixture, bzip2Compress)
     original_crc = crc32_data(original, original_len);
 
     // Compress
-    bz_err = BZ2_bzBuffToBuffCompress((char*)(cmp_buffer), &cmp_len, (char*)original, original_len, 9, 0, 0);
+    bz_err = AARU_bzip2_encode_buffer(cmp_buffer, &cmp_len, original, original_len, 9);
 
-    EXPECT_EQ(bz_err, BZ_OK);
+    EXPECT_EQ(bz_err, 0);
 
     // Decompress
-    bz_err = BZ2_bzBuffToBuffDecompress((char*)decmp_buffer, &decmp_len, (char*)cmp_buffer, cmp_len, 0, 0);
+    bz_err = AARU_bzip2_decode_buffer(decmp_buffer, &decmp_len, cmp_buffer, cmp_len);
 
-    EXPECT_EQ(bz_err, BZ_OK);
+    EXPECT_EQ(bz_err, 0);
 
     EXPECT_EQ(decmp_len, original_len);
 

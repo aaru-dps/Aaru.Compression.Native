@@ -17,8 +17,10 @@
  */
 
 #include <climits>
+#include <cstddef>
+#include <cstdint>
 
-#include "../3rdparty/lzfse/src/lzfse.h"
+#include "../library.h"
 #include "crc32.h"
 #include "gtest/gtest.h"
 
@@ -64,7 +66,7 @@ TEST_F(lzfseFixture, lzfse)
 {
     auto* outBuf = (uint8_t*)malloc(1048576);
 
-    auto decoded = lzfse_decode_buffer(outBuf, 1048576, buffer, 1059299, NULL);
+    auto decoded = AARU_lzfse_decode_buffer(outBuf, 1048576, buffer, 1059299, nullptr);
 
     EXPECT_EQ(decoded, 1048576);
 
@@ -106,11 +108,11 @@ TEST_F(lzfseFixture, lzfseCompress)
     original_crc = crc32_data(original, original_len);
 
     // Compress
-    newSize = lzfse_encode_buffer(cmp_buffer, cmp_len, original, original_len, nullptr);
+    newSize = AARU_lzfse_encode_buffer(cmp_buffer, cmp_len, original, original_len, nullptr);
     cmp_len = newSize;
 
     // Decompress
-    newSize   = lzfse_decode_buffer(decmp_buffer, decmp_len, cmp_buffer, cmp_len, nullptr);
+    newSize   = AARU_lzfse_decode_buffer(decmp_buffer, decmp_len, cmp_buffer, cmp_len, nullptr);
     decmp_len = newSize;
 
     EXPECT_EQ(decmp_len, original_len);

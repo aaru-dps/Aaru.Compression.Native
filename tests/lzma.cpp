@@ -17,9 +17,9 @@
  */
 
 #include <climits>
+#include <cstddef>
 #include <cstdint>
 
-#include "../3rdparty/lzma-21.03beta/C/LzmaLib.h"
 #include "../library.h"
 #include "crc32.h"
 #include "gtest/gtest.h"
@@ -69,7 +69,7 @@ TEST_F(lzmaFixture, lzma)
     size_t  srcLen   = 1200275;
     auto*   outBuf   = (uint8_t*)malloc(8388608);
 
-    auto err = LzmaUncompress(outBuf, &destLen, buffer, &srcLen, params, 5);
+    auto err = AARU_lzma_decode_buffer(outBuf, &destLen, buffer, &srcLen, params, 5);
 
     EXPECT_EQ(err, 0);
     EXPECT_EQ(destLen, 8388608);
@@ -114,11 +114,12 @@ TEST_F(lzmaFixture, lzmaCompress)
     original_crc = crc32_data(original, original_len);
 
     // Compress
-    err = LzmaCompress(cmp_buffer, &cmp_len, original, original_len, props, &props_len, 9, 1048576, 3, 0, 2, 273, 2);
+    err = AARU_lzma_encode_buffer(
+        cmp_buffer, &cmp_len, original, original_len, props, &props_len, 9, 1048576, 3, 0, 2, 273, 2);
     EXPECT_EQ(err, 0);
 
     // Decompress
-    err = LzmaUncompress(decmp_buffer, &decmp_len, cmp_buffer, &cmp_len, props, props_len);
+    err = AARU_lzma_decode_buffer(decmp_buffer, &decmp_len, cmp_buffer, &cmp_len, props, props_len);
     EXPECT_EQ(err, 0);
 
     EXPECT_EQ(decmp_len, original_len);

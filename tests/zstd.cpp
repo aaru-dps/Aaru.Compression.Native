@@ -17,9 +17,9 @@
  */
 
 #include <climits>
+#include <cstddef>
 #include <cstdint>
 
-#include "../3rdparty/zstd-1.5.0/lib/zstd.h"
 #include "../library.h"
 #include "crc32.h"
 #include "gtest/gtest.h"
@@ -66,7 +66,7 @@ TEST_F(zstdFixture, zstd)
 {
     auto* outBuf = (uint8_t*)malloc(1048576);
 
-    auto decoded = ZSTD_decompress(outBuf, 1048576, buffer, 1048613);
+    auto decoded = AARU_zstd_decode_buffer(outBuf, 1048576, buffer, 1048613);
 
     EXPECT_EQ(decoded, 1048576);
 
@@ -108,11 +108,11 @@ TEST_F(zstdFixture, zstdCompress)
     original_crc = crc32_data(original, original_len);
 
     // Compress
-    newSize = ZSTD_compress(cmp_buffer, cmp_len, original, original_len, 22);
+    newSize = AARU_zstd_encode_buffer(cmp_buffer, cmp_len, original, original_len, 22);
     cmp_len = newSize;
 
     // Decompress
-    newSize   = ZSTD_decompress(decmp_buffer, decmp_len, cmp_buffer, cmp_len);
+    newSize   = AARU_zstd_decode_buffer(decmp_buffer, decmp_len, cmp_buffer, cmp_len);
     decmp_len = newSize;
 
     EXPECT_EQ(decmp_len, original_len);
