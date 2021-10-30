@@ -20,8 +20,8 @@
 #include <cstdint>
 #include <cstring>
 
-#include "../library.h"
 #include "../apple_rle.h"
+#include "../library.h"
 #include "crc32.h"
 #include "gtest/gtest.h"
 
@@ -53,9 +53,7 @@ class apple_rleFixture : public ::testing::Test
         fclose(file);
     }
 
-    void TearDown() {
-        free((void*)buffer);
-    }
+    void TearDown() { free((void*)buffer); }
 
     ~apple_rleFixture()
     {
@@ -67,9 +65,9 @@ class apple_rleFixture : public ::testing::Test
 
 TEST_F(apple_rleFixture, apple_rle)
 {
-    auto *outBuf = (uint8_t*)malloc(32768);
+    auto* outBuf = (uint8_t*)malloc(32768);
 
-    auto decoded = apple_rle_decode_buffer(outBuf, 32768, buffer, 1102);
+    auto decoded = AARU_apple_rle_decode_buffer(outBuf, 32768, buffer, 1102);
 
     EXPECT_EQ(decoded, 20960);
 

@@ -20,8 +20,8 @@
 #include <cstdint>
 #include <cstring>
 
-#include "../library.h"
 #include "../adc.h"
+#include "../library.h"
 #include "crc32.h"
 #include "gtest/gtest.h"
 
@@ -67,7 +67,7 @@ TEST_F(adcFixture, adc)
 {
     auto* outBuf = (uint8_t*)malloc(327680);
 
-    auto decoded = adc_decode_buffer(outBuf, 327680, buffer, 34367);
+    auto decoded = AARU_adc_decode_buffer(outBuf, 327680, buffer, 34367);
 
     EXPECT_EQ(decoded, 262144);
 

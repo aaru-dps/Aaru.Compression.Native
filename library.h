@@ -54,47 +54,47 @@
 #define FORCE_INLINE static inline __attribute__((always_inline))
 #endif
 
-AARU_EXPORT int32_t AARU_CALL adc_decode_buffer(uint8_t*       dst_buffer,
-                                                int32_t        dst_size,
-                                                const uint8_t* src_buffer,
-                                                int32_t        src_size);
+AARU_EXPORT int32_t AARU_CALL AARU_adc_decode_buffer(uint8_t*       dst_buffer,
+                                                     int32_t        dst_size,
+                                                     const uint8_t* src_buffer,
+                                                     int32_t        src_size);
 
-AARU_EXPORT int32_t AARU_CALL apple_rle_decode_buffer(uint8_t*       dst_buffer,
+AARU_EXPORT int32_t AARU_CALL AARU_apple_rle_decode_buffer(uint8_t*       dst_buffer,
+                                                           int32_t        dst_size,
+                                                           const uint8_t* src_buffer,
+                                                           int32_t        src_size);
+
+AARU_EXPORT size_t AARU_CALL AARU_flac_decode_redbook_buffer(uint8_t*       dst_buffer,
+                                                             size_t         dst_size,
+                                                             const uint8_t* src_buffer,
+                                                             size_t         src_size);
+
+AARU_EXPORT size_t AARU_CALL AARU_flac_encode_redbook_buffer(uint8_t*       dst_buffer,
+                                                             size_t         dst_size,
+                                                             const uint8_t* src_buffer,
+                                                             size_t         src_size,
+                                                             uint32_t       blocksize,
+                                                             int32_t        do_mid_side_stereo,
+                                                             int32_t        loose_mid_side_stereo,
+                                                             const char*    apodization,
+                                                             uint32_t       qlp_coeff_precision,
+                                                             int32_t        do_qlp_coeff_prec_search,
+                                                             int32_t        do_exhaustive_model_search,
+                                                             uint32_t       min_residual_partition_order,
+                                                             uint32_t       max_residual_partition_order,
+                                                             const char*    application_id,
+                                                             uint32_t       application_id_len);
+
+AARU_EXPORT int32_t AARU_CALL AARU_lzip_decode_buffer(uint8_t*       dst_buffer,
                                                       int32_t        dst_size,
                                                       const uint8_t* src_buffer,
                                                       int32_t        src_size);
 
-AARU_EXPORT size_t AARU_CALL flac_decode_redbook_buffer(uint8_t*       dst_buffer,
-                                                        size_t         dst_size,
-                                                        const uint8_t* src_buffer,
-                                                        size_t         src_size);
-
-AARU_EXPORT size_t AARU_CALL flac_encode_redbook_buffer(uint8_t*       dst_buffer,
-                                                        size_t         dst_size,
-                                                        const uint8_t* src_buffer,
-                                                        size_t         src_size,
-                                                        uint32_t       blocksize,
-                                                        int32_t        do_mid_side_stereo,
-                                                        int32_t        loose_mid_side_stereo,
-                                                        const char*    apodization,
-                                                        uint32_t       qlp_coeff_precision,
-                                                        int32_t        do_qlp_coeff_prec_search,
-                                                        int32_t        do_exhaustive_model_search,
-                                                        uint32_t       min_residual_partition_order,
-                                                        uint32_t       max_residual_partition_order,
-                                                        const char*    application_id,
-                                                        uint32_t       application_id_len);
-
-AARU_EXPORT int32_t AARU_CALL lzip_decode_buffer(uint8_t*       dst_buffer,
-                                                 int32_t        dst_size,
-                                                 const uint8_t* src_buffer,
-                                                 int32_t        src_size);
-
-AARU_EXPORT int32_t AARU_CALL lzip_encode_buffer(uint8_t*       dst_buffer,
-                                                 int32_t        dst_size,
-                                                 const uint8_t* src_buffer,
-                                                 int32_t        src_size,
-                                                 int32_t        dictionary_size,
-                                                 int32_t        match_len_limit);
+AARU_EXPORT int32_t AARU_CALL AARU_lzip_encode_buffer(uint8_t*       dst_buffer,
+                                                      int32_t        dst_size,
+                                                      const uint8_t* src_buffer,
+                                                      int32_t        src_size,
+                                                      int32_t        dictionary_size,
+                                                      int32_t        match_len_limit);
 
 #endif // AARU_COMPRESSION_NATIVE_LIBRARY_H

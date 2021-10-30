@@ -20,8 +20,8 @@
 #include <cstddef>
 #include <cstdint>
 
-#include "../library.h"
 #include "../flac.h"
+#include "../library.h"
 #include "crc32.h"
 #include "gtest/gtest.h"
 
@@ -67,7 +67,7 @@ TEST_F(flacFixture, flac)
 {
     auto* outBuf = (uint8_t*)malloc(9633792);
 
-    auto decoded = flac_decode_redbook_buffer(outBuf, 9633792, buffer, 6534197);
+    auto decoded = AARU_flac_decode_redbook_buffer(outBuf, 9633792, buffer, 6534197);
 
     EXPECT_EQ(decoded, 9633792);
 
@@ -109,25 +109,25 @@ TEST_F(flacFixture, flacCompress)
     original_crc = crc32_data(original, original_len);
 
     // Compress
-    newSize = flac_encode_redbook_buffer(cmp_buffer,
-                                         cmp_len,
-                                         original,
-                                         original_len,
-                                         4608,
-                                         1,
-                                         0,
-                                         "partial_tukey(0/1.0/1.0)",
-                                         0,
-                                         1,
-                                         false,
-                                         0,
-                                         8,
-                                         "Aaru.Compression.Native.Tests",
-                                         strlen("Aaru.Compression.Native.Tests"));
+    newSize = AARU_flac_encode_redbook_buffer(cmp_buffer,
+                                              cmp_len,
+                                              original,
+                                              original_len,
+                                              4608,
+                                              1,
+                                              0,
+                                              "partial_tukey(0/1.0/1.0)",
+                                              0,
+                                              1,
+                                              false,
+                                              0,
+                                              8,
+                                              "Aaru.Compression.Native.Tests",
+                                              strlen("Aaru.Compression.Native.Tests"));
     cmp_len = newSize;
 
     // Decompress
-    newSize   = flac_decode_redbook_buffer(decmp_buffer, decmp_len, cmp_buffer, cmp_len);
+    newSize   = AARU_flac_decode_redbook_buffer(decmp_buffer, decmp_len, cmp_buffer, cmp_len);
     decmp_len = newSize;
 
     EXPECT_EQ(decmp_len, original_len);

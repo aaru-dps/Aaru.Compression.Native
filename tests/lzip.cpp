@@ -17,10 +17,10 @@
  */
 
 #include <climits>
+#include <cstddef>
 #include <cstdint>
 
 #include "../library.h"
-#include "../lzip.h"
 #include "crc32.h"
 #include "gtest/gtest.h"
 
@@ -66,7 +66,7 @@ TEST_F(lzipFixture, lzip)
 {
     auto* outBuf = (uint8_t*)malloc(1048576);
 
-    auto decoded = lzip_decode_buffer(outBuf, 1048576, buffer, 1062874);
+    auto decoded = AARU_lzip_decode_buffer(outBuf, 1048576, buffer, 1062874);
 
     EXPECT_EQ(decoded, 1048576);
 
@@ -108,11 +108,11 @@ TEST_F(lzipFixture, lzipCompress)
     original_crc = crc32_data(original, original_len);
 
     // Compress
-    newSize = lzip_encode_buffer(cmp_buffer, cmp_len, original, original_len, 1048576, 273);
+    newSize = AARU_lzip_encode_buffer(cmp_buffer, cmp_len, original, original_len, 1048576, 273);
     cmp_len = newSize;
 
     // Decompress
-    newSize   = lzip_decode_buffer(decmp_buffer, decmp_len, cmp_buffer, cmp_len);
+    newSize   = AARU_lzip_decode_buffer(decmp_buffer, decmp_len, cmp_buffer, cmp_len);
     decmp_len = newSize;
 
     EXPECT_EQ(decmp_len, original_len);

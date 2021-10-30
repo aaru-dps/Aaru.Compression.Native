@@ -24,10 +24,10 @@
 #include "library.h"
 #include "apple_rle.h"
 
-AARU_EXPORT int32_t AARU_CALL apple_rle_decode_buffer(uint8_t*       dst_buffer,
-                                                      int32_t        dst_size,
-                                                      const uint8_t* src_buffer,
-                                                      int32_t        src_size)
+AARU_EXPORT int32_t AARU_CALL AARU_apple_rle_decode_buffer(uint8_t*       dst_buffer,
+                                                           int32_t        dst_size,
+                                                           const uint8_t* src_buffer,
+                                                           int32_t        src_size)
 {
     static int32_t count         = 0;
     static bool    nextA         = true; // true if A, false if B
