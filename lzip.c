@@ -17,11 +17,11 @@
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stddef.h>
 #include <stdint.h>
 
 #include "library.h"
 #include "3rdparty/lzlib-1.12/lzlib.h"
-#include "lzip.h"
 
 AARU_EXPORT int32_t AARU_CALL lzip_decode_buffer(uint8_t*       dst_buffer,
                                                  int32_t        dst_size,
