@@ -28,6 +28,7 @@ docker run --rm dockcross/android-arm >docker/dockcross-android-arm
 chmod +x docker/dockcross-android-arm
 docker/dockcross-android-arm cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
 docker/dockcross-android-arm make Aaru.Compression.Native
+docker/dockcross-android-arm /usr/arm-linux-androideabi/bin/llvm-strip -s -w -K "AARU*" libAaru.Compression.Native.so
 mv libAaru.Compression.Native.so runtimes/android-arm/native/
 
 ## Android (ARM64)
@@ -38,6 +39,7 @@ docker run --rm dockcross/android-arm64 >docker/dockcross-android-arm64
 chmod +x docker/dockcross-android-arm64
 docker/dockcross-android-arm64 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
 docker/dockcross-android-arm64 make Aaru.Compression.Native
+docker/dockcross-android-arm64 /usr/aarch64-linux-android/bin/llvm-strip -s -w -K "AARU*" libAaru.Compression.Native.so
 mv libAaru.Compression.Native.so runtimes/android-arm64/native/
 
 ## Android (amd64)
@@ -48,6 +50,7 @@ docker run --rm dockcross/android-x86_64 >docker/dockcross-android-x64
 chmod +x docker/dockcross-android-x64
 docker/dockcross-android-x64 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
 docker/dockcross-android-x64 make Aaru.Compression.Native
+docker/dockcross-android-x64 /usr/x86_64-linux-android/bin/llvm-strip -s -w -K "AARU*" libAaru.Compression.Native.so
 mv libAaru.Compression.Native.so runtimes/android-x64/native/
 
 ## Android (x86)
@@ -58,6 +61,7 @@ docker run --rm dockcross/android-x86 >docker/dockcross-android-x86
 chmod +x docker/dockcross-android-x86
 docker/dockcross-android-x86 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
 docker/dockcross-android-x86 make Aaru.Compression.Native
+docker/dockcross-android-x86 /usr/i686-linux-android/bin/llvm-strip -s -w -K "AARU*" libAaru.Compression.Native.so
 mv libAaru.Compression.Native.so runtimes/android-x86/native/
 
 ## Linux (ARMv7-A)
@@ -68,6 +72,7 @@ docker run --rm dockcross/linux-armv7a >docker/dockcross-linux-arm
 chmod +x docker/dockcross-linux-arm
 docker/dockcross-linux-arm cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
 docker/dockcross-linux-arm make Aaru.Compression.Native
+docker/dockcross-linux-arm arm-cortexa8_neon-linux-gnueabihf-strip -s -w -K "AARU*" libAaru.Compression.Native.so
 mv libAaru.Compression.Native.so runtimes/linux-arm/native/
 
 ## Linux (ARM64)
@@ -78,6 +83,7 @@ docker run --rm dockcross/linux-arm64-lts >docker/dockcross-linux-arm64
 chmod +x docker/dockcross-linux-arm64
 docker/dockcross-linux-arm64 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
 docker/dockcross-linux-arm64 make Aaru.Compression.Native
+docker/dockcross-linux-arm64 aarch64-unknown-linux-gnu-strip -s -w -K "AARU*" libAaru.Compression.Native.so
 mv libAaru.Compression.Native.so runtimes/linux-arm64/native/
 
 ## Linux (MIPS64)
@@ -88,6 +94,7 @@ docker run --rm dockcross/linux-mips >docker/dockcross-linux-mips64
 chmod +x docker/dockcross-linux-mips64
 docker/dockcross-linux-mips64 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
 docker/dockcross-linux-mips64 make Aaru.Compression.Native
+docker/dockcross-linux-mips64 mips-unknown-linux-gnu-strip -s -w -K "AARU*" libAaru.Compression.Native.so
 mv libAaru.Compression.Native.so runtimes/linux-mips64/native/
 
 ## Linux (ARM), musl
@@ -98,6 +105,7 @@ docker run --rm dockcross/linux-armv7l-musl >docker/dockcross-linux-musl-arm
 chmod +x docker/dockcross-linux-musl-arm
 docker/dockcross-linux-musl-arm cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 -DAARU_MUSL=1 .
 docker/dockcross-linux-musl-arm make Aaru.Compression.Native
+docker/dockcross-linux-musl-arm armv7l-linux-musleabihf-strip -s -w -K "AARU*" libAaru.Compression.Native.so
 mv libAaru.Compression.Native.so runtimes/linux-musl-arm/native/
 
 ## Linux (ARM64), musl
@@ -108,6 +116,7 @@ docker run --rm dockcross/linux-arm64-musl >docker/dockcross-linux-musl-arm64
 chmod +x docker/dockcross-linux-musl-arm64
 docker/dockcross-linux-musl-arm64 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 -DAARU_MUSL=1 .
 docker/dockcross-linux-musl-arm64 make Aaru.Compression.Native
+docker/dockcross-linux-musl-arm64 aarch64-linux-musl-strip -s -w -K "AARU*" libAaru.Compression.Native.so
 mv libAaru.Compression.Native.so runtimes/linux-musl-arm64/native/
 
 ## Linux (s390x)
@@ -118,6 +127,7 @@ docker run --rm dockcross/linux-s390x >docker/dockcross-linux-s390x
 chmod +x docker/dockcross-linux-s390x
 docker/dockcross-linux-s390x cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
 docker/dockcross-linux-s390x make Aaru.Compression.Native
+docker/dockcross-linux-s390x s390x-ibm-linux-gnu-strip -s -w -K "AARU*" libAaru.Compression.Native.so
 mv libAaru.Compression.Native.so runtimes/linux-s390x/native/
 
 ## Linux (amd64)
@@ -128,6 +138,7 @@ docker run --rm dockcross/linux-x64 >docker/dockcross-linux-x64
 chmod +x docker/dockcross-linux-x64
 docker/dockcross-linux-x64 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
 docker/dockcross-linux-x64 make Aaru.Compression.Native
+docker/dockcross-linux-x64 x86_64-linux-gnu-strip -s -w -K "AARU*" libAaru.Compression.Native.so
 mv libAaru.Compression.Native.so runtimes/linux-x64/native/
 
 ## Linux (x86)
@@ -142,6 +153,7 @@ mv link.txt ./3rdparty/CMakeFiles/lzfse.dir/link.txt
 sed -e 's/CMAKE_C_COMPILER_RANLIB\-NOTFOUND/ranlib/g' ./3rdparty/CMakeFiles/lzfse.dir/link.txt > link.txt
 mv link.txt ./3rdparty/CMakeFiles/lzfse.dir/link.txt
 docker/dockcross-linux-x86 make Aaru.Compression.Native
+docker/dockcross-linux-x86 /usr/bin/x86_64-linux-gnu-strip -s -w -K "AARU*" libAaru.Compression.Native.so
 mv libAaru.Compression.Native.so runtimes/linux-x86/native/
 
 ## Windows (ARM)
