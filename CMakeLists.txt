@@ -43,6 +43,12 @@ message("Detected vs platform name: ${CMAKE_C_COMPILER_ARCHITECTURE_ID}")
 message("Detected compiler: ${CMAKE_C_COMPILER_ID}")
 message("Detected build type: ${CMAKE_BUILD_TYPE}")
 message("Detected platform: ${CMAKE_C_PLATFORM_ID}")
+message("Size of (void*): ${CMAKE_SIZEOF_VOID_P}")
+
+# Check if target is 64-bit
+if(${CMAKE_SIZEOF_VOID_P} MATCHES 8 OR ${CMAKE_C_COMPILER_ARCHITECTURE_ID} MATCHES "x64" OR ${CMAKE_SYSTEM_PROCESSOR} MATCHES "x86_64" OR ${CMAKE_SYSTEM_PROCESSOR} MATCHES "AMD64" OR ${CMAKE_SYSTEM_PROCESSOR} MATCHES "aarch64")
+    set(ARCHITECTURE_IS_64BIT TRUE)
+endif()
 
 if("${CMAKE_BUILD_TYPE}" MATCHES "Release")
     add_compile_definitions(NDEBUG)

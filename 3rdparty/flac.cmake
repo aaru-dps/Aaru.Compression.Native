@@ -161,4 +161,8 @@ endif()
 
 set_property(TARGET FLAC PROPERTY C_VISIBILITY_PRESET hidden)
 
+if(ARCHITECTURE_IS_64BIT)
+    set(ENABLE_64_BIT_WORDS 1)
+endif()
+
 configure_file(flac/config.cmake.h.in flac/config.h)
