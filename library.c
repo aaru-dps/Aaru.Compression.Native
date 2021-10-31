@@ -106,3 +106,5 @@ AARU_EXPORT size_t AARU_CALL AARU_zstd_encode_buffer(void*       dst_buffer,
 
 // This is required if BZ_NO_STDIO
 void bz_internal_error ( int errcode ) { }
+
+AARU_EXPORT uint64_t AARU_CALL AARU_get_acn_version() { return AARU_CHECKUMS_NATIVE_VERSION; }
