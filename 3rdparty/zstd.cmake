@@ -165,7 +165,7 @@ add_definitions(-DXXH_NAMESPACE=ZSTD_)
 #-----------------------------------------------------------------------------
 
 # Legacy support
-option(ZSTD_LEGACY_SUPPORT "LEGACY SUPPORT" ON)
+option(ZSTD_LEGACY_SUPPORT "LEGACY SUPPORT" OFF)
 
 if (ZSTD_LEGACY_SUPPORT)
     message(STATUS "ZSTD_LEGACY_SUPPORT defined!")

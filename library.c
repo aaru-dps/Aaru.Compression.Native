@@ -103,3 +103,6 @@ AARU_EXPORT size_t AARU_CALL AARU_zstd_encode_buffer(void*       dst_buffer,
 {
     return ZSTD_compress(dst_buffer, dst_size, src_buffer, src_size, compressionLevel);
 }
+
+// This is required if BZ_NO_STDIO
+void bz_internal_error ( int errcode ) { }

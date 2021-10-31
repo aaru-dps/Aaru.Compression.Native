@@ -139,3 +139,4 @@ add_definitions(-DBZ_DEBUG=0)
 #endif()
 
 set_property(TARGET bz2_static PROPERTY C_VISIBILITY_PRESET hidden)
+target_compile_definitions(bz2_static PUBLIC BZ_NO_STDIO)
