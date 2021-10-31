@@ -81,7 +81,7 @@ endif()
 set_target_properties(lzfse PROPERTIES
                       C_VISIBILITY_PRESET hidden)
 
-if(NOT AARU_MUSL)
+if(NOT AARU_MUSL AND (NOT ${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm"))
    set_property(TARGET lzfse PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
 endif()
 
