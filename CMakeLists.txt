@@ -114,7 +114,7 @@ MACRO(TARGET_LINK_LIBRARIES_WHOLE_ARCHIVE target)
     ENDIF()
 ENDMACRO()
 
-TARGET_LINK_LIBRARIES_WHOLE_ARCHIVE("Aaru.Compression.Native" bz2_static lzlib lzfse libzstd_static lzma FLAC)
+TARGET_LINK_LIBRARIES_WHOLE_ARCHIVE("Aaru.Compression.Native" bz2_static lzlib lzfse libzstd_static lzma m FLAC)
 
 if(NOT "${CMAKE_C_PLATFORM_ID}" MATCHES "MinGW" OR (NOT ${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm" AND NOT ${CMAKE_SYSTEM_PROCESSOR} MATCHES "aarch64"))
     set_property(TARGET "Aaru.Compression.Native" PROPERTY POSITION_INDEPENDENT_CODE TRUE)
