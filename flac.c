@@ -143,6 +143,7 @@ AARU_EXPORT size_t AARU_CALL AARU_flac_encode_redbook_buffer(uint8_t*       dst_
                                                              int32_t        do_mid_side_stereo,
                                                              int32_t        loose_mid_side_stereo,
                                                              const char*    apodization,
+                                                             uint32_t       max_lpc_order,
                                                              uint32_t       qlp_coeff_precision,
                                                              int32_t        do_qlp_coeff_prec_search,
                                                              int32_t        do_exhaustive_model_search,
@@ -191,7 +192,7 @@ AARU_EXPORT size_t AARU_CALL AARU_flac_encode_redbook_buffer(uint8_t*       dst_
     FLAC__stream_encoder_set_loose_mid_side_stereo(encoder, loose_mid_side_stereo);
     // Apodization
     FLAC__stream_encoder_set_apodization(encoder, apodization);
-    FLAC__stream_encoder_set_max_lpc_order(encoder, qlp_coeff_precision);
+    FLAC__stream_encoder_set_max_lpc_order(encoder, max_lpc_order);
     FLAC__stream_encoder_set_qlp_coeff_precision(encoder, qlp_coeff_precision);
     FLAC__stream_encoder_set_do_qlp_coeff_prec_search(encoder, do_qlp_coeff_prec_search);
     FLAC__stream_encoder_set_do_exhaustive_model_search(encoder, do_exhaustive_model_search);

@@ -117,6 +117,7 @@ TEST_F(flacFixture, flacCompress)
                                               1,
                                               0,
                                               "partial_tukey(0/1.0/1.0)",
+                                              12,
                                               0,
                                               1,
                                               false,
