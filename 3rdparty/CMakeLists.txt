@@ -1,5 +1,3 @@
-include(lzip.cmake)
-
 include(lzfse.cmake)
 
 include(lzma.cmake)
