@@ -68,11 +68,11 @@ mv libAaru.Compression.Native.so runtimes/android-x86/native/
 # Detected system processor: arm
 rm -f CMakeCache.txt
 mkdir -p runtimes/linux-arm/native
-docker run --rm dockcross/linux-armv7-lts >docker/dockcross-linux-arm
+docker run --rm dockcross/linux-armv7a >docker/dockcross-linux-arm
 chmod +x docker/dockcross-linux-arm
 docker/dockcross-linux-arm cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
 docker/dockcross-linux-arm make Aaru.Compression.Native
-docker/dockcross-linux-arm armv7-unknown-linux-gnueabi-strip -s -w -K "AARU*" libAaru.Compression.Native.so
+docker/dockcross-linux-arm arm-cortexa8_neon-linux-gnueabihf-strip -s -w -K "AARU*" libAaru.Compression.Native.so
 mv libAaru.Compression.Native.so runtimes/linux-arm/native/
 
 ## Linux (ARM64)
