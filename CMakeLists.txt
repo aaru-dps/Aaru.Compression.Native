@@ -95,6 +95,8 @@ add_subdirectory(3rdparty)
 
 add_library("Aaru.Compression.Native" SHARED library.c apple_rle.c apple_rle.h adc.c adc.h lzip.c flac.c flac.h)
 
+include(3rdparty/bzip2.cmake)
+
 MACRO(TARGET_LINK_LIBRARIES_WHOLE_ARCHIVE target)
     if("${CMAKE_C_COMPILER_ID}" MATCHES "MSVC")
         FOREACH(arg IN LISTS ARGN)
@@ -114,7 +116,7 @@ MACRO(TARGET_LINK_LIBRARIES_WHOLE_ARCHIVE target)
     ENDIF()
 ENDMACRO()
 
-TARGET_LINK_LIBRARIES_WHOLE_ARCHIVE("Aaru.Compression.Native" bz2_static lzlib lzfse libzstd_static lzma m FLAC)
+TARGET_LINK_LIBRARIES_WHOLE_ARCHIVE("Aaru.Compression.Native" lzlib lzfse libzstd_static lzma m FLAC)
 
 if(NOT "${CMAKE_C_PLATFORM_ID}" MATCHES "MinGW" OR (NOT ${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm" AND NOT ${CMAKE_SYSTEM_PROCESSOR} MATCHES "aarch64"))
     set_property(TARGET "Aaru.Compression.Native" PROPERTY POSITION_INDEPENDENT_CODE TRUE)

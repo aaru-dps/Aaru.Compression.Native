@@ -1,22 +1,15 @@
-cmake_minimum_required(VERSION 3.12)
-
-project(bzip2
-        VERSION 1.0.7
-        DESCRIPTION "This Bzip2/libbz2 a program and library for lossless block-sorting data compression."
-        LANGUAGES C)
-
 set(LT_CURRENT  1)
 set(LT_REVISION 7)
 set(LT_AGE      0)
 
-set(PROJECT_SOURCE_DIR "${PROJECT_SOURCE_DIR}/bzip2/")
-set(PROJECT_BINARY_DIR "${PROJECT_BINARY_DIR}/bzip2/")
+set(PROJECT_SOURCE_DIR "${PROJECT_SOURCE_DIR}/3rdparty/bzip2/")
+set(PROJECT_BINARY_DIR "${PROJECT_BINARY_DIR}/3rdparty/bzip2/")
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/bzip2/cmake")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2/cmake")
 include(Version)
 include(SymLink)
 
-set(BZ_VERSION ${PROJECT_VERSION})
+set(BZ_VERSION ${LT_CURRENT}.${LT_AGE}.${LT_REVISION})
 configure_file (
         ${PROJECT_SOURCE_DIR}/bz_version.h.in
         ${PROJECT_BINARY_DIR}/bz_version.h
@@ -24,11 +17,6 @@ configure_file (
 include_directories(${PROJECT_BINARY_DIR})
 
 message(STATUS "BZIP2 VERSION: ${BZ_VERSION}")
-
-math(EXPR LT_SOVERSION "${LT_CURRENT} - ${LT_AGE}")
-set(LT_VERSION "${LT_SOVERSION}.${LT_AGE}.${LT_REVISION}")
-set(PACKAGE_VERSION ${PROJECT_VERSION})
-HexVersion(PACKAGE_VERSION_NUM ${PROJECT_VERSION_MAJOR} ${PROJECT_VERSION_MINOR} ${PROJECT_VERSION_PATCH})
 
 # Do not disable assertions based on CMAKE_BUILD_TYPE.
 foreach(_build_type Release MinSizeRel RelWithDebInfo)
@@ -117,26 +105,15 @@ set(BZ2_SOURCES
     decompress.c
     bzlib.c)
 
-list(TRANSFORM BZ2_SOURCES PREPEND "bzip2/")
+list(TRANSFORM BZ2_SOURCES PREPEND "3rdparty/bzip2/")
 
 add_definitions(-DBZ_DEBUG=0)
 
-#if(ENABLE_STATIC_LIB)
-    # The libbz2 static library.
-    add_library(bz2_static STATIC)
-    target_sources(bz2_static
-                   PRIVATE     ${BZ2_SOURCES}
-                   PUBLIC      ${CMAKE_CURRENT_SOURCE_DIR}/bzip2/bzlib_private.h
-                   INTERFACE   ${CMAKE_CURRENT_SOURCE_DIR}/bzip2/bzlib.h)
-    set_target_properties(bz2_static PROPERTIES
-                          COMPILE_FLAGS       "${WARNCFLAGS}"
-                          VERSION             ${LT_VERSION}
-                          SOVERSION           ${LT_SOVERSION}
-                          ARCHIVE_OUTPUT_NAME bz2_static)
-    target_compile_definitions(bz2_static PUBLIC BZ2_STATICLIB)
-#    install(TARGETS bz2_static DESTINATION ${CMAKE_INSTALL_LIBDIR})
-#    install(FILES bzlib.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-#endif()
+target_sources("Aaru.Compression.Native"
+               PRIVATE     ${BZ2_SOURCES}
+               PUBLIC      ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2/bzlib_private.h
+               INTERFACE   ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2/bzlib.h)
+target_compile_definitions("Aaru.Compression.Native" PUBLIC BZ2_STATICLIB)
 
-set_property(TARGET bz2_static PROPERTY C_VISIBILITY_PRESET hidden)
-target_compile_definitions(bz2_static PUBLIC BZ_NO_STDIO)
+set_property(TARGET "Aaru.Compression.Native" PROPERTY C_VISIBILITY_PRESET hidden)
+target_compile_definitions("Aaru.Compression.Native" PUBLIC BZ_NO_STDIO)
