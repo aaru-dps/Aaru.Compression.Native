@@ -154,6 +154,7 @@ target_sources("Aaru.Compression.Native" PRIVATE
             $<$<BOOL:${OGG_FOUND}>:ogg_mapping.c>)
 
 target_compile_definitions("Aaru.Compression.Native" PUBLIC FLAC__NO_DLL)
+target_compile_definitions("Aaru.Compression.Native" PUBLIC FLAC__NO_FILEIO)
 
 # Disable fortify source when not-release or when cross-building with MingW for WoA
 if(CMAKE_BUILD_TYPE STREQUAL Debug OR CMAKE_BUILD_TYPE STREQUAL RelWithDebInfo OR "${CMAKE_C_PLATFORM_ID}" MATCHES "MinGW")
