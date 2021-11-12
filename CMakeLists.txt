@@ -27,7 +27,7 @@ project("Aaru.Compression.Native" C)
 if("${CMAKE_C_COMPILER_ID}" MATCHES "MSVC" AND "${CMAKE_C_COMPILER_ARCHITECTURE_ID}" MATCHES "ARMV7")
     set(CMAKE_C_STANDARD 11)
 else()
-    set(CMAKE_C_STANDARD 90)
+    set(CMAKE_C_STANDARD 99)
 endif()
 
 if("${CMAKE_C_PLATFORM_ID}" MATCHES "MinGW")
@@ -97,6 +97,7 @@ add_library("Aaru.Compression.Native" SHARED library.c apple_rle.c apple_rle.h a
 
 include(3rdparty/bzip2.cmake)
 include(3rdparty/flac.cmake)
+include(3rdparty/lzfse.cmake)
 include(3rdparty/lzip.cmake)
 
 MACRO(TARGET_LINK_LIBRARIES_WHOLE_ARCHIVE target)
@@ -118,7 +119,7 @@ MACRO(TARGET_LINK_LIBRARIES_WHOLE_ARCHIVE target)
     ENDIF()
 ENDMACRO()
 
-TARGET_LINK_LIBRARIES_WHOLE_ARCHIVE("Aaru.Compression.Native" lzfse libzstd_static lzma m)
+TARGET_LINK_LIBRARIES_WHOLE_ARCHIVE("Aaru.Compression.Native" libzstd_static lzma m)
 
 if(NOT "${CMAKE_C_PLATFORM_ID}" MATCHES "MinGW" OR (NOT ${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm" AND NOT ${CMAKE_SYSTEM_PROCESSOR} MATCHES "aarch64"))
     set_property(TARGET "Aaru.Compression.Native" PROPERTY POSITION_INDEPENDENT_CODE TRUE)

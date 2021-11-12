@@ -29,28 +29,6 @@ if (CMAKE_VERSION VERSION_GREATER 3.9)
     cmake_policy (SET CMP0069 NEW)
 endif ()
 
-# Compiler flags
-function(lzfse_add_compiler_flags target)
-    set (flags ${ARGV})
-    list (REMOVE_AT flags 0)
-
-    foreach (FLAG ${flags})
-        if(CMAKE_C_COMPILER_ID STREQUAL GNU)
-            # Because https://gcc.gnu.org/wiki/FAQ#wnowarning
-            string(REGEX REPLACE "\\-Wno\\-(.+)" "-W\\1" flag_to_test "${FLAG}")
-        else()
-            set (flag_to_test ${FLAG})
-        endif()
-
-        string(REGEX REPLACE "[^a-zA-Z0-9]+" "_" test_name "CFLAG_${flag_to_test}")
-
-        check_c_compiler_flag("${flag_to_test}" "${test_name}")
-        if(${${test_name}})
-            set_property(TARGET "${target}" APPEND_STRING PROPERTY COMPILE_FLAGS " ${FLAG}")
-        endif()
-    endforeach()
-endfunction()
-
 if (ENABLE_SANITIZER)
     set(CMAKE_C_FLAGS " ${CMAKE_C_FLAGS} -fsanitize=${ENABLE_SANITIZER}")
     set(CMAKE_CXX_FLAGS " ${CMAKE_CXX_FLAGS} -fsanitize=${ENABLE_SANITIZER}")
@@ -66,25 +44,11 @@ set(LZFSE_SOURCES
     src/lzvn_decode_base.c
     src/lzvn_encode_base.c)
 
-list(TRANSFORM LZFSE_SOURCES PREPEND "lzfse/")
+list(TRANSFORM LZFSE_SOURCES PREPEND "3rdparty/lzfse/")
 
-add_library(lzfse STATIC ${LZFSE_SOURCES})
-lzfse_add_compiler_flags(lzfse -Wall -Wno-unknown-pragmas -Wno-unused-variable)
+target_sources("Aaru.Compression.Native" PRIVATE ${LZFSE_SOURCES})
 
-
-if(CMAKE_VERSION VERSION_LESS 3.1 OR CMAKE_C_COMPLIER_ID STREQUAL "Intel")
-    lzfse_add_compiler_flags(lzfse -std=c99)
-else()
-    set_property(TARGET lzfse PROPERTY C_STANDARD 99)
-endif()
-
-set_target_properties(lzfse PROPERTIES
-                      C_VISIBILITY_PRESET hidden)
 
 if(NOT AARU_MUSL AND (NOT ${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm"))
-   set_property(TARGET lzfse PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
-endif()
-
-if(NOT "${CMAKE_C_PLATFORM_ID}" MATCHES "MinGW" OR (NOT ${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm" AND NOT ${CMAKE_SYSTEM_PROCESSOR} MATCHES "aarch64"))
-    set_property(TARGET lzfse PROPERTY POSITION_INDEPENDENT_CODE TRUE)
+   set_property(TARGET "Aaru.Compression.Native" PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
 endif()
