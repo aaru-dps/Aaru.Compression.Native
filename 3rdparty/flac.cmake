@@ -16,7 +16,8 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/flac/cmake")
 
 set(VERSION ${FLAC_VERSION})
 
-#set(PROJECT_SOURCE_DIR "${PROJECT_SOURCE_DIR}/flac/")
+set(OLD_PROJECT_SOURCE_DIR "${PROJECT_SOURCE_DIR}")
+set(PROJECT_SOURCE_DIR "${PROJECT_SOURCE_DIR}/3rdparty/flac/")
 
 #find_package(Iconv)
 #set(HAVE_ICONV ${Iconv_FOUND})
@@ -166,3 +167,5 @@ if(ARCHITECTURE_IS_64BIT)
 endif()
 
 configure_file(3rdparty/flac/config.cmake.h.in 3rdparty/flac/config.h)
+
+set(PROJECT_SOURCE_DIR "${OLD_PROJECT_SOURCE_DIR}")

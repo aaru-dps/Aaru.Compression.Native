@@ -2,17 +2,14 @@ set(LT_CURRENT  1)
 set(LT_REVISION 7)
 set(LT_AGE      0)
 
-set(PROJECT_SOURCE_DIR "${PROJECT_SOURCE_DIR}/3rdparty/bzip2/")
-set(PROJECT_BINARY_DIR "${PROJECT_BINARY_DIR}/3rdparty/bzip2/")
-
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2/cmake")
 include(Version)
 include(SymLink)
 
 set(BZ_VERSION ${LT_CURRENT}.${LT_AGE}.${LT_REVISION})
 configure_file (
-        ${PROJECT_SOURCE_DIR}/bz_version.h.in
-        ${PROJECT_BINARY_DIR}/bz_version.h
+        ${PROJECT_SOURCE_DIR}/3rdparty/bzip2/bz_version.h.in
+        ${PROJECT_BINARY_DIR}/3rdparty/bzip2/bz_version.h
 )
 include_directories(${PROJECT_BINARY_DIR})
 

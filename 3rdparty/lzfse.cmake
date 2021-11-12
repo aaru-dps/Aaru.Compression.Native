@@ -1,6 +1,3 @@
-cmake_minimum_required(VERSION 2.8.12)
-
-project(lzfse C)
 message(STATUS "LZFSE VERSION: Unknown")
 
 include(CheckCCompilerFlag)
