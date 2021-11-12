@@ -2,28 +2,28 @@
 # 3.3 is needed in src/libFLAC
 # 3.5 is needed in src/libFLAC/ia32
 # 3.9 is needed in 'doc' because of doxygen_add_docs()
-cmake_minimum_required(VERSION 3.5)
+#cmake_minimum_required(VERSION 3.5)
 
-if(NOT (CMAKE_BUILD_TYPE OR CMAKE_CONFIGURATION_TYPES OR DEFINED ENV{CFLAGS} OR DEFINED ENV{CXXFLAGS}))
-    set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo")
-endif()
+#if(NOT (CMAKE_BUILD_TYPE OR CMAKE_CONFIGURATION_TYPES OR DEFINED ENV{CFLAGS} OR DEFINED ENV{CXXFLAGS}))
+#    set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo")
+#endif()
 
-project(FLAC VERSION 1.3.3) # HOMEPAGE_URL "https://www.xiph.org/flac/")
+set(FLAC_VERSION 1.3.3) # HOMEPAGE_URL "https://www.xiph.org/flac/")
 
-message(STATUS "FLAC VERSION: ${PROJECT_VERSION}")
+message(STATUS "FLAC VERSION: ${FLAC_VERSION}")
 set(BUILD_SHARED_LIBS BOOL OFF)
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/flac/cmake")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/flac/cmake")
 
-set(VERSION ${PROJECT_VERSION})
+set(VERSION ${FLAC_VERSION})
 
-set(PROJECT_SOURCE_DIR "${PROJECT_SOURCE_DIR}/flac/")
+#set(PROJECT_SOURCE_DIR "${PROJECT_SOURCE_DIR}/flac/")
 
-find_package(Iconv)
-set(HAVE_ICONV ${Iconv_FOUND})
+#find_package(Iconv)
+#set(HAVE_ICONV ${Iconv_FOUND})
 
-if(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
-    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -funroll-loops")
-endif()
+#if(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
+#    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -funroll-loops")
+#endif()
 
 include(CMakePackageConfigHelpers)
 include(CPack)
@@ -47,7 +47,7 @@ else()
     check_include_file("x86intrin.h" FLAC__HAS_X86INTRIN)
 endif()
 
-check_function_exists(fseeko HAVE_FSEEKO)
+#check_function_exists(fseeko HAVE_FSEEKO)
 
 check_c_source_compiles("int main() { return __builtin_bswap16 (0) ; }" HAVE_BSWAP16)
 check_c_source_compiles("int main() { return __builtin_bswap32 (0) ; }" HAVE_BSWAP32)
@@ -58,9 +58,9 @@ endif()
 
 check_c_compiler_flag(-mstackrealign HAVE_STACKREALIGN_FLAG)
 
-include_directories("flac/include")
+include_directories("3rdparty/flac/include")
 
-include_directories("${CMAKE_CURRENT_BINARY_DIR}/flac")
+include_directories("${CMAKE_CURRENT_BINARY_DIR}/3rdparty/flac")
 add_definitions(-DHAVE_CONFIG_H)
 
 if(MSVC)
@@ -115,54 +115,54 @@ if(FLAC__CPU_IA32)
     endif()
 endif()
 
-include_directories("flac/src/libFLAC/include")
+include_directories("3rdparty/flac/src/libFLAC/include")
 
-add_library(FLAC STATIC
-            flac/src/libFLAC/bitmath.c
-            flac/src/libFLAC/bitreader.c
-            flac/src/libFLAC/bitwriter.c
-            flac/src/libFLAC/cpu.c
-            flac/src/libFLAC/crc.c
-            flac/src/libFLAC/fixed.c
-            flac/src/libFLAC/fixed_intrin_sse2.c
-            flac/src/libFLAC/fixed_intrin_ssse3.c
-            flac/src/libFLAC/float.c
-            flac/src/libFLAC/format.c
-            flac/src/libFLAC/lpc.c
-            flac/src/libFLAC/lpc_intrin_sse.c
-            flac/src/libFLAC/lpc_intrin_sse2.c
-            flac/src/libFLAC/lpc_intrin_sse41.c
-            flac/src/libFLAC/lpc_intrin_avx2.c
-            flac/src/libFLAC/lpc_intrin_vsx.c
-            flac/src/libFLAC/md5.c
-            flac/src/libFLAC/memory.c
-            flac/src/libFLAC/metadata_iterators.c
-            flac/src/libFLAC/metadata_object.c
-            flac/src/libFLAC/stream_decoder.c
-            flac/src/libFLAC/stream_encoder.c
-            flac/src/libFLAC/stream_encoder_intrin_sse2.c
-            flac/src/libFLAC/stream_encoder_intrin_ssse3.c
-            flac/src/libFLAC/stream_encoder_intrin_avx2.c
-            flac/src/libFLAC/stream_encoder_framing.c
-            flac/src/libFLAC/window.c
-            $<$<BOOL:${WIN32}>:flac/include/share/windows_unicode_filenames.h>
-            $<$<BOOL:${WIN32}>:flac/src/libFLAC/windows_unicode_filenames.c>
+target_sources("Aaru.Compression.Native" PRIVATE
+               3rdparty/flac/src/libFLAC/bitmath.c
+               3rdparty/flac/src/libFLAC/bitreader.c
+               3rdparty/flac/src/libFLAC/bitwriter.c
+               3rdparty/flac/src/libFLAC/cpu.c
+               3rdparty/flac/src/libFLAC/crc.c
+               3rdparty/flac/src/libFLAC/fixed.c
+               3rdparty/flac/src/libFLAC/fixed_intrin_sse2.c
+               3rdparty/flac/src/libFLAC/fixed_intrin_ssse3.c
+               3rdparty/flac/src/libFLAC/float.c
+               3rdparty/flac/src/libFLAC/format.c
+               3rdparty/flac/src/libFLAC/lpc.c
+               3rdparty/flac/src/libFLAC/lpc_intrin_sse.c
+               3rdparty/flac/src/libFLAC/lpc_intrin_sse2.c
+               3rdparty/flac/src/libFLAC/lpc_intrin_sse41.c
+               3rdparty/flac/src/libFLAC/lpc_intrin_avx2.c
+               3rdparty/flac/src/libFLAC/lpc_intrin_vsx.c
+               3rdparty/flac/src/libFLAC/md5.c
+               3rdparty/flac/src/libFLAC/memory.c
+               3rdparty/flac/src/libFLAC/metadata_iterators.c
+               3rdparty/flac/src/libFLAC/metadata_object.c
+               3rdparty/flac/src/libFLAC/stream_decoder.c
+               3rdparty/flac/src/libFLAC/stream_encoder.c
+               3rdparty/flac/src/libFLAC/stream_encoder_intrin_sse2.c
+               3rdparty/flac/src/libFLAC/stream_encoder_intrin_ssse3.c
+               3rdparty/flac/src/libFLAC/stream_encoder_intrin_avx2.c
+               3rdparty/flac/src/libFLAC/stream_encoder_framing.c
+               3rdparty/flac/src/libFLAC/window.c
+            $<$<BOOL:${WIN32}>:3rdparty/flac/include/share/windows_unicode_filenames.h>
+            $<$<BOOL:${WIN32}>:3rdparty/flac/src/libFLAC/windows_unicode_filenames.c>
             $<$<BOOL:${OGG_FOUND}>:ogg_decoder_aspect.c>
             $<$<BOOL:${OGG_FOUND}>:ogg_encoder_aspect.c>
             $<$<BOOL:${OGG_FOUND}>:ogg_helper.c>
             $<$<BOOL:${OGG_FOUND}>:ogg_mapping.c>)
 
-target_compile_definitions(FLAC PUBLIC FLAC__NO_DLL)
+target_compile_definitions("Aaru.Compression.Native" PUBLIC FLAC__NO_DLL)
 
 # Disable fortify source when not-release or when cross-building with MingW for WoA
 if(CMAKE_BUILD_TYPE STREQUAL Debug OR CMAKE_BUILD_TYPE STREQUAL RelWithDebInfo OR "${CMAKE_C_PLATFORM_ID}" MATCHES "MinGW")
     set(DODEFINE_FORTIFY_SOURCE 0)
 endif()
 
-set_property(TARGET FLAC PROPERTY C_VISIBILITY_PRESET hidden)
+set_property(TARGET "Aaru.Compression.Native" PROPERTY C_VISIBILITY_PRESET hidden)
 
 if(ARCHITECTURE_IS_64BIT)
     set(ENABLE_64_BIT_WORDS 1)
 endif()
 
-configure_file(flac/config.cmake.h.in flac/config.h)
+configure_file(3rdparty/flac/config.cmake.h.in 3rdparty/flac/config.h)
