@@ -153,7 +153,7 @@ AARU_EXPORT size_t AARU_CALL AARU_zstd_encode_buffer(void*       dst_buffer,
                                                      size_t      src_size,
                                                      int32_t     compressionLevel);
 
-#define AARU_CHECKUMS_NATIVE_VERSION 0x06000086
+#define AARU_CHECKUMS_NATIVE_VERSION 0x06000089
 
 AARU_EXPORT uint64_t AARU_CALL AARU_get_acn_version();
 
