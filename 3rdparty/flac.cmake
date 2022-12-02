@@ -91,12 +91,13 @@ if(FLAC__CPU_X86_64 OR FLAC__CPU_IA32)
     option(WITH_AVX "Enable AVX, AVX2 optimizations" ON)
 endif()
 
-include(CheckLanguage)
-check_language(ASM_NASM)
-if(CMAKE_ASM_NASM_COMPILER)
-    enable_language(ASM_NASM)
-    add_definitions(-DFLAC__HAS_NASM)
-endif()
+# TODO: Fix linking
+#include(CheckLanguage)
+#check_language(ASM_NASM)
+#if(CMAKE_ASM_NASM_COMPILER)
+#    enable_language(ASM_NASM)
+#    add_definitions(-DFLAC__HAS_NASM)
+#endif()
 
 if(NOT WITH_ASM)
     add_definitions(-DFLAC__NO_ASM)
@@ -104,7 +105,7 @@ endif()
 
 if(FLAC__CPU_IA32)
     if(WITH_ASM AND CMAKE_ASM_NASM_COMPILER)
-        add_subdirectory(ia32)
+        add_subdirectory(3rdparty/flac/src/libFLAC/ia32)
     endif()
 
     option(WITH_SSE "Enable SSE2 optimizations" ON)
