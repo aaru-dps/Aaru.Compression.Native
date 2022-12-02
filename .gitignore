@@ -606,3 +606,4 @@ pkg/**/aaru
 .sonarqube
 
 build/*
+docker/*
