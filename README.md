@@ -24,4 +24,4 @@ The resulting output of `build.sh` falls under the LGPL 2.1 license as stated in
 
 Any new algorithm added should be under a license compatible with the LGPL 2.1 license to be accepted.
 
-© 2021 Natalia Portillo
+© 2021-2023 Natalia Portillo

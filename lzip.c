@@ -1,6 +1,6 @@
 /*
  * This file is part of the Aaru Data Preservation Suite.
- * Copyright (c) 2019-2021 Natalia Portillo.
+ * Copyright (c) 2019-2023 Natalia Portillo.
  * Copyright © 2018-2019 David Ryskalczyk
  *
  * This library is free software; you can redistribute it and/or modify

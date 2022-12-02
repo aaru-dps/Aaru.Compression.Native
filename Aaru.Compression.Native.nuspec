@@ -7,7 +7,7 @@
         <authors>claunia</authors>
         <projectUrl>https://github.com/aaru-dps/Aaru.Compression.Native</projectUrl>
         <licenseUrl>https://spdx.org/licenses/LGPL-2.1-only.html</licenseUrl>
-        <copyright>Copyright © 2011-2021 Natalia Portillo</copyright>
+        <copyright>Copyright © 2011-2023 Natalia Portillo</copyright>
         <repository type="git" url="https://github.com/aaru-dps/Aaru.Compression.Native.git" />
     </metadata>
     <files>
