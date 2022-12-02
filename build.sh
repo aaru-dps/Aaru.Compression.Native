@@ -97,6 +97,17 @@ docker/dockcross-linux-mips64 make Aaru.Compression.Native
 docker/dockcross-linux-mips64 mips-unknown-linux-gnu-strip -s -w -K "AARU*" libAaru.Compression.Native.so
 mv libAaru.Compression.Native.so runtimes/linux-mips64/native/
 
+## Linux (PPC64LE)
+# Detected system processor: ppc64le
+rm -f CMakeCache.txt
+mkdir -p runtimes/linux-ppc64le/native
+docker run --rm dockcross/linux-ppc64le >docker/dockcross-linux-ppc64le
+chmod +x docker/dockcross-linux-ppc64le
+docker/dockcross-linux-ppc64le cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
+docker/dockcross-linux-ppc64le make Aaru.Compression.Native
+docker/dockcross-linux-ppc64le powerpc64le-unknown-linux-gnu-strip -s -w -K "AARU*" libAaru.Compression.Native.so
+mv libAaru.Compression.Native.so runtimes/linux-ppc64le/native/
+
 ## Linux (ARM), musl
 # Detected system processor: arm
 rm -f CMakeCache.txt
@@ -223,5 +234,8 @@ fi
 
 # TODO: "linux-musl-x64"
 # TODO: "linux-musl-x86"
+# TODO: "android-arm64"
+# TODO: "android-x64"
+# TODO: "android-x86"
 
 nuget pack
