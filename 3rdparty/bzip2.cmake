@@ -1,5 +1,5 @@
 set(LT_CURRENT  1)
-set(LT_REVISION 7)
+set(LT_REVISION 9)
 set(LT_AGE      0)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2/cmake")
