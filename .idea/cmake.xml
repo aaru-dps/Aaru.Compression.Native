@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CMakeSharedSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Debug (x64)" ENABLED="true" CONFIG_NAME="Debug" />
+      <configuration PROFILE_NAME="linux-arm" ENABLED="true" CONFIG_NAME="RelWithDebInfo" TOOLCHAIN_NAME="alarm32" />
+      <configuration PROFILE_NAME="linux-arm64" ENABLED="true" CONFIG_NAME="RelWithDebInfo" TOOLCHAIN_NAME="alarm64" />
+      <configuration PROFILE_NAME="linux-x64-wsl" ENABLED="true" CONFIG_NAME="Release" TOOLCHAIN_NAME="WSL" />
+      <configuration PROFILE_NAME="linux-x64" ENABLED="true" CONFIG_NAME="RelWithDebInfo" TOOLCHAIN_NAME="artemisa" />
+      <configuration PROFILE_NAME="osx-arm64" ENABLED="true" CONFIG_NAME="RelWithDebInfo" TOOLCHAIN_NAME="Mac OS (arm64)" GENERATION_OPTIONS="-G &quot;Unix Makefiles&quot;" />
+      <configuration PROFILE_NAME="osx-x64" ENABLED="true" CONFIG_NAME="RelWithDebInfo" TOOLCHAIN_NAME="Mac OS (x64)" GENERATION_OPTIONS="-G &quot;Unix Makefiles&quot;" />
+      <configuration PROFILE_NAME="win-x64" ENABLED="true" CONFIG_NAME="Release" />
+      <configuration PROFILE_NAME="win-x86" ENABLED="true" CONFIG_NAME="Release" TOOLCHAIN_NAME="Visual Studio (x86)" />
+      <configuration PROFILE_NAME="win-arm" ENABLED="true" CONFIG_NAME="Release" TOOLCHAIN_NAME="Visual Studio (arm)" />
+      <configuration PROFILE_NAME="win-arm64" ENABLED="true" CONFIG_NAME="Release" TOOLCHAIN_NAME="Visual Studio (arm64)" />
+    </configurations>
+  </component>
+</project>
