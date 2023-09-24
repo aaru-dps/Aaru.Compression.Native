@@ -60,7 +60,7 @@ else ()
     check_include_file("x86intrin.h" FLAC__HAS_X86INTRIN)
 endif ()
 
-#check_function_exists(fseeko HAVE_FSEEKO)
+check_function_exists(fseeko HAVE_FSEEKO)
 
 check_c_source_compiles("int main() { return __builtin_bswap16 (0) ; }" HAVE_BSWAP16)
 check_c_source_compiles("int main() { return __builtin_bswap32 (0) ; }" HAVE_BSWAP32)
