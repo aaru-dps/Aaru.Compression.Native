@@ -32,6 +32,10 @@ if("${CMAKE_C_COMPILER_ID}" MATCHES "AppleClang" OR "${CMAKE_C_COMPILER_ID}" MAT
     target_compile_definitions("Aaru.Compression.Native" PUBLIC USE_CLANG)
 endif()
 
+if(DEFINED AARU_MUSL)
+    target_compile_definitions("Aaru.Compression.Native" PUBLIC Z7_AFFINITY_DISABLE)
+endif()
+
 #target_compile_options(lzma PUBLIC -Wall)
 #target_compile_options(lzma PUBLIC -Werror)
 
