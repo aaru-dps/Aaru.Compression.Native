@@ -122,6 +122,21 @@ ENDMACRO()
 
 TARGET_LINK_LIBRARIES_WHOLE_ARCHIVE("Aaru.Compression.Native" libzstd_static m)
 
+check_include_file("semaphore.h" HAVE_SEMAPHORE_H)
+
+if(HAVE_SEMAPHORE_H)
+    set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
+    set(THREADS_PREFER_PTHREAD_FLAG TRUE)
+    find_package(Threads)
+    if(CMAKE_USE_PTHREADS_INIT)
+        set(HAVE_PTHREAD 1)
+    endif()
+endif()
+
+if(HAVE_PTHREAD)
+    TARGET_LINK_LIBRARIES_WHOLE_ARCHIVE("Aaru.Compression.Native" Threads::Threads)
+endif()
+
 if(NOT "${CMAKE_C_PLATFORM_ID}" MATCHES "MinGW" OR (NOT ${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm" AND NOT ${CMAKE_SYSTEM_PROCESSOR} MATCHES "aarch64"))
     set_property(TARGET "Aaru.Compression.Native" PROPERTY POSITION_INDEPENDENT_CODE TRUE)
 else()
