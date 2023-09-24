@@ -50,42 +50,42 @@ check_include_file("stdbool.h" HAVE_STDBOOL_H)
 check_include_file("arm_neon.h" FLAC__HAS_NEONINTRIN)
 check_include_file("semaphore.h" HAVE_SEMAPHORE_H)
 
-if (NOT HAVE_STDINT_H OR NOT HAVE_STDBOOL_H)
+if(NOT HAVE_STDINT_H OR NOT HAVE_STDBOOL_H)
     message(SEND_ERROR "Header stdint.h and/or stdbool.h not found")
-endif ()
+endif()
 
-if (MSVC)
+if(MSVC)
     check_include_file("intrin.h" FLAC__HAS_X86INTRIN)
-else ()
+else()
     check_include_file("x86intrin.h" FLAC__HAS_X86INTRIN)
-endif ()
+endif()
 
 check_function_exists(fseeko HAVE_FSEEKO)
 
 check_c_source_compiles("int main() { return __builtin_bswap16 (0) ; }" HAVE_BSWAP16)
 check_c_source_compiles("int main() { return __builtin_bswap32 (0) ; }" HAVE_BSWAP32)
 
-if (NOT "${CMAKE_C_PLATFORM_ID}" MATCHES "MinGW" OR (NOT ${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm" AND NOT ${CMAKE_SYSTEM_PROCESSOR} MATCHES "aarch64"))
+if(NOT "${CMAKE_C_PLATFORM_ID}" MATCHES "MinGW" OR (NOT ${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm" AND NOT ${CMAKE_SYSTEM_PROCESSOR} MATCHES "aarch64"))
     test_big_endian(CPU_IS_BIG_ENDIAN)
-endif ()
+endif()
 
 check_c_compiler_flag(-mstackrealign HAVE_STACKREALIGN_FLAG)
 
-if (CMAKE_SYSTEM_PROCESSOR STREQUAL "i686" AND HAVE_STACKREALIGN_FLAG)
+if(CMAKE_SYSTEM_PROCESSOR STREQUAL "i686" AND HAVE_STACKREALIGN_FLAG)
     add_compile_options(-mstackrealign)
     add_compile_options($<$<OR:$<COMPILE_LANGUAGE:C>,$<COMPILE_LANGUAGE:CXX>>:-mstackrealign>)
-endif ()
+endif()
 
 include_directories("3rdparty/flac/include")
 
 include_directories("${CMAKE_CURRENT_BINARY_DIR}/3rdparty/flac")
 add_definitions(-DHAVE_CONFIG_H)
 
-if (MSVC)
+if(MSVC)
     add_definitions(
             -D_CRT_SECURE_NO_WARNINGS
             -D_USE_MATH_DEFINES)
-endif ()
+endif()
 
 option(WITH_ASM "Use any assembly optimization routines" ON)
 
@@ -100,91 +100,91 @@ include(CheckCPUArch)
 include(CheckA64NEON)
 
 check_cpu_arch_x64(FLAC__CPU_X86_64)
-if (NOT FLAC__CPU_X86_64)
+if(NOT FLAC__CPU_X86_64)
     check_cpu_arch_x86(FLAC__CPU_IA32)
-endif ()
+endif()
 
-if (FLAC__CPU_X86_64 OR FLAC__CPU_IA32)
+if(FLAC__CPU_X86_64 OR FLAC__CPU_IA32)
     set(FLAC__ALIGN_MALLOC_DATA 1)
     option(WITH_AVX "Enable AVX, AVX2 optimizations (with runtime detection, resulting binary does not require AVX2, so only necessary when a compiler doesn't know about AVX)" ON)
-    if (WITH_AVX AND MSVC)
+    if(WITH_AVX AND MSVC)
         set_source_files_properties(fixed_intrin_avx2.c lpc_intrin_avx2.c stream_encoder_intrin_avx2.c PROPERTIES COMPILE_FLAGS /arch:AVX2)
         set_source_files_properties(lpc_intrin_fma.c PROPERTIES COMPILE_FLAGS "/arch:AVX2 /fp:fast")
-    endif ()
-    if (WITH_AVX AND (CMAKE_C_COMPILER_ID MATCHES "Clang"))
+    endif()
+    if(WITH_AVX AND (CMAKE_C_COMPILER_ID MATCHES "Clang"))
         set_source_files_properties(lpc_intrin_fma.c PROPERTIES COMPILE_FLAGS "-ffast-math")
-    endif ()
-else ()
-    if (FLAC__CPU_ARM64)
+    endif()
+else()
+    if(FLAC__CPU_ARM64)
         check_a64neon(FLAC__HAS_A64NEONINTRIN)
-    endif ()
-endif ()
+    endif()
+endif()
 
-if (NOT WITH_ASM)
+if(NOT WITH_ASM)
     add_definitions(-DFLAC__NO_ASM)
-endif ()
+endif()
 
-if (HAVE_SEMAPHORE_H)
+if(HAVE_SEMAPHORE_H)
     set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
     set(THREADS_PREFER_PTHREAD_FLAG TRUE)
     find_package(Threads)
-    if (CMAKE_USE_PTHREADS_INIT)
+    if(CMAKE_USE_PTHREADS_INIT)
         set(HAVE_PTHREAD 1)
-    endif ()
-endif ()
+    endif()
+endif()
 
 include_directories("3rdparty/flac/src/libFLAC/include")
 
 target_sources("Aaru.Compression.Native" PRIVATE
-        3rdparty/flac/src/libFLAC/bitmath.c
-        3rdparty/flac/src/libFLAC/bitreader.c
-        3rdparty/flac/src/libFLAC/bitwriter.c
-        3rdparty/flac/src/libFLAC/cpu.c
-        3rdparty/flac/src/libFLAC/crc.c
-        3rdparty/flac/src/libFLAC/fixed.c
-        3rdparty/flac/src/libFLAC/fixed_intrin_sse2.c
-        3rdparty/flac/src/libFLAC/fixed_intrin_ssse3.c
-        3rdparty/flac/src/libFLAC/fixed_intrin_sse42.c
-        3rdparty/flac/src/libFLAC/fixed_intrin_avx2.c
-        3rdparty/flac/src/libFLAC/float.c
-        3rdparty/flac/src/libFLAC/format.c
-        3rdparty/flac/src/libFLAC/lpc.c
-        3rdparty/flac/src/libFLAC/lpc_intrin_neon.c
-        3rdparty/flac/src/libFLAC/lpc_intrin_sse2.c
-        3rdparty/flac/src/libFLAC/lpc_intrin_sse41.c
-        3rdparty/flac/src/libFLAC/lpc_intrin_avx2.c
-        3rdparty/flac/src/libFLAC/lpc_intrin_fma.c
-        3rdparty/flac/src/libFLAC/md5.c
-        3rdparty/flac/src/libFLAC/memory.c
-        3rdparty/flac/src/libFLAC/metadata_iterators.c
-        3rdparty/flac/src/libFLAC/metadata_object.c
-        3rdparty/flac/src/libFLAC/stream_decoder.c
-        3rdparty/flac/src/libFLAC/stream_encoder.c
-        3rdparty/flac/src/libFLAC/stream_encoder_intrin_sse2.c
-        3rdparty/flac/src/libFLAC/stream_encoder_intrin_ssse3.c
-        3rdparty/flac/src/libFLAC/stream_encoder_intrin_avx2.c
-        3rdparty/flac/src/libFLAC/stream_encoder_framing.c
-        3rdparty/flac/src/libFLAC/window.c
-        $<$<BOOL:${WIN32}>:3rdparty/flac/include/share/win_utf8_io.h>
-        $<$<BOOL:${WIN32}>:3rdparty/flac/src/share/win_utf8_io/win_utf8_io.c>
-        $<$<BOOL:${OGG_FOUND}>:ogg_decoder_aspect.c>
-        $<$<BOOL:${OGG_FOUND}>:ogg_encoder_aspect.c>
-        $<$<BOOL:${OGG_FOUND}>:ogg_helper.c>
-        $<$<BOOL:${OGG_FOUND}>:ogg_mapping.c>)
+               3rdparty/flac/src/libFLAC/bitmath.c
+               3rdparty/flac/src/libFLAC/bitreader.c
+               3rdparty/flac/src/libFLAC/bitwriter.c
+               3rdparty/flac/src/libFLAC/cpu.c
+               3rdparty/flac/src/libFLAC/crc.c
+               3rdparty/flac/src/libFLAC/fixed.c
+               3rdparty/flac/src/libFLAC/fixed_intrin_sse2.c
+               3rdparty/flac/src/libFLAC/fixed_intrin_ssse3.c
+               3rdparty/flac/src/libFLAC/fixed_intrin_sse42.c
+               3rdparty/flac/src/libFLAC/fixed_intrin_avx2.c
+               3rdparty/flac/src/libFLAC/float.c
+               3rdparty/flac/src/libFLAC/format.c
+               3rdparty/flac/src/libFLAC/lpc.c
+               3rdparty/flac/src/libFLAC/lpc_intrin_neon.c
+               3rdparty/flac/src/libFLAC/lpc_intrin_sse2.c
+               3rdparty/flac/src/libFLAC/lpc_intrin_sse41.c
+               3rdparty/flac/src/libFLAC/lpc_intrin_avx2.c
+               3rdparty/flac/src/libFLAC/lpc_intrin_fma.c
+               3rdparty/flac/src/libFLAC/md5.c
+               3rdparty/flac/src/libFLAC/memory.c
+               3rdparty/flac/src/libFLAC/metadata_iterators.c
+               3rdparty/flac/src/libFLAC/metadata_object.c
+               3rdparty/flac/src/libFLAC/stream_decoder.c
+               3rdparty/flac/src/libFLAC/stream_encoder.c
+               3rdparty/flac/src/libFLAC/stream_encoder_intrin_sse2.c
+               3rdparty/flac/src/libFLAC/stream_encoder_intrin_ssse3.c
+               3rdparty/flac/src/libFLAC/stream_encoder_intrin_avx2.c
+               3rdparty/flac/src/libFLAC/stream_encoder_framing.c
+               3rdparty/flac/src/libFLAC/window.c
+               $<$<BOOL:${WIN32}>:3rdparty/flac/include/share/win_utf8_io.h>
+               $<$<BOOL:${WIN32}>:3rdparty/flac/src/share/win_utf8_io/win_utf8_io.c>
+               $<$<BOOL:${OGG_FOUND}>:ogg_decoder_aspect.c>
+               $<$<BOOL:${OGG_FOUND}>:ogg_encoder_aspect.c>
+               $<$<BOOL:${OGG_FOUND}>:ogg_helper.c>
+               $<$<BOOL:${OGG_FOUND}>:ogg_mapping.c>)
 
 target_compile_definitions("Aaru.Compression.Native" PUBLIC FLAC__NO_DLL)
 target_compile_definitions("Aaru.Compression.Native" PUBLIC FLAC__NO_FILEIO)
 
 # Disable fortify source when not-release or when cross-building with MingW for WoA
-if (CMAKE_BUILD_TYPE STREQUAL Debug OR CMAKE_BUILD_TYPE STREQUAL RelWithDebInfo OR "${CMAKE_C_PLATFORM_ID}" MATCHES "MinGW")
+if(CMAKE_BUILD_TYPE STREQUAL Debug OR CMAKE_BUILD_TYPE STREQUAL RelWithDebInfo OR "${CMAKE_C_PLATFORM_ID}" MATCHES "MinGW")
     set(DODEFINE_FORTIFY_SOURCE 0)
-endif ()
+endif()
 
 set_property(TARGET "Aaru.Compression.Native" PROPERTY C_VISIBILITY_PRESET hidden)
 
-if (ARCHITECTURE_IS_64BIT)
+if(ARCHITECTURE_IS_64BIT)
     set(ENABLE_64_BIT_WORDS 1)
-endif ()
+endif()
 
 configure_file(3rdparty/flac/config.cmake.h.in 3rdparty/flac/config.h)
 

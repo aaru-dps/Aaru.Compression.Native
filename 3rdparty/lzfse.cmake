@@ -18,19 +18,19 @@ if("${LZFSE_BUNDLE_MODE}" STREQUAL "")
 endif()
 mark_as_advanced(LZFSE_BUNDLE_MODE)
 
-if (CMAKE_VERSION VERSION_GREATER 3.2)
-    cmake_policy (SET CMP0063 NEW)
-endif ()
+if(CMAKE_VERSION VERSION_GREATER 3.2)
+    cmake_policy(SET CMP0063 NEW)
+endif()
 
-if (CMAKE_VERSION VERSION_GREATER 3.9)
-    cmake_policy (SET CMP0069 NEW)
-endif ()
+if(CMAKE_VERSION VERSION_GREATER 3.9)
+    cmake_policy(SET CMP0069 NEW)
+endif()
 
-if (ENABLE_SANITIZER)
+if(ENABLE_SANITIZER)
     set(CMAKE_C_FLAGS " ${CMAKE_C_FLAGS} -fsanitize=${ENABLE_SANITIZER}")
     set(CMAKE_CXX_FLAGS " ${CMAKE_CXX_FLAGS} -fsanitize=${ENABLE_SANITIZER}")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=${ENABLE_SANITIZER}")
-endif ()
+endif()
 
 set(LZFSE_SOURCES
     src/lzfse_decode.c
@@ -47,5 +47,5 @@ target_sources("Aaru.Compression.Native" PRIVATE ${LZFSE_SOURCES})
 
 
 if(NOT AARU_MUSL AND (NOT ${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm"))
-   set_property(TARGET "Aaru.Compression.Native" PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
+    set_property(TARGET "Aaru.Compression.Native" PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
 endif()

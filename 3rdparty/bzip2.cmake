@@ -1,13 +1,13 @@
-set(LT_CURRENT  1)
+set(LT_CURRENT 1)
 set(LT_REVISION 9)
-set(LT_AGE      0)
+set(LT_AGE 0)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2/cmake")
 include(Version)
 include(SymLink)
 
 set(BZ_VERSION ${LT_CURRENT}.${LT_AGE}.${LT_REVISION})
-configure_file (
+configure_file(
         ${PROJECT_SOURCE_DIR}/3rdparty/bzip2/bz_version.h.in
         ${PROJECT_BINARY_DIR}/3rdparty/bzip2/bz_version.h
 )
@@ -43,18 +43,18 @@ endif()
 
 # Checks for header files.
 include(CheckIncludeFile)
-check_include_file(arpa/inet.h    HAVE_ARPA_INET_H)
-check_include_file(fcntl.h        HAVE_FCNTL_H)
-check_include_file(inttypes.h     HAVE_INTTYPES_H)
-check_include_file(limits.h       HAVE_LIMITS_H)
-check_include_file(netdb.h        HAVE_NETDB_H)
-check_include_file(netinet/in.h   HAVE_NETINET_IN_H)
-check_include_file(pwd.h          HAVE_PWD_H)
-check_include_file(sys/socket.h   HAVE_SYS_SOCKET_H)
-check_include_file(sys/time.h     HAVE_SYS_TIME_H)
-check_include_file(syslog.h       HAVE_SYSLOG_H)
-check_include_file(time.h         HAVE_TIME_H)
-check_include_file(unistd.h       HAVE_UNISTD_H)
+check_include_file(arpa/inet.h HAVE_ARPA_INET_H)
+check_include_file(fcntl.h HAVE_FCNTL_H)
+check_include_file(inttypes.h HAVE_INTTYPES_H)
+check_include_file(limits.h HAVE_LIMITS_H)
+check_include_file(netdb.h HAVE_NETDB_H)
+check_include_file(netinet/in.h HAVE_NETINET_IN_H)
+check_include_file(pwd.h HAVE_PWD_H)
+check_include_file(sys/socket.h HAVE_SYS_SOCKET_H)
+check_include_file(sys/time.h HAVE_SYS_TIME_H)
+check_include_file(syslog.h HAVE_SYSLOG_H)
+check_include_file(time.h HAVE_TIME_H)
+check_include_file(unistd.h HAVE_UNISTD_H)
 
 include(CheckTypeSize)
 # Checks for typedefs, structures, and compiler characteristics.
@@ -74,9 +74,9 @@ check_struct_has_member("struct tm" tm_gmtoff time.h HAVE_STRUCT_TM_TM_GMTOFF)
 
 # Checks for library functions.
 include(CheckFunctionExists)
-check_function_exists(_Exit     HAVE__EXIT)
-check_function_exists(accept4   HAVE_ACCEPT4)
-check_function_exists(mkostemp  HAVE_MKOSTEMP)
+check_function_exists(_Exit HAVE__EXIT)
+check_function_exists(accept4 HAVE_ACCEPT4)
+check_function_exists(mkostemp HAVE_MKOSTEMP)
 
 include(CheckSymbolExists)
 # XXX does this correctly detect initgroups (un)availability on cygwin?
@@ -107,9 +107,9 @@ list(TRANSFORM BZ2_SOURCES PREPEND "3rdparty/bzip2/")
 add_definitions(-DBZ_DEBUG=0)
 
 target_sources("Aaru.Compression.Native"
-               PRIVATE     ${BZ2_SOURCES}
-               PUBLIC      ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2/bzlib_private.h
-               INTERFACE   ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2/bzlib.h)
+               PRIVATE ${BZ2_SOURCES}
+               PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2/bzlib_private.h
+               INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bzip2/bzlib.h)
 target_compile_definitions("Aaru.Compression.Native" PUBLIC BZ2_STATICLIB)
 
 set_property(TARGET "Aaru.Compression.Native" PROPERTY C_VISIBILITY_PRESET hidden)
