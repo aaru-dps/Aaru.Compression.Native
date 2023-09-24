@@ -1,18 +1,19 @@
 /* Threads.h -- multithreading library
-2021-07-12 : Igor Pavlov : Public domain */
+2023-04-02 : Igor Pavlov : Public domain */
 
-#ifndef __7Z_THREADS_H
-#define __7Z_THREADS_H
+#ifndef ZIP7_INC_THREADS_H
+#define ZIP7_INC_THREADS_H
 
 #ifdef _WIN32
-#include <windows.h>
+#include "7zWindows.h"
+
 #else
 
 #if defined(__linux__)
 #if !defined(__APPLE__) && !defined(_AIX) && !defined(__ANDROID__)
-#ifndef _7ZIP_AFFINITY_DISABLE
-#define _7ZIP_AFFINITY_SUPPORTED
-// #pragma message(" ==== _7ZIP_AFFINITY_SUPPORTED")
+#ifndef Z7_AFFINITY_DISABLE
+#define Z7_AFFINITY_SUPPORTED
+// #pragma message(" ==== Z7_AFFINITY_SUPPORTED")
 // #define _GNU_SOURCE
 #endif
 #endif
@@ -33,55 +34,65 @@ WRes Handle_WaitObject(HANDLE h);
 
 typedef HANDLE CThread;
 
-#define Thread_Construct(p) { *(p) = NULL; }
+#define Thread_CONSTRUCT(p) { *(p) = NULL; }
 #define Thread_WasCreated(p) (*(p) != NULL)
 #define Thread_Close(p) HandlePtr_Close(p)
 // #define Thread_Wait(p) Handle_WaitObject(*(p))
 
+#ifdef UNDER_CE
+  // if (USE_THREADS_CreateThread is      defined), we use _beginthreadex()
+  // if (USE_THREADS_CreateThread is not definned), we use CreateThread()
+  #define USE_THREADS_CreateThread
+#endif
+
 typedef
-    #ifdef UNDER_CE
+    #ifdef USE_THREADS_CreateThread
       DWORD
     #else
       unsigned
     #endif
     THREAD_FUNC_RET_TYPE;
 
+#define THREAD_FUNC_RET_ZERO  0
+
 typedef DWORD_PTR CAffinityMask;
 typedef DWORD_PTR CCpuSet;
 
-#define CpuSet_Zero(p) { *(p) = 0; }
-#define CpuSet_Set(p, cpu) { *(p) |= ((DWORD_PTR)1 << (cpu)); }
+#define CpuSet_Zero(p)        *(p) = (0)
+#define CpuSet_Set(p, cpu)    *(p) |= ((DWORD_PTR)1 << (cpu))
 
 #else //  _WIN32
 
-typedef struct _CThread
+typedef struct
 {
   pthread_t _tid;
   int _created;
 } CThread;
 
-#define Thread_Construct(p) { (p)->_tid = 0; (p)->_created = 0; }
-#define Thread_WasCreated(p) ((p)->_created != 0)
+#define Thread_CONSTRUCT(p)   { (p)->_tid = 0;  (p)->_created = 0; }
+#define Thread_WasCreated(p)  ((p)->_created != 0)
 WRes Thread_Close(CThread *p);
 // #define Thread_Wait Thread_Wait_Close
 
 typedef void * THREAD_FUNC_RET_TYPE;
+#define THREAD_FUNC_RET_ZERO  NULL
+
 
 typedef UInt64 CAffinityMask;
 
-#ifdef _7ZIP_AFFINITY_SUPPORTED
+#ifdef Z7_AFFINITY_SUPPORTED
 
 typedef cpu_set_t CCpuSet;
-#define CpuSet_Zero(p) CPU_ZERO(p)
-#define CpuSet_Set(p, cpu) CPU_SET(cpu, p)
-#define CpuSet_IsSet(p, cpu) CPU_ISSET(cpu, p)
+#define CpuSet_Zero(p)        CPU_ZERO(p)
+#define CpuSet_Set(p, cpu)    CPU_SET(cpu, p)
+#define CpuSet_IsSet(p, cpu)  CPU_ISSET(cpu, p)
 
 #else
 
 typedef UInt64 CCpuSet;
-#define CpuSet_Zero(p) { *(p) = 0; }
-#define CpuSet_Set(p, cpu) { *(p) |= ((UInt64)1 << (cpu)); }
-#define CpuSet_IsSet(p, cpu) ((*(p) & ((UInt64)1 << (cpu))) != 0)
+#define CpuSet_Zero(p)        *(p) = (0)
+#define CpuSet_Set(p, cpu)    *(p) |= ((UInt64)1 << (cpu))
+#define CpuSet_IsSet(p, cpu)  ((*(p) & ((UInt64)1 << (cpu))) != 0)
 
 #endif
 
@@ -89,8 +100,31 @@ typedef UInt64 CCpuSet;
 #endif //  _WIN32
 
 
-#define THREAD_FUNC_CALL_TYPE MY_STD_CALL
-#define THREAD_FUNC_DECL THREAD_FUNC_RET_TYPE THREAD_FUNC_CALL_TYPE
+#define THREAD_FUNC_CALL_TYPE Z7_STDCALL
+
+#if defined(_WIN32) && defined(__GNUC__)
+/* GCC compiler for x86 32-bit uses the rule:
+   the stack is 16-byte aligned before CALL instruction for function calling.
+   But only root function main() contains instructions that
+   set 16-byte alignment for stack pointer. And another functions
+   just keep alignment, if it was set in some parent function.
+   
+   The problem:
+    if we create new thread in MinGW (GCC) 32-bit x86 via _beginthreadex() or CreateThread(),
+       the root function of thread doesn't set 16-byte alignment.
+       And stack frames in all child functions also will be unaligned in that case.
+   
+   Here we set (force_align_arg_pointer) attribute for root function of new thread.
+   Do we need (force_align_arg_pointer) also for another systems?  */
+  
+  #define THREAD_FUNC_ATTRIB_ALIGN_ARG __attribute__((force_align_arg_pointer))
+  // #define THREAD_FUNC_ATTRIB_ALIGN_ARG // for debug : bad alignment in SSE functions
+#else
+  #define THREAD_FUNC_ATTRIB_ALIGN_ARG
+#endif
+
+#define THREAD_FUNC_DECL  THREAD_FUNC_ATTRIB_ALIGN_ARG THREAD_FUNC_RET_TYPE THREAD_FUNC_CALL_TYPE
+
 typedef THREAD_FUNC_RET_TYPE (THREAD_FUNC_CALL_TYPE * THREAD_FUNC_TYPE)(void *);
 WRes Thread_Create(CThread *p, THREAD_FUNC_TYPE func, LPVOID param);
 WRes Thread_Create_With_Affinity(CThread *p, THREAD_FUNC_TYPE func, LPVOID param, CAffinityMask affinity);
@@ -158,6 +192,7 @@ WRes ManualResetEvent_Create(CManualResetEvent *p, int signaled);
 WRes ManualResetEvent_CreateNotSignaled(CManualResetEvent *p);
 WRes AutoResetEvent_Create(CAutoResetEvent *p, int signaled);
 WRes AutoResetEvent_CreateNotSignaled(CAutoResetEvent *p);
+
 WRes Event_Set(CEvent *p);
 WRes Event_Reset(CEvent *p);
 WRes Event_Wait(CEvent *p);
@@ -197,6 +232,8 @@ void CriticalSection_Leave(CCriticalSection *cs);
 LONG InterlockedIncrement(LONG volatile *addend);
 
 #endif  // _WIN32
+
+WRes AutoResetEvent_OptCreate_And_Reset(CAutoResetEvent *p);
 
 EXTERN_C_END
 

@@ -1,7 +1,7 @@
 set("LZMA_C_DIRECTORY" "3rdparty/lzma/C")
 set("LZMA_ASM_DIRECTORY" "3rdparty/lzma/Asm")
 
-message(STATUS "LZMA VERSION: 21.03beta")
+message(STATUS "LZMA VERSION: 23.01")
 
 target_compile_definitions("Aaru.Compression.Native" PUBLIC _REENTRANT)
 target_compile_definitions("Aaru.Compression.Native" PUBLIC _FILE_OFFSET_BITS)
@@ -68,9 +68,9 @@ target_sources("Aaru.Compression.Native" PRIVATE ${LZMA_C_DIRECTORY}/CpuArch.c)
 #target_sources("Aaru.Compression.Native" PRIVATE ${LZMA_C_DIRECTORY}/HuffEnc.c)
 target_sources("Aaru.Compression.Native" PRIVATE ${LZMA_C_DIRECTORY}/LzFind.c)
 ## ifdef MT_FILES
-#target_sources("Aaru.Compression.Native" PRIVATE ${LZMA_C_DIRECTORY}/LzFindMt.c)
+target_sources("Aaru.Compression.Native" PRIVATE ${LZMA_C_DIRECTORY}/LzFindMt.c)
 #
-#target_sources("Aaru.Compression.Native" PRIVATE ${LZMA_C_DIRECTORY}/Threads.c)
+target_sources("Aaru.Compression.Native" PRIVATE ${LZMA_C_DIRECTORY}/Threads.c)
 ## endif
 #
 target_sources("Aaru.Compression.Native" PRIVATE ${LZMA_C_DIRECTORY}/LzmaEnc.c)
@@ -92,6 +92,7 @@ target_sources("Aaru.Compression.Native" PRIVATE ${LZMA_C_DIRECTORY}/LzmaLib.c)
 #target_sources("Aaru.Compression.Native" PRIVATE ${LZMA_C_DIRECTORY}/Sha1.c)
 #target_sources("Aaru.Compression.Native" PRIVATE ${LZMA_C_DIRECTORY}/Sha256.c)
 #target_sources("Aaru.Compression.Native" PRIVATE ${LZMA_C_DIRECTORY}/Sort.c)
+#target_sources("Aaru.Compression.Native" PRIVATE ${LZMA_C_DIRECTORY}/SwapBytes.c)
 #target_sources("Aaru.Compression.Native" PRIVATE ${LZMA_C_DIRECTORY}/Xz.c)
 #target_sources("Aaru.Compression.Native" PRIVATE ${LZMA_C_DIRECTORY}/XzCrc64.c)
 
@@ -120,6 +121,7 @@ endif()
 
 if(USE_LZMA_DEC_ASM)
     if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "x86_64" OR ${CMAKE_SYSTEM_PROCESSOR} MATCHES "AMD64")
+        target_sources("Aaru.Compression.Native" PRIVATE ${LZMA_ASM_DIRECTORY}/x86/LzFindOpt.asm)
         target_sources("Aaru.Compression.Native" PRIVATE ${LZMA_ASM_DIRECTORY}/x86/LzmaDecOpt.asm)
     endif()
 
@@ -128,8 +130,10 @@ if(USE_LZMA_DEC_ASM)
 #        target_sources("Aaru.Compression.Native" PRIVATE ${LZMA_ASM_DIRECTORY}/arm64/7zAsm.S)
     endif()
 
+    target_sources("Aaru.Compression.Native" PRIVATE ${LZMA_C_DIRECTORY}/LzFindOpt.c)
     target_sources("Aaru.Compression.Native" PRIVATE ${LZMA_C_DIRECTORY}/LzmaDec.c)
 else()
+    target_sources("Aaru.Compression.Native" PRIVATE ${LZMA_C_DIRECTORY}/LzFindOpt.c)
     target_sources("Aaru.Compression.Native" PRIVATE ${LZMA_C_DIRECTORY}/LzmaDec.c)
 endif()
 
