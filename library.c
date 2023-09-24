@@ -23,7 +23,7 @@
 #include "3rdparty/bzip2/bzlib.h"
 #include "3rdparty/lzfse/src/lzfse.h"
 #include "3rdparty/lzma/C/LzmaLib.h"
-#include "3rdparty/zstd-1.5.0/lib/zstd.h"
+#include "3rdparty/zstd/lib/zstd.h"
 
 AARU_EXPORT int32_t AARU_CALL AARU_bzip2_decode_buffer(uint8_t*       dst_buffer,
                                                        uint32_t*      dst_size,
