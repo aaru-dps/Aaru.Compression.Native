@@ -1,5 +1,5 @@
-set("LZMA_C_DIRECTORY" "3rdparty/lzma-21.03beta/C")
-set("LZMA_ASM_DIRECTORY" "3rdparty/lzma-21.03beta/Asm")
+set("LZMA_C_DIRECTORY" "3rdparty/lzma/C")
+set("LZMA_ASM_DIRECTORY" "3rdparty/lzma/Asm")
 
 message(STATUS "LZMA VERSION: 21.03beta")
 
