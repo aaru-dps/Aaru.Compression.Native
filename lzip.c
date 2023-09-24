@@ -21,7 +21,7 @@
 #include <stdint.h>
 
 #include "library.h"
-#include "3rdparty/lzlib-1.12/lzlib.h"
+#include "3rdparty/lzlib/lzlib.h"
 
 AARU_EXPORT int32_t AARU_CALL AARU_lzip_decode_buffer(uint8_t*       dst_buffer,
                                                       int32_t        dst_size,
