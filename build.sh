@@ -116,14 +116,17 @@ mv libAaru.Compression.Native.so runtimes/linux-ppc64le/native/
 
 ## Linux (ARM), musl
 # Detected system processor: arm
-rm -f CMakeCache.txt
-mkdir -p runtimes/linux-musl-arm/native
-docker run --rm dockcross/linux-armv7l-musl >docker/dockcross-linux-musl-arm
-chmod +x docker/dockcross-linux-musl-arm
-docker/dockcross-linux-musl-arm cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 -DAARU_MUSL=1 .
-docker/dockcross-linux-musl-arm make Aaru.Compression.Native
-docker/dockcross-linux-musl-arm armv7l-linux-musleabihf-strip -s -w -K "AARU*" libAaru.Compression.Native.so
-mv libAaru.Compression.Native.so runtimes/linux-musl-arm/native/
+# Fails LZMA multithreading
+#rm -f CMakeCache.txt
+#mkdir -p runtimes/linux-musl-arm/native
+#docker run --rm dockcross/linux-armv7l-musl >docker/dockcross-linux-musl-arm
+#chmod +x docker/dockcross-linux-musl-arm
+#docker/dockcross-linux-musl-arm cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 -DAARU_MUSL=1 .
+#cat CMakeFiles/Aaru.Compression.Native.dir/flags.make
+#read -n 1 -s -r -p "Press any key to continue"
+#docker/dockcross-linux-musl-arm make
+#docker/dockcross-linux-musl-arm armv7l-linux-musleabihf-strip -s -w -K "AARU*" libAaru.Compression.Native.so
+#mv libAaru.Compression.Native.so runtimes/linux-musl-arm/native/
 
 ## Linux (ARM64), musl
 # Detected system processor: aarch64
