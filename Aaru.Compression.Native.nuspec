@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>Aaru.Compression.Native</id>
-        <version>6.0.0-alpha9</version>
+        <version>6.0.0-alpha10</version>
         <description>C implementation of compression algorithms used by Aaru.</description>
         <authors>claunia</authors>
         <projectUrl>https://github.com/aaru-dps/Aaru.Compression.Native</projectUrl>
