@@ -23,8 +23,8 @@ else()
 endif()
 cmake_policy(VERSION ${ZSTD_CMAKE_POLICY_VERSION})
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/zstd-1.5.0/build/cmake/CMakeModules")
-set(ZSTD_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/zstd-1.5.0")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/zstd/build/cmake/CMakeModules")
+set(ZSTD_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/zstd")
 set(LIBRARY_DIR ${ZSTD_SOURCE_DIR}/lib)
 
 # Parse version
