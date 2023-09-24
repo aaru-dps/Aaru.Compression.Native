@@ -194,10 +194,6 @@ mkdir -p runtimes/win-arm64/native
 docker run --rm dockcross/windows-arm64 > docker/dockcross-win-arm64
 chmod +x docker/dockcross-win-arm64
 docker/dockcross-win-arm64 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
-sed -e 's/CMAKE_C_COMPILER_AR\-NOTFOUND/\/usr\/xcc\/aarch64-w64-mingw32-cross\/bin\/aarch64-w64-mingw32-ar/g' ./3rdparty/CMakeFiles/lzfse.dir/link.txt > link.txt
-mv link.txt ./3rdparty/CMakeFiles/lzfse.dir/link.txt
-sed -e 's/CMAKE_C_COMPILER_RANLIB\-NOTFOUND/\/usr\/xcc\/aarch64-w64-mingw32-cross\/bin\/aarch64-w64-mingw32-ranlib/g' ./3rdparty/CMakeFiles/lzfse.dir/link.txt > link.txt
-mv link.txt ./3rdparty/CMakeFiles/lzfse.dir/link.txt
 sed -e 's/\-soname,libAaru\.Compression\.Native\.so//g' ./CMakeFiles/Aaru.Compression.Native.dir/link.txt > link.txt
 mv link.txt ./CMakeFiles/Aaru.Compression.Native.dir/link.txt
 docker/dockcross-win-arm64 make Aaru.Compression.Native
