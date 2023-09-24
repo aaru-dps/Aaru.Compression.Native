@@ -235,3 +235,5 @@ fi
 # TODO: "android-x86"
 
 nuget pack
+
+rm -f CMakeCache.txt
