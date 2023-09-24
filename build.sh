@@ -215,13 +215,17 @@ mv libAaru.Compression.Native.dll runtimes/win-x86/native/
 
 ## Mac OS X (arm64 and x64)
 if [[ ${OS_NAME} == Darwin ]]; then
-  rm -f CMakeCache.txt
-  cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 . .
-  make Aaru.Compression.Native
-  mkdir -p runtimes/osx-arm64/native
-  mkdir -p runtimes/osx-x64/native
-  lipo libAaru.Compression.Native.dylib -thin arm64 -output runtimes/osx-arm64/native/libAaru.Compression.Native.dylib
-  lipo libAaru.Compression.Native.dylib -thin x86_64 -output runtimes/osx-x64/native/libAaru.Compression.Native.dylib
+    rm -f CMakeCache.txt
+    cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 -DAARU_MACOS_TARGET_ARCH=x86_64 .
+    make Aaru.Compression.Native
+    mkdir -p runtimes/osx-x64/native
+    mv libAaru.Compression.Native.dylib runtimes/osx-x64/native
+
+    rm -f CMakeCache.txt
+    cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 -DAARU_MACOS_TARGET_ARCH=arm64 .
+    make Aaru.Compression.Native
+    mkdir -p runtimes/osx-arm64/native
+    mv libAaru.Compression.Native.dylib runtimes/osx-arm64/native
 fi
 
 # TODO: "linux-musl-x64"
