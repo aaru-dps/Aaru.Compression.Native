@@ -33,14 +33,16 @@ mv libAaru.Compression.Native.so runtimes/android-arm/native/
 
 ## Android (ARM64)
 # Detected system processor: aarch64
-#rm -f CMakeCache.txt
-#mkdir -p runtimes/android-arm64/native
-#docker run --rm dockcross/android-arm64 >docker/dockcross-android-arm64
-#chmod +x docker/dockcross-android-arm64
-#docker/dockcross-android-arm64 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
-#docker/dockcross-android-arm64 make Aaru.Compression.Native
-#docker/dockcross-android-arm64 /usr/aarch64-linux-android/bin/llvm-strip -s -w -K "AARU*" libAaru.Compression.Native.so
-#mv libAaru.Compression.Native.so runtimes/android-arm64/native/
+rm -f CMakeCache.txt
+mkdir -p runtimes/android-arm64/native
+docker run --rm dockcross/android-arm64 >docker/dockcross-android-arm64
+chmod +x docker/dockcross-android-arm64
+docker/dockcross-android-arm64 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
+sed -e 's/\-fuse-ld=gold//g' ./CMakeFiles/Aaru.Compression.Native.dir/link.txt > link.txt
+mv link.txt ./CMakeFiles/Aaru.Compression.Native.dir/link.txt
+docker/dockcross-android-arm64 make Aaru.Compression.Native
+docker/dockcross-android-arm64 /usr/aarch64-linux-android/bin/llvm-strip -s -w -K "AARU*" libAaru.Compression.Native.so
+mv libAaru.Compression.Native.so runtimes/android-arm64/native/
 
 ## Android (amd64)
 # Detected system processor: x86_64
