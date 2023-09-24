@@ -1,4 +1,4 @@
-set("LZIP_DIRECTORY" "3rdparty/lzlib-1.12")
+set("LZIP_DIRECTORY" "3rdparty/lzlib")
 
 message(STATUS "LZIP VERSION: 1.12")
 
