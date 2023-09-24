@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, see <http://www.gnu.org/licenses/>.
 
-OS_NAME=`uname`
+OS_NAME=$(uname)
 
 mkdir -p docker
 
@@ -24,7 +24,7 @@ mkdir -p docker
 # Detected system processor: armv7-a
 rm -f CMakeCache.txt
 mkdir -p runtimes/android-arm/native
-docker run --rm dockcross/android-arm >docker/dockcross-android-arm
+docker run --rm dockcross/android-arm > docker/dockcross-android-arm
 chmod +x docker/dockcross-android-arm
 docker/dockcross-android-arm cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
 docker/dockcross-android-arm make Aaru.Compression.Native
@@ -35,7 +35,7 @@ mv libAaru.Compression.Native.so runtimes/android-arm/native/
 # Detected system processor: aarch64
 rm -f CMakeCache.txt
 mkdir -p runtimes/android-arm64/native
-docker run --rm dockcross/android-arm64 >docker/dockcross-android-arm64
+docker run --rm dockcross/android-arm64 > docker/dockcross-android-arm64
 chmod +x docker/dockcross-android-arm64
 docker/dockcross-android-arm64 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
 sed -e 's/\-fuse-ld=gold//g' ./CMakeFiles/Aaru.Compression.Native.dir/link.txt > link.txt
@@ -48,7 +48,7 @@ mv libAaru.Compression.Native.so runtimes/android-arm64/native/
 # Detected system processor: x86_64
 rm -f CMakeCache.txt
 mkdir -p runtimes/android-x64/native
-docker run --rm dockcross/android-x86_64 >docker/dockcross-android-x64
+docker run --rm dockcross/android-x86_64 > docker/dockcross-android-x64
 chmod +x docker/dockcross-android-x64
 docker/dockcross-android-x64 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
 sed -e 's/\-fuse-ld=gold//g' ./CMakeFiles/Aaru.Compression.Native.dir/link.txt > link.txt
@@ -61,7 +61,7 @@ mv libAaru.Compression.Native.so runtimes/android-x64/native/
 # Detected system processor: i686
 rm -f CMakeCache.txt
 mkdir -p runtimes/android-x86/native
-docker run --rm dockcross/android-x86 >docker/dockcross-android-x86
+docker run --rm dockcross/android-x86 > docker/dockcross-android-x86
 chmod +x docker/dockcross-android-x86
 docker/dockcross-android-x86 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
 sed -e 's/\-fuse-ld=gold//g' ./CMakeFiles/Aaru.Compression.Native.dir/link.txt > link.txt
@@ -74,7 +74,7 @@ mv libAaru.Compression.Native.so runtimes/android-x86/native/
 # Detected system processor: arm
 rm -f CMakeCache.txt
 mkdir -p runtimes/linux-arm/native
-docker run --rm dockcross/linux-armv7a-lts >docker/dockcross-linux-arm
+docker run --rm dockcross/linux-armv7a-lts > docker/dockcross-linux-arm
 chmod +x docker/dockcross-linux-arm
 docker/dockcross-linux-arm cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
 docker/dockcross-linux-arm make Aaru.Compression.Native
@@ -85,7 +85,7 @@ mv libAaru.Compression.Native.so runtimes/linux-arm/native/
 # Detected system processor: aarch64
 rm -f CMakeCache.txt
 mkdir -p runtimes/linux-arm64/native
-docker run --rm dockcross/linux-arm64-lts >docker/dockcross-linux-arm64
+docker run --rm dockcross/linux-arm64-lts > docker/dockcross-linux-arm64
 chmod +x docker/dockcross-linux-arm64
 docker/dockcross-linux-arm64 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
 docker/dockcross-linux-arm64 make Aaru.Compression.Native
@@ -96,7 +96,7 @@ mv libAaru.Compression.Native.so runtimes/linux-arm64/native/
 # Detected system processor: mips
 rm -f CMakeCache.txt
 mkdir -p runtimes/linux-mips64/native
-docker run --rm dockcross/linux-mips >docker/dockcross-linux-mips64
+docker run --rm dockcross/linux-mips > docker/dockcross-linux-mips64
 chmod +x docker/dockcross-linux-mips64
 docker/dockcross-linux-mips64 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
 docker/dockcross-linux-mips64 make Aaru.Compression.Native
@@ -107,7 +107,7 @@ mv libAaru.Compression.Native.so runtimes/linux-mips64/native/
 # Detected system processor: ppc64le
 rm -f CMakeCache.txt
 mkdir -p runtimes/linux-ppc64le/native
-docker run --rm dockcross/linux-ppc64le >docker/dockcross-linux-ppc64le
+docker run --rm dockcross/linux-ppc64le > docker/dockcross-linux-ppc64le
 chmod +x docker/dockcross-linux-ppc64le
 docker/dockcross-linux-ppc64le cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
 docker/dockcross-linux-ppc64le make Aaru.Compression.Native
@@ -146,7 +146,7 @@ mv libAaru.Compression.Native.so runtimes/linux-ppc64le/native/
 # Detected system processor: s390x
 rm -f CMakeCache.txt
 mkdir -p runtimes/linux-s390x/native
-docker run --rm dockcross/linux-s390x >docker/dockcross-linux-s390x
+docker run --rm dockcross/linux-s390x > docker/dockcross-linux-s390x
 chmod +x docker/dockcross-linux-s390x
 docker/dockcross-linux-s390x cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
 docker/dockcross-linux-s390x make Aaru.Compression.Native
@@ -157,7 +157,7 @@ mv libAaru.Compression.Native.so runtimes/linux-s390x/native/
 # Detected system processor: x86_64
 rm -f CMakeCache.txt
 mkdir -p runtimes/linux-x64/native
-docker run --rm dockcross/linux-x64 >docker/dockcross-linux-x64
+docker run --rm dockcross/linux-x64 > docker/dockcross-linux-x64
 chmod +x docker/dockcross-linux-x64
 docker/dockcross-linux-x64 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
 docker/dockcross-linux-x64 make Aaru.Compression.Native
@@ -204,7 +204,7 @@ mv libAaru.Compression.Native.so runtimes/win-arm64/native/libAaru.Compression.N
 # TODO: Requires MSVCRT.DLL
 rm -f CMakeCache.txt
 mkdir -p runtimes/win-x64/native
-docker run --rm dockcross/windows-shared-x64 >docker/dockcross-win-x64
+docker run --rm dockcross/windows-shared-x64 > docker/dockcross-win-x64
 chmod +x docker/dockcross-win-x64
 docker/dockcross-win-x64 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
 docker/dockcross-win-x64 make Aaru.Compression.Native
@@ -240,9 +240,6 @@ fi
 # TODO: "linux-musl-arm64"
 # TODO: "linux-musl-x64"
 # TODO: "linux-musl-x86"
-# TODO: "android-arm64"
-# TODO: "android-x64"
-# TODO: "android-x86"
 
 nuget pack
 
