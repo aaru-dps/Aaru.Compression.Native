@@ -20,25 +20,25 @@
 #include <cstddef>
 #include <cstdint>
 
-#include "../flac.h"
 #include "../library.h"
+#include "../flac.h"
 #include "crc32.h"
 #include "gtest/gtest.h"
 
 #define EXPECTED_CRC32 0xdfbc99bb
 
-static const uint8_t* buffer;
+static const uint8_t *buffer;
 
 class flacFixture : public ::testing::Test
 {
-  public:
+public:
     flacFixture()
     {
         // initialization;
         // can also be done in SetUp()
     }
 
-  protected:
+protected:
     void SetUp()
     {
         char path[PATH_MAX];
@@ -47,13 +47,13 @@ class flacFixture : public ::testing::Test
         getcwd(path, PATH_MAX);
         snprintf(filename, PATH_MAX, "%s/data/flac.flac", path);
 
-        FILE* file = fopen(filename, "rb");
-        buffer     = (const uint8_t*)malloc(6534197);
-        fread((void*)buffer, 1, 6534197, file);
+        FILE *file = fopen(filename, "rb");
+        buffer     = (const uint8_t *)malloc(6534197);
+        fread((void *)buffer, 1, 6534197, file);
         fclose(file);
     }
 
-    void TearDown() { free((void*)buffer); }
+    void TearDown() { free((void *)buffer); }
 
     ~flacFixture()
     {
@@ -65,7 +65,7 @@ class flacFixture : public ::testing::Test
 
 TEST_F(flacFixture, flac)
 {
-    auto* outBuf = (uint8_t*)malloc(9633792);
+    auto *outBuf = (uint8_t *)malloc(9633792);
 
     auto decoded = AARU_flac_decode_redbook_buffer(outBuf, 9633792, buffer, 6534197);
 
@@ -85,46 +85,33 @@ TEST_F(flacFixture, flacCompress)
     uint           decmp_len    = original_len;
     char           path[PATH_MAX];
     char           filename[PATH_MAX * 2];
-    FILE*          file;
+    FILE          *file;
     uint32_t       original_crc, decmp_crc;
-    const uint8_t* original;
-    uint8_t*       cmp_buffer;
-    uint8_t*       decmp_buffer;
+    const uint8_t *original;
+    uint8_t       *cmp_buffer;
+    uint8_t       *decmp_buffer;
     size_t         newSize;
 
     // Allocate buffers
-    original     = (const uint8_t*)malloc(original_len);
-    cmp_buffer   = (uint8_t*)malloc(cmp_len);
-    decmp_buffer = (uint8_t*)malloc(decmp_len);
+    original     = (const uint8_t *)malloc(original_len);
+    cmp_buffer   = (uint8_t *)malloc(cmp_len);
+    decmp_buffer = (uint8_t *)malloc(decmp_len);
 
     // Read the file
     getcwd(path, PATH_MAX);
     snprintf(filename, PATH_MAX, "%s/data/audio.bin", path);
 
     file = fopen(filename, "rb");
-    fread((void*)original, 1, original_len, file);
+    fread((void *)original, 1, original_len, file);
     fclose(file);
 
     // Calculate the CRC
     original_crc = crc32_data(original, original_len);
 
     // Compress
-    newSize = AARU_flac_encode_redbook_buffer(cmp_buffer,
-                                              cmp_len,
-                                              original,
-                                              original_len,
-                                              4608,
-                                              1,
-                                              0,
-                                              "partial_tukey(0/1.0/1.0)",
-                                              12,
-                                              0,
-                                              1,
-                                              false,
-                                              0,
-                                              8,
-                                              "Aaru.Compression.Native.Tests",
-                                              strlen("Aaru.Compression.Native.Tests"));
+    newSize = AARU_flac_encode_redbook_buffer(cmp_buffer, cmp_len, original, original_len, 4608, 1, 0,
+                                              "partial_tukey(0/1.0/1.0)", 12, 0, 1, false, 0, 8,
+                                              "Aaru.Compression.Native.Tests", strlen("Aaru.Compression.Native.Tests"));
     cmp_len = newSize;
 
     // Decompress
@@ -136,7 +123,7 @@ TEST_F(flacFixture, flacCompress)
     decmp_crc = crc32_data(decmp_buffer, decmp_len);
 
     // Free buffers
-    free((void*)original);
+    free((void *)original);
     free(cmp_buffer);
     free(decmp_buffer);
 

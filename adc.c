@@ -19,10 +19,14 @@ FORCE_INLINE int GetChunkSize(uint8_t byt)
 {
     switch(GetChunkType(byt))
     {
-        case ADC_PLAIN: return (byt & 0x7F) + 1;
-        case ADC_TWO_BYTE: return ((byt & 0x3F) >> 2) + 3;
-        case ADC_THREE_BYTE: return (byt & 0x3F) + 4;
-        default: return -1;
+        case ADC_PLAIN:
+            return (byt & 0x7F) + 1;
+        case ADC_TWO_BYTE:
+            return ((byt & 0x3F) >> 2) + 3;
+        case ADC_THREE_BYTE:
+            return (byt & 0x3F) + 4;
+        default:
+            return -1;
     }
 }
 
@@ -30,17 +34,19 @@ FORCE_INLINE int GetOffset(uint8_t chunk[])
 {
     switch(GetChunkType(chunk[0]))
     {
-        case ADC_PLAIN: return 0;
-        case ADC_TWO_BYTE: return ((chunk[0] & 0x03) << 8) + chunk[1];
-        case ADC_THREE_BYTE: return (chunk[1] << 8) + chunk[2];
-        default: return -1;
+        case ADC_PLAIN:
+            return 0;
+        case ADC_TWO_BYTE:
+            return ((chunk[0] & 0x03) << 8) + chunk[1];
+        case ADC_THREE_BYTE:
+            return (chunk[1] << 8) + chunk[2];
+        default:
+            return -1;
     }
 }
 
-AARU_EXPORT int32_t AARU_CALL AARU_adc_decode_buffer(uint8_t*       dst_buffer,
-                                                     int32_t        dst_size,
-                                                     const uint8_t* src_buffer,
-                                                     int32_t        src_size)
+AARU_EXPORT int32_t AARU_CALL AARU_adc_decode_buffer(uint8_t *dst_buffer, int32_t dst_size, const uint8_t *src_buffer,
+                                                     int32_t src_size)
 {
     int     inputPosition = 0;
     int     chunkSize;

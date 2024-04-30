@@ -51,13 +51,13 @@ check_include_file("arm_neon.h" FLAC__HAS_NEONINTRIN)
 check_include_file("semaphore.h" HAVE_SEMAPHORE_H)
 
 if(NOT HAVE_STDINT_H OR NOT HAVE_STDBOOL_H)
-    message(SEND_ERROR "Header stdint.h and/or stdbool.h not found")
+  message(SEND_ERROR "Header stdint.h and/or stdbool.h not found")
 endif()
 
 if(MSVC)
-    check_include_file("intrin.h" FLAC__HAS_X86INTRIN)
+  check_include_file("intrin.h" FLAC__HAS_X86INTRIN)
 else()
-    check_include_file("x86intrin.h" FLAC__HAS_X86INTRIN)
+  check_include_file("x86intrin.h" FLAC__HAS_X86INTRIN)
 endif()
 
 check_function_exists(fseeko HAVE_FSEEKO)
@@ -66,14 +66,14 @@ check_c_source_compiles("int main() { return __builtin_bswap16 (0) ; }" HAVE_BSW
 check_c_source_compiles("int main() { return __builtin_bswap32 (0) ; }" HAVE_BSWAP32)
 
 if(NOT "${CMAKE_C_PLATFORM_ID}" MATCHES "MinGW" OR (NOT ${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm" AND NOT ${CMAKE_SYSTEM_PROCESSOR} MATCHES "aarch64"))
-    test_big_endian(CPU_IS_BIG_ENDIAN)
+  test_big_endian(CPU_IS_BIG_ENDIAN)
 endif()
 
 check_c_compiler_flag(-mstackrealign HAVE_STACKREALIGN_FLAG)
 
 if(CMAKE_SYSTEM_PROCESSOR STREQUAL "i686" AND HAVE_STACKREALIGN_FLAG)
-    add_compile_options(-mstackrealign)
-    add_compile_options($<$<OR:$<COMPILE_LANGUAGE:C>,$<COMPILE_LANGUAGE:CXX>>:-mstackrealign>)
+  add_compile_options(-mstackrealign)
+  add_compile_options($<$<OR:$<COMPILE_LANGUAGE:C>,$<COMPILE_LANGUAGE:CXX>>:-mstackrealign>)
 endif()
 
 include_directories("3rdparty/flac/include")
@@ -82,9 +82,9 @@ include_directories("${CMAKE_CURRENT_BINARY_DIR}/3rdparty/flac")
 add_definitions(-DHAVE_CONFIG_H)
 
 if(MSVC)
-    add_definitions(
-            -D_CRT_SECURE_NO_WARNINGS
-            -D_USE_MATH_DEFINES)
+  add_definitions(
+          -D_CRT_SECURE_NO_WARNINGS
+          -D_USE_MATH_DEFINES)
 endif()
 
 option(WITH_ASM "Use any assembly optimization routines" ON)
@@ -101,36 +101,36 @@ include(CheckA64NEON)
 
 check_cpu_arch_x64(FLAC__CPU_X86_64)
 if(NOT FLAC__CPU_X86_64)
-    check_cpu_arch_x86(FLAC__CPU_IA32)
+  check_cpu_arch_x86(FLAC__CPU_IA32)
 endif()
 
 if(FLAC__CPU_X86_64 OR FLAC__CPU_IA32)
-    set(FLAC__ALIGN_MALLOC_DATA 1)
-    option(WITH_AVX "Enable AVX, AVX2 optimizations (with runtime detection, resulting binary does not require AVX2, so only necessary when a compiler doesn't know about AVX)" ON)
-    if(WITH_AVX AND MSVC)
-        set_source_files_properties(fixed_intrin_avx2.c lpc_intrin_avx2.c stream_encoder_intrin_avx2.c PROPERTIES COMPILE_FLAGS /arch:AVX2)
-        set_source_files_properties(lpc_intrin_fma.c PROPERTIES COMPILE_FLAGS "/arch:AVX2 /fp:fast")
-    endif()
-    if(WITH_AVX AND (CMAKE_C_COMPILER_ID MATCHES "Clang"))
-        set_source_files_properties(lpc_intrin_fma.c PROPERTIES COMPILE_FLAGS "-ffast-math")
-    endif()
+  set(FLAC__ALIGN_MALLOC_DATA 1)
+  option(WITH_AVX "Enable AVX, AVX2 optimizations (with runtime detection, resulting binary does not require AVX2, so only necessary when a compiler doesn't know about AVX)" ON)
+  if(WITH_AVX AND MSVC)
+    set_source_files_properties(fixed_intrin_avx2.c lpc_intrin_avx2.c stream_encoder_intrin_avx2.c PROPERTIES COMPILE_FLAGS /arch:AVX2)
+    set_source_files_properties(lpc_intrin_fma.c PROPERTIES COMPILE_FLAGS "/arch:AVX2 /fp:fast")
+  endif()
+  if(WITH_AVX AND (CMAKE_C_COMPILER_ID MATCHES "Clang"))
+    set_source_files_properties(lpc_intrin_fma.c PROPERTIES COMPILE_FLAGS "-ffast-math")
+  endif()
 else()
-    if(FLAC__CPU_ARM64)
-        check_a64neon(FLAC__HAS_A64NEONINTRIN)
-    endif()
+  if(FLAC__CPU_ARM64)
+    check_a64neon(FLAC__HAS_A64NEONINTRIN)
+  endif()
 endif()
 
 if(NOT WITH_ASM)
-    add_definitions(-DFLAC__NO_ASM)
+  add_definitions(-DFLAC__NO_ASM)
 endif()
 
 if(HAVE_SEMAPHORE_H)
-    set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
-    set(THREADS_PREFER_PTHREAD_FLAG TRUE)
-    find_package(Threads)
-    if(CMAKE_USE_PTHREADS_INIT)
-        set(HAVE_PTHREAD 1)
-    endif()
+  set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
+  set(THREADS_PREFER_PTHREAD_FLAG TRUE)
+  find_package(Threads)
+  if(CMAKE_USE_PTHREADS_INIT)
+    set(HAVE_PTHREAD 1)
+  endif()
 endif()
 
 include_directories("3rdparty/flac/src/libFLAC/include")
@@ -177,13 +177,13 @@ target_compile_definitions("Aaru.Compression.Native" PUBLIC FLAC__NO_FILEIO)
 
 # Disable fortify source when not-release or when cross-building with MingW for WoA
 if(CMAKE_BUILD_TYPE STREQUAL Debug OR CMAKE_BUILD_TYPE STREQUAL RelWithDebInfo OR "${CMAKE_C_PLATFORM_ID}" MATCHES "MinGW")
-    set(DODEFINE_FORTIFY_SOURCE 0)
+  set(DODEFINE_FORTIFY_SOURCE 0)
 endif()
 
 set_property(TARGET "Aaru.Compression.Native" PROPERTY C_VISIBILITY_PRESET hidden)
 
 if(ARCHITECTURE_IS_64BIT)
-    set(ENABLE_64_BIT_WORDS 1)
+  set(ENABLE_64_BIT_WORDS 1)
 endif()
 
 configure_file(3rdparty/flac/config.cmake.h.in 3rdparty/flac/config.h)

@@ -24,15 +24,13 @@
 #include "library.h"
 #include "apple_rle.h"
 
-AARU_EXPORT int32_t AARU_CALL AARU_apple_rle_decode_buffer(uint8_t*       dst_buffer,
-                                                           int32_t        dst_size,
-                                                           const uint8_t* src_buffer,
-                                                           int32_t        src_size)
+AARU_EXPORT int32_t AARU_CALL AARU_apple_rle_decode_buffer(uint8_t *dst_buffer, int32_t dst_size,
+                                                           const uint8_t *src_buffer, int32_t src_size)
 {
     static int32_t count         = 0;
-    static bool    nextA         = true; // true if A, false if B
+    static bool    nextA         = true;  // true if A, false if B
     static uint8_t repeatedByteA = 0, repeatedByteB = 0;
-    static bool    repeatMode = false; // true if we're repeating, false if we're just copying
+    static bool    repeatMode = false;  // true if we're repeating, false if we're just copying
     int32_t        in_pos = 0, out_pos = 0;
 
     while(in_pos <= src_size && out_pos <= dst_size)

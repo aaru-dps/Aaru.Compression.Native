@@ -20,25 +20,25 @@
 #include <cstdint>
 #include <cstring>
 
-#include "../apple_rle.h"
 #include "../library.h"
+#include "../apple_rle.h"
 #include "crc32.h"
 #include "gtest/gtest.h"
 
 #define EXPECTED_CRC32 0x3525ef06
 
-static const uint8_t* buffer;
+static const uint8_t *buffer;
 
 class apple_rleFixture : public ::testing::Test
 {
-  public:
+public:
     apple_rleFixture()
     {
         // initialization;
         // can also be done in SetUp()
     }
 
-  protected:
+protected:
     void SetUp()
     {
         char path[PATH_MAX];
@@ -47,13 +47,13 @@ class apple_rleFixture : public ::testing::Test
         getcwd(path, PATH_MAX);
         snprintf(filename, PATH_MAX, "%s/data/apple_rle.bin", path);
 
-        FILE* file = fopen(filename, "rb");
-        buffer     = (const uint8_t*)malloc(1102);
-        fread((void*)buffer, 1, 1102, file);
+        FILE *file = fopen(filename, "rb");
+        buffer     = (const uint8_t *)malloc(1102);
+        fread((void *)buffer, 1, 1102, file);
         fclose(file);
     }
 
-    void TearDown() { free((void*)buffer); }
+    void TearDown() { free((void *)buffer); }
 
     ~apple_rleFixture()
     {
@@ -65,7 +65,7 @@ class apple_rleFixture : public ::testing::Test
 
 TEST_F(apple_rleFixture, apple_rle)
 {
-    auto* outBuf = (uint8_t*)malloc(32768);
+    auto *outBuf = (uint8_t *)malloc(32768);
 
     auto decoded = AARU_apple_rle_decode_buffer(outBuf, 32768, buffer, 1102);
 

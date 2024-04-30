@@ -12,23 +12,21 @@
 #include "3rdparty/flac/include/FLAC/stream_encoder.h"
 #include "flac.h"
 
-static FLAC__StreamDecoderReadStatus
-    read_callback(const FLAC__StreamDecoder* decoder, FLAC__byte buffer[], size_t* bytes, void* client_data);
-static FLAC__StreamDecoderWriteStatus write_callback(const FLAC__StreamDecoder* decoder,
-                                                     const FLAC__Frame*         frame,
-                                                     const FLAC__int32* const   buffer[],
-                                                     void*                      client_data);
-static void
-    error_callback(const FLAC__StreamDecoder* decoder, FLAC__StreamDecoderErrorStatus status, void* client_data);
+static FLAC__StreamDecoderReadStatus read_callback(const FLAC__StreamDecoder *decoder, FLAC__byte buffer[],
+                                                   size_t *bytes, void *client_data);
 
-AARU_EXPORT size_t AARU_CALL AARU_flac_decode_redbook_buffer(uint8_t*       dst_buffer,
-                                                             size_t         dst_size,
-                                                             const uint8_t* src_buffer,
-                                                             size_t         src_size)
+static FLAC__StreamDecoderWriteStatus write_callback(const FLAC__StreamDecoder *decoder, const FLAC__Frame *frame,
+                                                     const FLAC__int32 const *buffer[], void *client_data);
+
+static void error_callback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorStatus status,
+                           void *client_data);
+
+AARU_EXPORT size_t AARU_CALL AARU_flac_decode_redbook_buffer(uint8_t *dst_buffer, size_t dst_size,
+                                                             const uint8_t *src_buffer, size_t src_size)
 {
-    FLAC__StreamDecoder*          decoder;
+    FLAC__StreamDecoder          *decoder;
     FLAC__StreamDecoderInitStatus init_status;
-    aaru_flac_ctx*                ctx = (aaru_flac_ctx*)malloc(sizeof(aaru_flac_ctx));
+    aaru_flac_ctx                *ctx = (aaru_flac_ctx *)malloc(sizeof(aaru_flac_ctx));
     size_t                        ret_size;
 
     memset(ctx, 0, sizeof(aaru_flac_ctx));
@@ -51,8 +49,8 @@ AARU_EXPORT size_t AARU_CALL AARU_flac_decode_redbook_buffer(uint8_t*       dst_
 
     FLAC__stream_decoder_set_md5_checking(decoder, false);
 
-    init_status = FLAC__stream_decoder_init_stream(
-        decoder, read_callback, NULL, NULL, NULL, NULL, write_callback, NULL, error_callback, ctx);
+    init_status = FLAC__stream_decoder_init_stream(decoder, read_callback, NULL, NULL, NULL, NULL, write_callback, NULL,
+                                                   error_callback, ctx);
 
     if(init_status != FLAC__STREAM_DECODER_INIT_STATUS_OK)
     {
@@ -72,10 +70,10 @@ AARU_EXPORT size_t AARU_CALL AARU_flac_decode_redbook_buffer(uint8_t*       dst_
     return ret_size;
 }
 
-static FLAC__StreamDecoderReadStatus
-    read_callback(const FLAC__StreamDecoder* decoder, FLAC__byte buffer[], size_t* bytes, void* client_data)
+static FLAC__StreamDecoderReadStatus read_callback(const FLAC__StreamDecoder *decoder, FLAC__byte buffer[],
+                                                   size_t *bytes, void *client_data)
 {
-    aaru_flac_ctx* ctx = (aaru_flac_ctx*)client_data;
+    aaru_flac_ctx *ctx = (aaru_flac_ctx *)client_data;
 
     if(ctx->src_len - ctx->src_pos < *bytes) *bytes = ctx->src_len - ctx->src_pos;
 
@@ -87,14 +85,12 @@ static FLAC__StreamDecoderReadStatus
     return FLAC__STREAM_DECODER_READ_STATUS_CONTINUE;
 }
 
-static FLAC__StreamDecoderWriteStatus write_callback(const FLAC__StreamDecoder* decoder,
-                                                     const FLAC__Frame*         frame,
-                                                     const FLAC__int32* const   buffer[],
-                                                     void*                      client_data)
+static FLAC__StreamDecoderWriteStatus write_callback(const FLAC__StreamDecoder *decoder, const FLAC__Frame *frame,
+                                                     const FLAC__int32 const *buffer[], void *client_data)
 {
-    aaru_flac_ctx* ctx = (aaru_flac_ctx*)client_data;
+    aaru_flac_ctx *ctx = (aaru_flac_ctx *)client_data;
     size_t         i;
-    uint16_t*      buffer16 = (uint16_t*)(ctx->dst_buffer + ctx->dst_pos);
+    uint16_t      *buffer16 = (uint16_t *)(ctx->dst_buffer + ctx->dst_pos);
 
     // Why FLAC does not interleave the channels as PCM do, oh the mistery, we could use memcpy instead of looping
     for(i = 0; i < frame->header.blocksize && ctx->dst_pos < ctx->dst_len; i++)
@@ -119,47 +115,34 @@ static FLAC__StreamDecoderWriteStatus write_callback(const FLAC__StreamDecoder* 
     return FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE;
 }
 
-static void error_callback(const FLAC__StreamDecoder* decoder, FLAC__StreamDecoderErrorStatus status, void* client_data)
+static void error_callback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorStatus status, void *client_data)
 {
-    aaru_flac_ctx* ctx = (aaru_flac_ctx*)client_data;
+    aaru_flac_ctx *ctx = (aaru_flac_ctx *)client_data;
 
     fprintf(stderr, "Got error callback: %s\n", FLAC__StreamDecoderErrorStatusString[status]);
 
     ctx->error = 1;
 }
 
-static FLAC__StreamEncoderWriteStatus encoder_write_callback(const FLAC__StreamEncoder* encoder,
-                                                             const FLAC__byte           buffer[],
-                                                             size_t                     bytes,
-                                                             uint32_t                   samples,
-                                                             uint32_t                   current_frame,
-                                                             void*                      client_data);
+static FLAC__StreamEncoderWriteStatus encoder_write_callback(const FLAC__StreamEncoder *encoder,
+                                                             const FLAC__byte buffer[], size_t bytes, uint32_t samples,
+                                                             uint32_t current_frame, void *client_data);
 
-AARU_EXPORT size_t AARU_CALL AARU_flac_encode_redbook_buffer(uint8_t*       dst_buffer,
-                                                             size_t         dst_size,
-                                                             const uint8_t* src_buffer,
-                                                             size_t         src_size,
-                                                             uint32_t       blocksize,
-                                                             int32_t        do_mid_side_stereo,
-                                                             int32_t        loose_mid_side_stereo,
-                                                             const char*    apodization,
-                                                             uint32_t       max_lpc_order,
-                                                             uint32_t       qlp_coeff_precision,
-                                                             int32_t        do_qlp_coeff_prec_search,
-                                                             int32_t        do_exhaustive_model_search,
-                                                             uint32_t       min_residual_partition_order,
-                                                             uint32_t       max_residual_partition_order,
-                                                             const char*    application_id,
-                                                             uint32_t       application_id_len)
+AARU_EXPORT size_t AARU_CALL AARU_flac_encode_redbook_buffer(
+    uint8_t *dst_buffer, size_t dst_size, const uint8_t *src_buffer, size_t src_size, uint32_t blocksize,
+    int32_t do_mid_side_stereo, int32_t loose_mid_side_stereo, const char *apodization, uint32_t max_lpc_order,
+    uint32_t qlp_coeff_precision, int32_t do_qlp_coeff_prec_search, int32_t do_exhaustive_model_search,
+    uint32_t min_residual_partition_order, uint32_t max_residual_partition_order, const char *application_id,
+    uint32_t application_id_len)
 {
-    FLAC__StreamEncoder*          encoder;
-    aaru_flac_ctx*                ctx = (aaru_flac_ctx*)malloc(sizeof(aaru_flac_ctx));
+    FLAC__StreamEncoder          *encoder;
+    aaru_flac_ctx                *ctx = (aaru_flac_ctx *)malloc(sizeof(aaru_flac_ctx));
     FLAC__StreamEncoderInitStatus init_status;
     size_t                        ret_size;
-    FLAC__int32*                  pcm;
+    FLAC__int32                  *pcm;
     int                           i;
-    int16_t*                      buffer16 = (int16_t*)src_buffer;
-    FLAC__StreamMetadata*         metadata[1];
+    int16_t                      *buffer16 = (int16_t *)src_buffer;
+    FLAC__StreamMetadata         *metadata[1];
 
     memset(ctx, 0, sizeof(aaru_flac_ctx));
 
@@ -213,8 +196,8 @@ AARU_EXPORT size_t AARU_CALL AARU_flac_encode_redbook_buffer(uint8_t*       dst_
 
     if(application_id_len > 0 && application_id != NULL)
         if((metadata[0] = FLAC__metadata_object_new(FLAC__METADATA_TYPE_APPLICATION)) != NULL)
-            FLAC__metadata_object_application_set_data(
-                metadata[0], (unsigned char*)application_id, application_id_len, true);
+            FLAC__metadata_object_application_set_data(metadata[0], (unsigned char *)application_id, application_id_len,
+                                                       true);
 
     FLAC__stream_encoder_set_metadata(encoder, metadata, 1);
 
@@ -245,14 +228,11 @@ AARU_EXPORT size_t AARU_CALL AARU_flac_encode_redbook_buffer(uint8_t*       dst_
     return ret_size;
 }
 
-static FLAC__StreamEncoderWriteStatus encoder_write_callback(const FLAC__StreamEncoder* encoder,
-                                                             const FLAC__byte           buffer[],
-                                                             size_t                     bytes,
-                                                             uint32_t                   samples,
-                                                             uint32_t                   current_frame,
-                                                             void*                      client_data)
+static FLAC__StreamEncoderWriteStatus encoder_write_callback(const FLAC__StreamEncoder *encoder,
+                                                             const FLAC__byte buffer[], size_t bytes, uint32_t samples,
+                                                             uint32_t current_frame, void *client_data)
 {
-    aaru_flac_ctx* ctx = (aaru_flac_ctx*)client_data;
+    aaru_flac_ctx *ctx = (aaru_flac_ctx *)client_data;
 
     if(bytes > ctx->dst_len - ctx->dst_pos) bytes = ctx->dst_len - ctx->dst_pos;
 

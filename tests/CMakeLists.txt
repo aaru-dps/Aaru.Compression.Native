@@ -1,5 +1,5 @@
 if("${CMAKE_C_PLATFORM_ID}" MATCHES "MinGW" OR "${AARU_BUILD_PACKAGE}" MATCHES 1)
-    return()
+  return()
 endif()
 
 # 'Google_test' is the subproject name

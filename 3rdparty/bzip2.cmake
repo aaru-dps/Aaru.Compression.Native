@@ -17,28 +17,28 @@ message(STATUS "BZIP2 VERSION: ${BZ_VERSION}")
 
 # Do not disable assertions based on CMAKE_BUILD_TYPE.
 foreach(_build_type Release MinSizeRel RelWithDebInfo)
-    foreach(_lang C)
-        string(TOUPPER CMAKE_${_lang}_FLAGS_${_build_type} _var)
-        string(REGEX REPLACE "(^|)[/-]D *NDEBUG($|)" " " ${_var} "${${_var}}")
-    endforeach()
+  foreach(_lang C)
+    string(TOUPPER CMAKE_${_lang}_FLAGS_${_build_type} _var)
+    string(REGEX REPLACE "(^|)[/-]D *NDEBUG($|)" " " ${_var} "${${_var}}")
+  endforeach()
 endforeach()
 
 # Support the latest c++ standard available.
 include(ExtractValidFlags)
 
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
-    set(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING "Choose the build type" FORCE)
+  set(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING "Choose the build type" FORCE)
 
-    # Include "None" as option to disable any additional (optimization) flags,
-    # relying on just CMAKE_C_FLAGS and CMAKE_CXX_FLAGS (which are empty by
-    # default). These strings are presented in cmake-gui.
-    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS
-                 None Debug Release MinSizeRel RelWithDebInfo)
+  # Include "None" as option to disable any additional (optimization) flags,
+  # relying on just CMAKE_C_FLAGS and CMAKE_CXX_FLAGS (which are empty by
+  # default). These strings are presented in cmake-gui.
+  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS
+               None Debug Release MinSizeRel RelWithDebInfo)
 endif()
 
 # Always use '-fPIC'/'-fPIE' option, except when using MingW to compile for WoA.
 if(NOT "${CMAKE_C_PLATFORM_ID}" MATCHES "MinGW" OR (NOT "${CMAKE_SYSTEM_PROCESSOR}" MATCHES "aarch64" AND NOT "${CMAKE_SYSTEM_PROCESSOR}" MATCHES "arm"))
-    set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+  set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 endif()
 
 # Checks for header files.
@@ -60,13 +60,13 @@ include(CheckTypeSize)
 # Checks for typedefs, structures, and compiler characteristics.
 # AC_TYPE_SIZE_T
 if(NOT "${CMAKE_C_PLATFORM_ID}" MATCHES "MinGW" OR (NOT ${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm" AND NOT ${CMAKE_SYSTEM_PROCESSOR} MATCHES "aarch64"))
-    check_type_size("ssize_t" SIZEOF_SSIZE_T)
+  check_type_size("ssize_t" SIZEOF_SSIZE_T)
 endif()
 
 if(NOT SIZEOF_SSIZE_T)
-    # ssize_t is a signed type in POSIX storing at least -1.
-    # Set it to "int" to match the behavior of AC_TYPE_SSIZE_T (autotools).
-    set(ssize_t int)
+  # ssize_t is a signed type in POSIX storing at least -1.
+  # Set it to "int" to match the behavior of AC_TYPE_SSIZE_T (autotools).
+  set(ssize_t int)
 endif()
 
 include(CheckStructHasMember)
@@ -82,11 +82,11 @@ include(CheckSymbolExists)
 # XXX does this correctly detect initgroups (un)availability on cygwin?
 check_symbol_exists(initgroups grp.h HAVE_DECL_INITGROUPS)
 if(NOT HAVE_DECL_INITGROUPS AND HAVE_UNISTD_H)
-    # FreeBSD declares initgroups() in unistd.h
-    check_symbol_exists(initgroups unistd.h HAVE_DECL_INITGROUPS2)
-    if(HAVE_DECL_INITGROUPS2)
-        set(HAVE_DECL_INITGROUPS 1)
-    endif()
+  # FreeBSD declares initgroups() in unistd.h
+  check_symbol_exists(initgroups unistd.h HAVE_DECL_INITGROUPS2)
+  if(HAVE_DECL_INITGROUPS2)
+    set(HAVE_DECL_INITGROUPS 1)
+  endif()
 endif()
 
 # The build targets.

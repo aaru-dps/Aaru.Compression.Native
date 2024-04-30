@@ -19,37 +19,38 @@
 extern "C"
 {
 #endif
+
 #include <stdint.h>
 
 #define CRC32_ISO_POLY 0xEDB88320
 #define CRC32_ISO_SEED 0xFFFFFFFF
 
-uint32_t crc32_data(const uint8_t *data, uint32_t len)
-{
-    uint32_t localHashInt = CRC32_ISO_SEED;
-    uint32_t localTable[256];
-    int i, j;
-
-    for(i = 0; i < 256; i++)
+    uint32_t crc32_data(const uint8_t *data, uint32_t len)
     {
-        uint32_t entry = (uint32_t)i;
+        uint32_t localHashInt = CRC32_ISO_SEED;
+        uint32_t localTable[256];
+        int      i, j;
 
-        for(j = 0; j < 8; j++)
-            if((entry & 1) == 1)
-                entry = (entry >> 1) ^ CRC32_ISO_POLY;
-            else
-                entry >>= 1;
+        for(i = 0; i < 256; i++)
+        {
+            uint32_t entry = (uint32_t)i;
 
-        localTable[i] = entry;
+            for(j = 0; j < 8; j++)
+                if((entry & 1) == 1)
+                    entry = (entry >> 1) ^ CRC32_ISO_POLY;
+                else
+                    entry >>= 1;
+
+            localTable[i] = entry;
+        }
+
+        for(i = 0; i < len; i++) localHashInt = (localHashInt >> 8) ^ localTable[data[i] ^ (localHashInt & 0xff)];
+
+        localHashInt ^= CRC32_ISO_SEED;
+
+        return localHashInt;
     }
 
-    for(i = 0; i < len; i++)
-        localHashInt = (localHashInt >> 8) ^ localTable[data[i] ^ (localHashInt & 0xff)];
-
-    localHashInt ^= CRC32_ISO_SEED;
-
-    return localHashInt;
-}
 #ifdef __cplusplus
 }
 #endif

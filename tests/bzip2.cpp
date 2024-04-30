@@ -26,18 +26,18 @@
 
 #define EXPECTED_CRC32 0xc64059c0
 
-static const uint8_t* buffer;
+static const uint8_t *buffer;
 
 class bzip2Fixture : public ::testing::Test
 {
-  public:
+public:
     bzip2Fixture()
     {
         // initialization;
         // can also be done in SetUp()
     }
 
-  protected:
+protected:
     void SetUp()
     {
         char path[PATH_MAX];
@@ -46,13 +46,13 @@ class bzip2Fixture : public ::testing::Test
         getcwd(path, PATH_MAX);
         snprintf(filename, PATH_MAX, "%s/data/bzip2.bz2", path);
 
-        FILE* file = fopen(filename, "rb");
-        buffer     = (const uint8_t*)malloc(1053934);
-        fread((void*)buffer, 1, 1053934, file);
+        FILE *file = fopen(filename, "rb");
+        buffer     = (const uint8_t *)malloc(1053934);
+        fread((void *)buffer, 1, 1053934, file);
         fclose(file);
     }
 
-    void TearDown() { free((void*)buffer); }
+    void TearDown() { free((void *)buffer); }
 
     ~bzip2Fixture()
     {
@@ -65,7 +65,7 @@ class bzip2Fixture : public ::testing::Test
 TEST_F(bzip2Fixture, bzip2)
 {
     uint  real_size = 1048576;
-    auto* outBuf    = (uint8_t*)malloc(1048576);
+    auto *outBuf    = (uint8_t *)malloc(1048576);
 
     auto bz_err = AARU_bzip2_decode_buffer(outBuf, &real_size, buffer, 1053934);
 
@@ -87,24 +87,24 @@ TEST_F(bzip2Fixture, bzip2Compress)
     uint           decmp_len    = original_len;
     char           path[PATH_MAX];
     char           filename[PATH_MAX * 2];
-    FILE*          file;
+    FILE          *file;
     uint32_t       original_crc, decmp_crc;
     int            bz_err;
-    const uint8_t* original;
-    uint8_t*       cmp_buffer;
-    uint8_t*       decmp_buffer;
+    const uint8_t *original;
+    uint8_t       *cmp_buffer;
+    uint8_t       *decmp_buffer;
 
     // Allocate buffers
-    original     = (const uint8_t*)malloc(original_len);
-    cmp_buffer   = (uint8_t*)malloc(cmp_len);
-    decmp_buffer = (uint8_t*)malloc(decmp_len);
+    original     = (const uint8_t *)malloc(original_len);
+    cmp_buffer   = (uint8_t *)malloc(cmp_len);
+    decmp_buffer = (uint8_t *)malloc(decmp_len);
 
     // Read the file
     getcwd(path, PATH_MAX);
     snprintf(filename, PATH_MAX, "%s/data/data.bin", path);
 
     file = fopen(filename, "rb");
-    fread((void*)original, 1, original_len, file);
+    fread((void *)original, 1, original_len, file);
     fclose(file);
 
     // Calculate the CRC
@@ -125,7 +125,7 @@ TEST_F(bzip2Fixture, bzip2Compress)
     decmp_crc = crc32_data(decmp_buffer, decmp_len);
 
     // Free buffers
-    free((void*)original);
+    free((void *)original);
     free(cmp_buffer);
     free(decmp_buffer);
 

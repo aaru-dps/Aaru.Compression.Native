@@ -20,25 +20,25 @@
 #include <cstdint>
 #include <cstring>
 
-#include "../adc.h"
 #include "../library.h"
+#include "../adc.h"
 #include "crc32.h"
 #include "gtest/gtest.h"
 
 #define EXPECTED_CRC32 0x5a5a7388
 
-static const uint8_t* buffer;
+static const uint8_t *buffer;
 
 class adcFixture : public ::testing::Test
 {
-  public:
+public:
     adcFixture()
     {
         // initialization;
         // can also be done in SetUp()
     }
 
-  protected:
+protected:
     void SetUp()
     {
         char path[PATH_MAX];
@@ -47,13 +47,13 @@ class adcFixture : public ::testing::Test
         getcwd(path, PATH_MAX);
         snprintf(filename, PATH_MAX, "%s/data/adc.bin", path);
 
-        FILE* file = fopen(filename, "rb");
-        buffer     = (const uint8_t*)malloc(34367);
-        fread((void*)buffer, 1, 34367, file);
+        FILE *file = fopen(filename, "rb");
+        buffer     = (const uint8_t *)malloc(34367);
+        fread((void *)buffer, 1, 34367, file);
         fclose(file);
     }
 
-    void TearDown() { free((void*)buffer); }
+    void TearDown() { free((void *)buffer); }
 
     ~adcFixture()
     {
@@ -65,7 +65,7 @@ class adcFixture : public ::testing::Test
 
 TEST_F(adcFixture, adc)
 {
-    auto* outBuf = (uint8_t*)malloc(327680);
+    auto *outBuf = (uint8_t *)malloc(327680);
 
     auto decoded = AARU_adc_decode_buffer(outBuf, 327680, buffer, 34367);
 

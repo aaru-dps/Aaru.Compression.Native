@@ -4,11 +4,14 @@ This repository contains the Aaru.Compression.Native library for [Aaru](https://
 
 The purpose of this library is to provide compression and de-compression algorithms for Aaru.
 
-No archiver processing code should fall here, those go in [Aaru.Compression](https://github.com/aaru-dps/Aaru/tree/devel/Aaru.Compression).
+No archiver processing code should fall here, those go
+in [Aaru.Compression](https://github.com/aaru-dps/Aaru/tree/devel/Aaru.Compression).
 
-To build you just need Docker on Linux and run `build.sh`, that will generate a NuGet package for use with Aaru.Compression.
+To build you just need Docker on Linux and run `build.sh`, that will generate a NuGet package for use with
+Aaru.Compression.
 
 Currently implemented algorithms are:
+
 - Apple Data Compression (RLE with sliding dictionary created for Apple Disk Copy's NDIF)
 - Apple RLE (Run Length Encoding created for Apple DART)
 - [BZIP2](https://gitlab.com/bzip2/bzip2.git)

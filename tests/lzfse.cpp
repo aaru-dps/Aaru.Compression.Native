@@ -26,18 +26,18 @@
 
 #define EXPECTED_CRC32 0xc64059c0
 
-static const uint8_t* buffer;
+static const uint8_t *buffer;
 
 class lzfseFixture : public ::testing::Test
 {
-  public:
+public:
     lzfseFixture()
     {
         // initialization;
         // can also be done in SetUp()
     }
 
-  protected:
+protected:
     void SetUp()
     {
         char path[PATH_MAX];
@@ -46,13 +46,13 @@ class lzfseFixture : public ::testing::Test
         getcwd(path, PATH_MAX);
         snprintf(filename, PATH_MAX, "%s/data/lzfse.bin", path);
 
-        FILE* file = fopen(filename, "rb");
-        buffer     = (const uint8_t*)malloc(1059299);
-        fread((void*)buffer, 1, 1059299, file);
+        FILE *file = fopen(filename, "rb");
+        buffer     = (const uint8_t *)malloc(1059299);
+        fread((void *)buffer, 1, 1059299, file);
         fclose(file);
     }
 
-    void TearDown() { free((void*)buffer); }
+    void TearDown() { free((void *)buffer); }
 
     ~lzfseFixture()
     {
@@ -64,7 +64,7 @@ class lzfseFixture : public ::testing::Test
 
 TEST_F(lzfseFixture, lzfse)
 {
-    auto* outBuf = (uint8_t*)malloc(1048576);
+    auto *outBuf = (uint8_t *)malloc(1048576);
 
     auto decoded = AARU_lzfse_decode_buffer(outBuf, 1048576, buffer, 1059299, nullptr);
 
@@ -84,24 +84,24 @@ TEST_F(lzfseFixture, lzfseCompress)
     uint           decmp_len    = original_len;
     char           path[PATH_MAX];
     char           filename[PATH_MAX * 2];
-    FILE*          file;
+    FILE          *file;
     uint32_t       original_crc, decmp_crc;
-    const uint8_t* original;
-    uint8_t*       cmp_buffer;
-    uint8_t*       decmp_buffer;
+    const uint8_t *original;
+    uint8_t       *cmp_buffer;
+    uint8_t       *decmp_buffer;
     size_t         newSize;
 
     // Allocate buffers
-    original     = (const uint8_t*)malloc(original_len);
-    cmp_buffer   = (uint8_t*)malloc(cmp_len);
-    decmp_buffer = (uint8_t*)malloc(decmp_len);
+    original     = (const uint8_t *)malloc(original_len);
+    cmp_buffer   = (uint8_t *)malloc(cmp_len);
+    decmp_buffer = (uint8_t *)malloc(decmp_len);
 
     // Read the file
     getcwd(path, PATH_MAX);
     snprintf(filename, PATH_MAX, "%s/data/data.bin", path);
 
     file = fopen(filename, "rb");
-    fread((void*)original, 1, original_len, file);
+    fread((void *)original, 1, original_len, file);
     fclose(file);
 
     // Calculate the CRC
@@ -120,7 +120,7 @@ TEST_F(lzfseFixture, lzfseCompress)
     decmp_crc = crc32_data(decmp_buffer, decmp_len);
 
     // Free buffers
-    free((void*)original);
+    free((void *)original);
     free(cmp_buffer);
     free(decmp_buffer);
 

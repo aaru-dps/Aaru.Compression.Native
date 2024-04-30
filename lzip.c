@@ -23,13 +23,11 @@
 #include "library.h"
 #include "3rdparty/lzlib/lzlib.h"
 
-AARU_EXPORT int32_t AARU_CALL AARU_lzip_decode_buffer(uint8_t*       dst_buffer,
-                                                      int32_t        dst_size,
-                                                      const uint8_t* src_buffer,
-                                                      int32_t        src_size)
+AARU_EXPORT int32_t AARU_CALL AARU_lzip_decode_buffer(uint8_t *dst_buffer, int32_t dst_size, const uint8_t *src_buffer,
+                                                      int32_t src_size)
 {
     int           max_in_size;
-    void*         ctx;
+    void         *ctx;
     enum LZ_Errno lz_err;
     int32_t       in_pos = 0, out_pos = 0, in_size;
     int           rd;
@@ -83,15 +81,12 @@ AARU_EXPORT int32_t AARU_CALL AARU_lzip_decode_buffer(uint8_t*       dst_buffer,
     return out_pos;
 }
 
-AARU_EXPORT int32_t AARU_CALL AARU_lzip_encode_buffer(uint8_t*       dst_buffer,
-                                                      int32_t        dst_size,
-                                                      const uint8_t* src_buffer,
-                                                      int32_t        src_size,
-                                                      int32_t        dictionary_size,
-                                                      int32_t        match_len_limit)
+AARU_EXPORT int32_t AARU_CALL AARU_lzip_encode_buffer(uint8_t *dst_buffer, int32_t dst_size, const uint8_t *src_buffer,
+                                                      int32_t src_size, int32_t dictionary_size,
+                                                      int32_t match_len_limit)
 {
     int           max_in_size;
-    void*         ctx;
+    void         *ctx;
     enum LZ_Errno lz_err;
     int32_t       in_pos = 0, out_pos = 0, in_size;
     int           rd;
