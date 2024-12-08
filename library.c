@@ -21,6 +21,7 @@
 
 #include "library.h"
 #include "3rdparty/bzip2/bzlib.h"
+#include "3rdparty/lz4/lib/lz4.h"
 #include "3rdparty/lzfse/src/lzfse.h"
 #include "3rdparty/lzma/C/LzmaLib.h"
 #include "3rdparty/zstd/lib/zstd.h"
@@ -36,6 +37,18 @@ AARU_EXPORT int32_t AARU_CALL AARU_bzip2_encode_buffer(uint8_t *dst_buffer, uint
                                                        int32_t blockSize100k)
 {
     return BZ2_bzBuffToBuffCompress((char *)dst_buffer, dst_size, (char *)src_buffer, src_size, blockSize100k, 0, 0);
+}
+
+AARU_EXPORT int32_t AARU_CALL AARU_lz4_decode_buffer(uint8_t *dst_buffer, int32_t dst_size, const uint8_t *src_buffer,
+                                                     int32_t src_size)
+{
+    return LZ4_decompress_safe((const char *)src_buffer, (char *)dst_buffer, src_size, dst_size);
+}
+
+AARU_EXPORT int32_t AARU_CALL AARU_lz4_encode_buffer(uint8_t *dst_buffer, int32_t dst_size, const uint8_t *src_buffer,
+                                                     int32_t src_size)
+{
+    return LZ4_compress_default((const char *)src_buffer, (char *)dst_buffer, src_size, dst_size);
 }
 
 AARU_EXPORT size_t AARU_CALL AARU_lzfse_decode_buffer(uint8_t *dst_buffer, size_t dst_size, const uint8_t *src_buffer,

@@ -70,6 +70,12 @@ AARU_EXPORT size_t AARU_CALL AARU_flac_encode_redbook_buffer(
     uint32_t min_residual_partition_order, uint32_t max_residual_partition_order, const char *application_id,
     uint32_t application_id_len);
 
+AARU_EXPORT int32_t AARU_CALL AARU_lz4_decode_buffer(uint8_t *dst_buffer, int32_t dst_size, const uint8_t *src_buffer,
+                                                      int32_t src_size);
+
+AARU_EXPORT int32_t AARU_CALL AARU_lz4_encode_buffer(uint8_t *dst_buffer, int32_t dst_size, const uint8_t *src_buffer,
+                                                      int32_t src_size);
+
 AARU_EXPORT int32_t AARU_CALL AARU_lzip_decode_buffer(uint8_t *dst_buffer, int32_t dst_size, const uint8_t *src_buffer,
                                                       int32_t src_size);
 
