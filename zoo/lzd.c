@@ -171,7 +171,7 @@ LZDStatus LZD_Drain(LZDContext *ctx, unsigned char *out, size_t out_len, size_t 
     return LZD_OK;
 }
 
-AARU_EXPORT void LZD_Destroy(LZDContext *ctx)
+void LZD_Destroy(LZDContext *ctx)
 {
     if(!ctx) return;
     free(ctx->head);
@@ -179,13 +179,13 @@ AARU_EXPORT void LZD_Destroy(LZDContext *ctx)
     free(ctx->stack);
 }
 
-AARU_EXPORT void *CreateLZDContext(void)
+AARU_EXPORT void AARU_CALL *CreateLZDContext(void)
 {
     LZDContext *c = malloc(sizeof *c);
     return c && LZD_Init(c) == LZD_OK ? c : (free(c), NULL);
 }
 
-AARU_EXPORT void DestroyLZDContext(void *ctx)
+AARU_EXPORT void AARU_CALL DestroyLZDContext(void *ctx)
 {
     if(ctx)
     {
@@ -194,12 +194,12 @@ AARU_EXPORT void DestroyLZDContext(void *ctx)
     }
 }
 
-AARU_EXPORT int LZD_FeedNative(void *ctx, const unsigned char *data, size_t length)
+AARU_EXPORT int AARU_CALL LZD_FeedNative(void *ctx, const unsigned char *data, size_t length)
 {
     return (int)LZD_Feed(ctx, data, length);
 }
 
-AARU_EXPORT int LZD_DrainNative(void *ctx, unsigned char *outBuf, size_t outBufLen, size_t *produced)
+AARU_EXPORT int AARU_CALL LZD_DrainNative(void *ctx, unsigned char *outBuf, size_t outBufLen, size_t *produced)
 {
     return (int)LZD_Drain(ctx, outBuf, outBufLen, produced);
 }
