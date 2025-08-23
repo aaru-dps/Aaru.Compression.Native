@@ -198,7 +198,7 @@ mv libAaru.Compression.Native.so runtimes/win-arm64/native/libAaru.Compression.N
 # TODO: Requires MSVCRT.DLL
 rm -f CMakeCache.txt
 mkdir -p runtimes/win-x64/native
-docker run --rm dockcross/windows-shared-x64 > docker/dockcross-win-x64
+docker run --rm dockcross/windows-static-x64 > docker/dockcross-win-x64
 chmod +x docker/dockcross-win-x64
 docker/dockcross-win-x64 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
 docker/dockcross-win-x64 make Aaru.Compression.Native
@@ -209,7 +209,7 @@ mv libAaru.Compression.Native.dll runtimes/win-x64/native/
 # TODO: Requires MSVCRT.DLL
 rm -f CMakeCache.txt
 mkdir -p runtimes/win-x86/native
-docker run --rm dockcross/windows-shared-x86 > docker/dockcross-win-x86
+docker run --rm dockcross/windows-static-x86 > docker/dockcross-win-x86
 chmod +x docker/dockcross-win-x86
 docker/dockcross-win-x86 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 .
 docker/dockcross-win-x86 make Aaru.Compression.Native
@@ -222,6 +222,7 @@ if [[ ${OS_NAME} == Darwin ]]; then
     make Aaru.Compression.Native
     mkdir -p runtimes/osx-x64/native
     mv libAaru.Compression.Native.dylib runtimes/osx-x64/native
+    make clean
 
     rm -f CMakeCache.txt
     cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 -DAARU_MACOS_TARGET_ARCH=arm64 .
