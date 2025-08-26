@@ -112,6 +112,8 @@ AARU_EXPORT int AARU_CALL LZD_FeedNative(void *ctx, const unsigned char *data, s
 
 AARU_EXPORT int AARU_CALL LZD_DrainNative(void *ctx, unsigned char *outBuf, size_t outBufLen, size_t *produced);
 
+AARU_EXPORT int AARU_CALL lh5_decompress(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf, size_t *out_len);
+
 #define AARU_CHECKUMS_NATIVE_VERSION 0x06000089
 
 AARU_EXPORT uint64_t AARU_CALL AARU_get_acn_version();

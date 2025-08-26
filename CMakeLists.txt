@@ -130,7 +130,16 @@ add_subdirectory(3rdparty)
 
 add_library("Aaru.Compression.Native" SHARED library.c apple_rle.c apple_rle.h adc.c adc.h lzip.c flac.c flac.h
             zoo/lzd.c
-            zoo/lzd.h)
+            zoo/lzd.h
+            zoo/lzh.c
+            zoo/decode.c
+            zoo/huf.c
+            zoo/io.c
+            zoo/lh5.h
+            zoo/lh5.c
+            zoo/lzh.h
+            zoo/ar.h
+            zoo/maketbl.c)
 
 include(3rdparty/bzip2.cmake)
 include(3rdparty/flac.cmake)

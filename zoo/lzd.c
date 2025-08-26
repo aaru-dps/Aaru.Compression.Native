@@ -220,11 +220,11 @@ AARU_EXPORT void AARU_CALL DestroyLZDContext(void *ctx)
 // Public API wrapper to feed new compressed data
 AARU_EXPORT int AARU_CALL LZD_FeedNative(void *ctx, const unsigned char *data, size_t length)
 {
-    return (int)LZD_Feed(ctx, data, length);
+    return LZD_Feed(ctx, data, length);
 }
 
 // Public API wrapper to drain decompressed data
 AARU_EXPORT int AARU_CALL LZD_DrainNative(void *ctx, unsigned char *outBuf, size_t outBufLen, size_t *produced)
 {
-    return (int)LZD_Drain(ctx, outBuf, outBufLen, produced);
+    return LZD_Drain(ctx, outBuf, outBufLen, produced);
 }
