@@ -140,7 +140,8 @@ add_library("Aaru.Compression.Native" SHARED library.c apple_rle.c apple_rle.h a
             zoo/lzh.h
             zoo/ar.h
             zoo/maketbl.c
-            arc/pack.c)
+            arc/pack.c
+            arc/squeeze.c)
 
 include(3rdparty/bzip2.cmake)
 include(3rdparty/flac.cmake)

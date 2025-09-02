@@ -120,5 +120,7 @@ AARU_EXPORT uint64_t AARU_CALL AARU_get_acn_version();
 
 // ARC method 3: Stored with non-repeat packing
 AARU_EXPORT int AARU_CALL arc_decompress_pack(const unsigned char *in_buf, size_t in_len, unsigned char *out_buf, size_t *out_len);
+// ARC method 4: Huffman squeezing
+AARU_EXPORT int AARU_CALL arc_decompress_squeeze(const unsigned char *in_buf, size_t in_len, unsigned char *out_buf, size_t *out_len);
 
 #endif  // AARU_COMPRESSION_NATIVE_LIBRARY_H

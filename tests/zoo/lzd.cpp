@@ -25,7 +25,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#include "../library.h"
+#include "../../library.h"
 #include "../crc32.h"
 #include "gtest/gtest.h"
 
