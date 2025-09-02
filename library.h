@@ -124,22 +124,30 @@ AARU_EXPORT int AARU_CALL arc_decompress_pack(const unsigned char *in_buf, size_
 // ARC method 4: Huffman squeezing
 AARU_EXPORT int AARU_CALL arc_decompress_squeeze(const unsigned char *in_buf, size_t in_len, unsigned char *out_buf,
                                                  size_t *out_len);
-// Method 5: LZW (crunching)
+// ARC Method 5: LZW (crunching)
 AARU_EXPORT int AARU_CALL arc_decompress_crunch(const unsigned char *in_buf, size_t in_len, unsigned char *out_buf,
                                                 size_t *out_len);
-// Method 6: LZW with non-repeat packing (crunching)
+// ARC Method 6: LZW with non-repeat packing (crunching)
 AARU_EXPORT int AARU_CALL arc_decompress_crunch_nrpack(const unsigned char *in_buf, size_t in_len,
                                                        unsigned char *out_buf, size_t *out_len);
-// Method 7: LZW with non-repeat packing and new hash (Crunching)
+// ARC Method 7: LZW with non-repeat packing and new hash (Crunching)
 AARU_EXPORT int AARU_CALL arc_decompress_crunch_nrpack_new(const unsigned char *in_buf, size_t in_len,
                                                            unsigned char *out_buf, size_t *out_len);
 
-// Method 8: Dynamic LZW (crunching)
+// ARC Method 8: Dynamic LZW (crunching)
 AARU_EXPORT int AARU_CALL arc_decompress_crunch_dynamic(const unsigned char *in_buf, size_t in_len,
                                                         unsigned char *out_buf, size_t *out_len);
 
-// Method 9: Dynamic LZW with 13 bits (squashing)
+// ARC Method 9: Dynamic LZW with 13 bits (squashing)
 AARU_EXPORT int AARU_CALL arc_decompress_squash(const unsigned char *in_buf, size_t in_len, unsigned char *out_buf,
                                                 size_t *out_len);
+
+// ARC/PAK Method 10: LZW (crush) (unsure why it's different of the others but even XADMaster uses different codepaths)
+AARU_EXPORT int AARU_CALL pak_decompress_crush(const unsigned char *in_buf, size_t in_len, unsigned char *out_buf,
+                                               size_t *out_len);
+
+// ARC/PAK Method 11: LZSS (distill)
+AARU_EXPORT int AARU_CALL pak_decompress_distill(const unsigned char *in_buf, size_t in_len, unsigned char *out_buf,
+                                                 size_t *out_len);
 
 #endif  // AARU_COMPRESSION_NATIVE_LIBRARY_H
