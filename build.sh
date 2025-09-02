@@ -179,7 +179,7 @@ docker/dockcross-win-arm cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1
 sed -e 's/\-soname,libAaru\.Compression\.Native\.so//g' ./CMakeFiles/Aaru.Compression.Native.dir/link.txt > link.txt
 mv link.txt ./CMakeFiles/Aaru.Compression.Native.dir/link.txt
 docker/dockcross-win-arm make Aaru.Compression.Native
-mv libAaru.Compression.Native.so runtimes/win-arm/native/libAaru.Compression.Native.dll
+mv libAaru.Compression.Native.dll runtimes/win-arm/native/
 
 ## Windows (ARM64)
 # Detected system processor: aarch64
@@ -191,7 +191,7 @@ docker/dockcross-win-arm64 cmake -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE
 sed -e 's/\-soname,libAaru\.Compression\.Native\.so//g' ./CMakeFiles/Aaru.Compression.Native.dir/link.txt > link.txt
 mv link.txt ./CMakeFiles/Aaru.Compression.Native.dir/link.txt
 docker/dockcross-win-arm64 make Aaru.Compression.Native
-mv libAaru.Compression.Native.so runtimes/win-arm64/native/libAaru.Compression.Native.dll
+mv libAaru.Compression.Native.dll runtimes/win-arm64/native/
 
 ## Windows (AMD64)
 # Detected system processor: x86_64
