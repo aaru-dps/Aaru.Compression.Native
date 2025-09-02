@@ -25,7 +25,7 @@
 
 // Decompresses data using non-repeat packing.
 // This algorithm encodes runs of identical bytes.
-int arc_decompress_pack(const unsigned char *in_buf, size_t in_len, unsigned char *out_buf, size_t *out_len)
+AARU_EXPORT int AARU_CALL arc_decompress_pack(const unsigned char *in_buf, size_t in_len, unsigned char *out_buf, size_t *out_len)
 {
     // Basic validation of pointers.
     if(!in_buf || !out_buf || !out_len) { return -1; }
