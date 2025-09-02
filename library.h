@@ -134,4 +134,12 @@ AARU_EXPORT int AARU_CALL arc_decompress_crunch_nrpack(const unsigned char *in_b
 AARU_EXPORT int AARU_CALL arc_decompress_crunch_nrpack_new(const unsigned char *in_buf, size_t in_len,
                                                            unsigned char *out_buf, size_t *out_len);
 
+// Method 8: Dynamic LZW (crunching)
+AARU_EXPORT int AARU_CALL arc_decompress_crunch_dynamic(const unsigned char *in_buf, size_t in_len,
+                                                        unsigned char *out_buf, size_t *out_len);
+
+// Method 9: Dynamic LZW with 13 bits (squashing)
+AARU_EXPORT int AARU_CALL arc_decompress_squash(const unsigned char *in_buf, size_t in_len, unsigned char *out_buf,
+                                                size_t *out_len);
+
 #endif  // AARU_COMPRESSION_NATIVE_LIBRARY_H

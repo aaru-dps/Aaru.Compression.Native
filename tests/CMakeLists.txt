@@ -51,9 +51,18 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/arcpack.bin
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/arcsqueeze.bin
      DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data/)
 
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/arccrunchnr.bin
+     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data/)
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/arccrunch_dynamic.bin
+     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data/)
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/arcsquash.bin
+     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data/)
+
 # 'Google_Tests_run' is the target name
 # 'test1.cpp tests2.cpp' are source files with tests
 add_executable(tests_run apple_rle.cpp crc32.c crc32.h adc.cpp bzip2.cpp lzip.cpp lzfse.cpp zstd.cpp lzma.cpp flac.cpp
-               zoo/lzd.cpp arc/pack.cpp lh5.cpp arc/squeeze.cpp
-               arc/crunch.cpp)
+               zoo/lzd.cpp arc/pack.cpp lh5.cpp arc/squeeze.cpp arc/crunch.cpp
+               arc/squash.cpp)
 target_link_libraries(tests_run gtest gtest_main "Aaru.Compression.Native")
