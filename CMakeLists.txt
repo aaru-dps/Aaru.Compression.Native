@@ -132,7 +132,17 @@ add_library("Aaru.Compression.Native" SHARED library.c apple_rle.c apple_rle.h a
             zoo/lzd.c zoo/lzd.h zoo/lzh.c zoo/decode.c zoo/huf.c zoo/io.c zoo/lh5.c zoo/lh5.h zoo/lzh.h zoo/ar.h zoo/maketbl.c
             arc/pack.c arc/squeeze.c arc/crunch.c arc/lzw.c
             pak/crush.c pak/distill.c pak/bitstream.c pak/bitstream.h pak/lzw.c pak/lzw.h pak/prefixcode.c
-            pak/prefixcode.h)
+            pak/prefixcode.h
+            ha/acoder.c
+            ha/acoder.h
+            ha/asc.c
+            ha/asc.h
+            ha/decompress.c
+            ha/hsc.c
+            ha/hsc.h
+            ha/internal.h
+            ha/swdict.c
+            ha/swdict.h)
 
 include(3rdparty/bzip2.cmake)
 include(3rdparty/flac.cmake)

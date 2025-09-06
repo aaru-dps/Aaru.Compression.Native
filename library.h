@@ -150,4 +150,16 @@ AARU_EXPORT int AARU_CALL pak_decompress_crush(const unsigned char *in_buf, size
 AARU_EXPORT int AARU_CALL pak_decompress_distill(const unsigned char *in_buf, size_t in_len, unsigned char *out_buf,
                                                  size_t *out_len);
 
+/**
+ * HA Algorithm Types
+ */
+typedef enum {
+    HA_ALGORITHM_ASC = 0,  /* ASC algorithm */
+    HA_ALGORITHM_HSC = 1   /* HSC algorithm */
+} ha_algorithm_t;
+
+AARU_EXPORT int AARU_CALL ha_asc_decompress(const unsigned char *in_buf, size_t in_len, unsigned char *out_buf, size_t *out_len);
+
+AARU_EXPORT int AARU_CALL ha_hsc_decompress(const unsigned char *in_buf, size_t in_len, unsigned char *out_buf, size_t *out_len);
+
 #endif  // AARU_COMPRESSION_NATIVE_LIBRARY_H
