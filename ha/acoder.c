@@ -26,7 +26,7 @@ allowing it to be compiled with Borland C++ 3.1.
 
 /***********************************************************************
   Modified to work with memory buffers instead of files by
-  Copyright (C) 2005 Natalia Portillo
+  Copyright (C) 2025-2026 Natalia Portillo
 ************************************************************************/
 
 #include "internal.h"
