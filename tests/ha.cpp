@@ -66,7 +66,7 @@ TEST_F(ha_ascFixture, ha_asc)
 {
     size_t destLen = 152089;
     size_t srcLen  = 53654;
-    auto * outBuf  = (uint8_t *)malloc(53654);
+    auto * outBuf  = (uint8_t *)malloc(152089);
 
     auto err = ha_asc_decompress(buffer, srcLen, outBuf, &destLen);
 
