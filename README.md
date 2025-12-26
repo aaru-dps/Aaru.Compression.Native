@@ -16,6 +16,7 @@ Currently implemented algorithms are:
 - Apple RLE (Run Length Encoding created for Apple DART)
 - [BZIP2](https://gitlab.com/bzip2/bzip2.git)
 - [FLAC](https://github.com/xiph/flac)
+- [LZ4](https://github.com/lz4/lz4)
 - [LZFSE](https://github.com/lzfse/lzfse)
 - [LZIP](http://www.nongnu.org/lzip)
 - [LZMA](https://www.7-zip.org)

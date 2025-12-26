@@ -146,6 +146,7 @@ add_library("Aaru.Compression.Native" SHARED library.c apple_rle.c apple_rle.h a
 
 include(3rdparty/bzip2.cmake)
 include(3rdparty/flac.cmake)
+include(3rdparty/lz4.cmake)
 include(3rdparty/lzfse.cmake)
 include(3rdparty/lzip.cmake)
 include(3rdparty/lzma.cmake)
@@ -169,7 +170,7 @@ macro(target_link_libraries_whole_archive target)
   endif()
 endmacro()
 
-target_link_libraries_whole_archive("Aaru.Compression.Native" libzstd_static m)
+target_link_libraries_whole_archive("Aaru.Compression.Native" libzstd_static lz4_static m)
 
 check_include_file("semaphore.h" HAVE_SEMAPHORE_H)
 
