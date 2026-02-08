@@ -28,6 +28,9 @@
 #include "3rdparty/lzfse/src/lzvn_encode_base.h"
 #include "3rdparty/lzfse/src/lzvn_decode_base.h"
 #include "3rdparty/lzma/C/LzmaLib.h"
+#include "3rdparty/lzma/C/Xz.h"
+#include "3rdparty/lzma/C/XzEnc.h"
+#include "3rdparty/lzma/C/Alloc.h"
 #include "3rdparty/lzo-2.10/include/lzo/lzoconf.h"
 #include "3rdparty/lzo-2.10/include/lzo/lzo1.h"
 #include "3rdparty/lzo-2.10/include/lzo/lzo1a.h"
@@ -165,6 +168,102 @@ AARU_EXPORT int32_t AARU_CALL AARU_lzma_encode_buffer(uint8_t *      dst_buffer,
 {
     return LzmaCompress(dst_buffer, dst_size, src_buffer, srcLen, outProps, outPropsSize, level, dictSize, lc, lp, pb,
                         fb, numThreads);
+}
+
+// XZ buffer stream structures
+typedef struct
+{
+    ISeqInStream vt;
+    const Byte *data;
+    size_t size;
+    size_t pos;
+} CBufferInStream;
+
+static SRes BufferInStream_Read(ISeqInStreamPtr pp, void *buf, size_t *size)
+{
+    CBufferInStream *p = Z7_CONTAINER_FROM_VTBL(pp, CBufferInStream, vt);
+    size_t remaining = p->size - p->pos;
+    if (*size > remaining)
+        *size = remaining;
+    memcpy(buf, p->data + p->pos, *size);
+    p->pos += *size;
+    return SZ_OK;
+}
+
+typedef struct
+{
+    ISeqOutStream vt;
+    Byte *data;
+    size_t size;
+    size_t pos;
+} CBufferOutStream;
+
+static size_t BufferOutStream_Write(ISeqOutStreamPtr pp, const void *buf, size_t size)
+{
+    CBufferOutStream *p = Z7_CONTAINER_FROM_VTBL(pp, CBufferOutStream, vt);
+    size_t remaining = p->size - p->pos;
+    if (size > remaining)
+        size = remaining;
+    memcpy(p->data + p->pos, buf, size);
+    p->pos += size;
+    return size;
+}
+
+AARU_EXPORT int32_t AARU_CALL AARU_xz_decode_buffer(uint8_t *      dst_buffer,
+                                                    size_t *       dst_size,
+                                                    const uint8_t *src_buffer,
+                                                    size_t         src_size)
+{
+    CXzUnpacker state;
+    SizeT destLen = (SizeT)*dst_size;
+    SizeT srcLen = (SizeT)src_size;
+    ECoderStatus status;
+    SRes res;
+
+    XzUnpacker_Construct(&state, &g_Alloc);
+    XzUnpacker_Init(&state);
+
+    res = XzUnpacker_CodeFull(&state, dst_buffer, &destLen, src_buffer, &srcLen,
+                              CODER_FINISH_END, &status);
+
+    *dst_size = destLen;
+
+    XzUnpacker_Free(&state);
+
+    return res;
+}
+
+AARU_EXPORT int32_t AARU_CALL AARU_xz_encode_buffer(uint8_t *      dst_buffer,
+                                                    size_t *       dst_size,
+                                                    const uint8_t *src_buffer,
+                                                    size_t         src_size,
+                                                    uint32_t       preset,
+                                                    uint32_t       checkType)
+{
+    CXzProps props;
+    CBufferInStream inStream;
+    CBufferOutStream outStream;
+    SRes res;
+
+    XzProps_Init(&props);
+    props.lzma2Props.lzmaProps.level = preset > 9 ? 9 : preset;
+    props.checkId = checkType > XZ_CHECK_SHA256 ? XZ_CHECK_CRC64 : checkType;
+
+    inStream.vt.Read = BufferInStream_Read;
+    inStream.data = src_buffer;
+    inStream.size = src_size;
+    inStream.pos = 0;
+
+    outStream.vt.Write = BufferOutStream_Write;
+    outStream.data = dst_buffer;
+    outStream.size = *dst_size;
+    outStream.pos = 0;
+
+    res = Xz_Encode(&outStream.vt, &inStream.vt, &props, NULL);
+
+    *dst_size = outStream.pos;
+
+    return res;
 }
 
 AARU_EXPORT size_t AARU_CALL AARU_zstd_decode_buffer(void *      dst_buffer,

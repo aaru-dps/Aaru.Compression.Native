@@ -110,6 +110,12 @@ AARU_EXPORT int32_t AARU_CALL AARU_lzma_encode_buffer(uint8_t *dst_buffer, size_
                                                       int32_t level, uint32_t dictSize, int32_t lc, int32_t lp,
                                                       int32_t pb, int32_t fb, int32_t numThreads);
 
+AARU_EXPORT int32_t AARU_CALL AARU_xz_decode_buffer(uint8_t *dst_buffer, size_t *dst_size, const uint8_t *src_buffer,
+                                                    size_t src_size);
+
+AARU_EXPORT int32_t AARU_CALL AARU_xz_encode_buffer(uint8_t *dst_buffer, size_t *dst_size, const uint8_t *src_buffer,
+                                                    size_t src_size, uint32_t preset, uint32_t checkType);
+
 AARU_EXPORT size_t AARU_CALL AARU_zstd_decode_buffer(void *dst_buffer, size_t dst_size, const void *src_buffer,
                                                      size_t src_size);
 
