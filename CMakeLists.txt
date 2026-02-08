@@ -85,7 +85,7 @@ if("${CMAKE_BUILD_TYPE}" MATCHES "Release" OR "${CMAKE_BUILD_TYPE}" MATCHES "Rel
       add_compile_options("/arch:VFPv4")
     endif()
   else()
-    add_compile_options(-ffast-math -Ofast)
+    add_compile_options(-O3 -ffast-math)
 
     if("${CMAKE_C_COMPILER_ID}" MATCHES "AppleClang")
       if(${AARU_MACOS_TARGET_ARCH} MATCHES "x86_64")
