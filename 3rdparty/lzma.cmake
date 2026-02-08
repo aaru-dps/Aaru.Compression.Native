@@ -36,6 +36,20 @@ if(DEFINED AARU_MUSL)
   target_compile_definitions("Aaru.Compression.Native" PUBLIC Z7_AFFINITY_DISABLE)
 endif()
 
+# Disable SHA256 HW intrinsics on platforms where they're not available:
+# 1. 32-bit ARM (armv7) - intrinsics only exist on ARM64
+# 2. Windows ARM (MinGW cross-compilation) - crypto intrinsics not available in MinGW
+# The LZMA SDK incorrectly enables USE_HW_SHA based on clang/gcc version checks,
+# but vsha256hq_u32 and other SHA intrinsics may not be available.
+# Force __clang_major__ and __GNUC__ to 0 for Sha256Opt.c to skip HW path.
+if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "armv7" OR (${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm" AND NOT ${CMAKE_SYSTEM_PROCESSOR} MATCHES "aarch64"))
+  # 32-bit ARM
+  set_source_files_properties(${LZMA_C_DIRECTORY}/Sha256Opt.c PROPERTIES COMPILE_FLAGS "-D__clang_major__=0 -D__GNUC__=0")
+elseif("${CMAKE_C_PLATFORM_ID}" MATCHES "MinGW" AND (${CMAKE_SYSTEM_PROCESSOR} MATCHES "aarch64" OR ${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm"))
+  # Windows ARM64/ARM with MinGW - crypto intrinsics not available
+  set_source_files_properties(${LZMA_C_DIRECTORY}/Sha256Opt.c PROPERTIES COMPILE_FLAGS "-D__clang_major__=0 -D__GNUC__=0")
+endif()
+
 #target_compile_options(lzma PUBLIC -Wall)
 #target_compile_options(lzma PUBLIC -Werror)
 
