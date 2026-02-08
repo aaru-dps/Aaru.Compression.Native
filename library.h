@@ -96,6 +96,12 @@ AARU_EXPORT size_t AARU_CALL AARU_lzfse_decode_buffer(uint8_t *dst_buffer, size_
 AARU_EXPORT size_t AARU_CALL AARU_lzfse_encode_buffer(uint8_t *dst_buffer, size_t dst_size, const uint8_t *src_buffer,
                                                       size_t src_size, void *scratch_buffer);
 
+AARU_EXPORT size_t AARU_CALL AARU_lzvn_decode_buffer(uint8_t *dst_buffer, size_t dst_size, const uint8_t *src_buffer,
+                                                     size_t src_size);
+
+AARU_EXPORT size_t AARU_CALL AARU_lzvn_encode_buffer(uint8_t *dst_buffer, size_t dst_size, const uint8_t *src_buffer,
+                                                     size_t src_size, void *scratch_buffer);
+
 AARU_EXPORT int32_t AARU_CALL AARU_lzma_decode_buffer(uint8_t *dst_buffer, size_t *dst_size, const uint8_t *src_buffer,
                                                       size_t *src_size, const uint8_t *props, size_t propsSize);
 

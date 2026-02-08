@@ -19,11 +19,14 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "library.h"
 #include "3rdparty/bzip2/bzlib.h"
 #include "3rdparty/lz4/lib/lz4.h"
 #include "3rdparty/lzfse/src/lzfse.h"
+#include "3rdparty/lzfse/src/lzvn_encode_base.h"
+#include "3rdparty/lzfse/src/lzvn_decode_base.h"
 #include "3rdparty/lzma/C/LzmaLib.h"
 #include "3rdparty/lzo-2.10/include/lzo/lzoconf.h"
 #include "3rdparty/lzo-2.10/include/lzo/lzo1.h"
@@ -87,6 +90,53 @@ AARU_EXPORT size_t AARU_CALL AARU_lzfse_encode_buffer(uint8_t *      dst_buffer,
                                                       void *         scratch_buffer)
 {
     return lzfse_encode_buffer(dst_buffer, dst_size, src_buffer, src_size, scratch_buffer);
+}
+
+AARU_EXPORT size_t AARU_CALL AARU_lzvn_decode_buffer(uint8_t *      dst_buffer,
+                                                     size_t         dst_size,
+                                                     const uint8_t *src_buffer,
+                                                     size_t         src_size)
+{
+    lzvn_decoder_state state;
+    memset(&state, 0, sizeof(state));
+
+    state.src     = src_buffer;
+    state.src_end = src_buffer + src_size;
+
+    state.dst       = dst_buffer;
+    state.dst_begin = dst_buffer;
+    state.dst_end   = dst_buffer + dst_size;
+
+    lzvn_decode(&state);
+
+    return (size_t)(state.dst - dst_buffer);
+}
+
+AARU_EXPORT size_t AARU_CALL AARU_lzvn_encode_buffer(uint8_t *      dst_buffer,
+                                                     size_t         dst_size,
+                                                     const uint8_t *src_buffer,
+                                                     size_t         src_size,
+                                                     void *         scratch_buffer)
+{
+    lzvn_encoder_state state;
+    memset(&state, 0, sizeof(state));
+
+    state.src             = src_buffer;
+    state.src_begin       = 0;
+    state.src_end         = (lzvn_offset)src_size;
+    state.src_current     = 0;
+    state.src_current_end = (lzvn_offset)src_size - LZVN_ENCODE_MIN_MARGIN;
+    state.src_literal     = 0;
+
+    state.dst       = dst_buffer;
+    state.dst_begin = dst_buffer;
+    state.dst_end   = dst_buffer + dst_size;
+
+    state.table = (lzvn_encode_entry_type *)scratch_buffer;
+
+    lzvn_encode(&state);
+
+    return (size_t)(state.dst - dst_buffer);
 }
 
 AARU_EXPORT int32_t AARU_CALL AARU_lzma_decode_buffer(uint8_t *      dst_buffer,
@@ -245,56 +295,58 @@ AARU_EXPORT int32_t AARU_CALL AARU_lzo_encode_buffer(uint8_t *      dst_buffer,
     switch(algorithm)
     {
         case AARU_LZO_ALGORITHM_LZO1:
-            if(compression_level == 99) result = lzo1_99_compress(src_buffer, (lzo_uint)src_size, dst_buffer, &out_len,
-                                                                  wrkmem);
+            if(compression_level == 99)
+                result  = lzo1_99_compress(src_buffer, (lzo_uint)src_size, dst_buffer, &out_len, wrkmem);
             else result = lzo1_compress(src_buffer, (lzo_uint)src_size, dst_buffer, &out_len, wrkmem);
             break;
         case AARU_LZO_ALGORITHM_LZO1A:
-            if(compression_level == 99) result = lzo1a_99_compress(src_buffer, (lzo_uint)src_size, dst_buffer, &out_len,
-                                                                   wrkmem);
+            if(compression_level == 99)
+                result  = lzo1a_99_compress(src_buffer, (lzo_uint)src_size, dst_buffer, &out_len, wrkmem);
             else result = lzo1a_compress(src_buffer, (lzo_uint)src_size, dst_buffer, &out_len, wrkmem);
             break;
         case AARU_LZO_ALGORITHM_LZO1B:
-            if(compression_level == 99) result = lzo1b_99_compress(src_buffer, (lzo_uint)src_size, dst_buffer, &out_len,
-                                                                   wrkmem);
-            else if(compression_level == 999) result = lzo1b_999_compress(
-                                                  src_buffer, (lzo_uint)src_size, dst_buffer, &out_len, wrkmem);
-            else if(compression_level >= 1 && compression_level <= 9) result = lzo1b_compress(
-                                                                          src_buffer, (lzo_uint)src_size, dst_buffer,
-                                                                          &out_len, wrkmem, compression_level);
-            else result = lzo1b_compress(src_buffer, (lzo_uint)src_size, dst_buffer, &out_len, wrkmem,
-                                         LZO1B_DEFAULT_COMPRESSION);
+            if(compression_level == 99)
+                result = lzo1b_99_compress(src_buffer, (lzo_uint)src_size, dst_buffer, &out_len, wrkmem);
+            else if(compression_level == 999)
+                result = lzo1b_999_compress(src_buffer, (lzo_uint)src_size, dst_buffer, &out_len, wrkmem);
+            else if(compression_level >= 1 && compression_level <= 9)
+                result = lzo1b_compress(src_buffer, (lzo_uint)src_size, dst_buffer, &out_len, wrkmem,
+                                        compression_level);
+            else
+                result = lzo1b_compress(src_buffer, (lzo_uint)src_size, dst_buffer, &out_len, wrkmem,
+                                        LZO1B_DEFAULT_COMPRESSION);
             break;
         case AARU_LZO_ALGORITHM_LZO1C:
-            if(compression_level == 99) result = lzo1c_99_compress(src_buffer, (lzo_uint)src_size, dst_buffer, &out_len,
-                                                                   wrkmem);
-            else if(compression_level == 999) result = lzo1c_999_compress(
-                                                  src_buffer, (lzo_uint)src_size, dst_buffer, &out_len, wrkmem);
-            else if(compression_level >= 1 && compression_level <= 9) result = lzo1c_compress(
-                                                                          src_buffer, (lzo_uint)src_size, dst_buffer,
-                                                                          &out_len, wrkmem, compression_level);
-            else result = lzo1c_compress(src_buffer, (lzo_uint)src_size, dst_buffer, &out_len, wrkmem,
-                                         LZO1C_DEFAULT_COMPRESSION);
+            if(compression_level == 99)
+                result = lzo1c_99_compress(src_buffer, (lzo_uint)src_size, dst_buffer, &out_len, wrkmem);
+            else if(compression_level == 999)
+                result = lzo1c_999_compress(src_buffer, (lzo_uint)src_size, dst_buffer, &out_len, wrkmem);
+            else if(compression_level >= 1 && compression_level <= 9)
+                result = lzo1c_compress(src_buffer, (lzo_uint)src_size, dst_buffer, &out_len, wrkmem,
+                                        compression_level);
+            else
+                result = lzo1c_compress(src_buffer, (lzo_uint)src_size, dst_buffer, &out_len, wrkmem,
+                                        LZO1C_DEFAULT_COMPRESSION);
             break;
         case AARU_LZO_ALGORITHM_LZO1F:
-            if(compression_level == 999) result = lzo1f_999_compress(src_buffer, (lzo_uint)src_size, dst_buffer,
-                                                                     &out_len, wrkmem);
+            if(compression_level == 999)
+                result  = lzo1f_999_compress(src_buffer, (lzo_uint)src_size, dst_buffer, &out_len, wrkmem);
             else result = lzo1f_1_compress(src_buffer, (lzo_uint)src_size, dst_buffer, &out_len, wrkmem);
             break;
         case AARU_LZO_ALGORITHM_LZO1X:
-            if(compression_level == 11) result = lzo1x_1_11_compress(src_buffer, (lzo_uint)src_size, dst_buffer,
-                                                                     &out_len, wrkmem);
-            else if(compression_level == 12) result = lzo1x_1_12_compress(
-                                                 src_buffer, (lzo_uint)src_size, dst_buffer, &out_len, wrkmem);
-            else if(compression_level == 15) result = lzo1x_1_15_compress(
-                                                 src_buffer, (lzo_uint)src_size, dst_buffer, &out_len, wrkmem);
-            else if(compression_level == 999) result = lzo1x_999_compress(
-                                                  src_buffer, (lzo_uint)src_size, dst_buffer, &out_len, wrkmem);
+            if(compression_level == 11)
+                result = lzo1x_1_11_compress(src_buffer, (lzo_uint)src_size, dst_buffer, &out_len, wrkmem);
+            else if(compression_level == 12)
+                result = lzo1x_1_12_compress(src_buffer, (lzo_uint)src_size, dst_buffer, &out_len, wrkmem);
+            else if(compression_level == 15)
+                result = lzo1x_1_15_compress(src_buffer, (lzo_uint)src_size, dst_buffer, &out_len, wrkmem);
+            else if(compression_level == 999)
+                result  = lzo1x_999_compress(src_buffer, (lzo_uint)src_size, dst_buffer, &out_len, wrkmem);
             else result = lzo1x_1_compress(src_buffer, (lzo_uint)src_size, dst_buffer, &out_len, wrkmem);
             break;
         case AARU_LZO_ALGORITHM_LZO1Y:
-            if(compression_level == 999) result = lzo1y_999_compress(src_buffer, (lzo_uint)src_size, dst_buffer,
-                                                                     &out_len, wrkmem);
+            if(compression_level == 999)
+                result  = lzo1y_999_compress(src_buffer, (lzo_uint)src_size, dst_buffer, &out_len, wrkmem);
             else result = lzo1y_1_compress(src_buffer, (lzo_uint)src_size, dst_buffer, &out_len, wrkmem);
             break;
         case AARU_LZO_ALGORITHM_LZO1Z:
