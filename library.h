@@ -110,6 +110,27 @@ AARU_EXPORT size_t AARU_CALL AARU_zstd_decode_buffer(void *dst_buffer, size_t ds
 AARU_EXPORT size_t AARU_CALL AARU_zstd_encode_buffer(void *dst_buffer, size_t dst_size, const void *src_buffer,
                                                      size_t src_size, int32_t compressionLevel);
 
+/**
+ * LZO Algorithm Types
+ */
+typedef enum {
+    AARU_LZO_ALGORITHM_LZO1  = 0,   /* LZO1 algorithm */
+    AARU_LZO_ALGORITHM_LZO1A = 1,   /* LZO1A algorithm */
+    AARU_LZO_ALGORITHM_LZO1B = 2,   /* LZO1B algorithm (supports compression levels 1-9, 99, 999) */
+    AARU_LZO_ALGORITHM_LZO1C = 3,   /* LZO1C algorithm (supports compression levels 1-9, 99, 999) */
+    AARU_LZO_ALGORITHM_LZO1F = 4,   /* LZO1F algorithm (supports compression level 999) */
+    AARU_LZO_ALGORITHM_LZO1X = 5,   /* LZO1X algorithm (supports compression levels 11, 12, 15, 999) - most common */
+    AARU_LZO_ALGORITHM_LZO1Y = 6,   /* LZO1Y algorithm (supports compression level 999) */
+    AARU_LZO_ALGORITHM_LZO1Z = 7,   /* LZO1Z algorithm (only 999 compression level) */
+    AARU_LZO_ALGORITHM_LZO2A = 8    /* LZO2A algorithm (only 999 compression level) */
+} aaru_lzo_algorithm_t;
+
+AARU_EXPORT int32_t AARU_CALL AARU_lzo_decode_buffer(uint8_t *dst_buffer, size_t *dst_size, const uint8_t *src_buffer,
+                                                     size_t src_size, int32_t algorithm);
+
+AARU_EXPORT int32_t AARU_CALL AARU_lzo_encode_buffer(uint8_t *dst_buffer, size_t *dst_size, const uint8_t *src_buffer,
+                                                     size_t src_size, int32_t algorithm, int32_t compression_level);
+
 AARU_EXPORT void AARU_CALL *CreateLZDContext(void);
 
 AARU_EXPORT void AARU_CALL DestroyLZDContext(void *ctx);

@@ -170,7 +170,10 @@ macro(target_link_libraries_whole_archive target)
   endif()
 endmacro()
 
-target_link_libraries_whole_archive("Aaru.Compression.Native" libzstd_static lz4_static m)
+target_link_libraries_whole_archive("Aaru.Compression.Native" libzstd_static lz4_static lzo_static_lib m)
+
+# Add LZO include directories for library.c to resolve <lzo/...> includes
+target_include_directories("Aaru.Compression.Native" PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/lzo-2.10/include)
 
 check_include_file("semaphore.h" HAVE_SEMAPHORE_H)
 
