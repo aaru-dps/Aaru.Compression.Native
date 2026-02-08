@@ -126,6 +126,9 @@ if("${CMAKE_BUILD_TYPE}" MATCHES "Release" OR "${CMAKE_BUILD_TYPE}" MATCHES "Rel
   endif()
 endif()
 
+# Ensure all static libraries are built with PIC so they can be linked into the shared library
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 add_subdirectory(3rdparty)
 
 add_library("Aaru.Compression.Native" SHARED library.c apple_rle.c apple_rle.h adc.c adc.h lzip.c flac.c flac.h
@@ -188,12 +191,6 @@ endif()
 
 if(HAVE_PTHREAD)
   target_link_libraries_whole_archive("Aaru.Compression.Native" Threads::Threads)
-endif()
-
-if(NOT "${CMAKE_C_PLATFORM_ID}" MATCHES "MinGW" OR (NOT ${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm" AND NOT ${CMAKE_SYSTEM_PROCESSOR} MATCHES "aarch64"))
-  set_property(TARGET "Aaru.Compression.Native" PROPERTY POSITION_INDEPENDENT_CODE TRUE)
-else()
-  set_property(TARGET "Aaru.Compression.Native" PROPERTY POSITION_INDEPENDENT_CODE FALSE)
 endif()
 
 add_subdirectory(tests)
