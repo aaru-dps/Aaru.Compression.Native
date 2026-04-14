@@ -71,10 +71,10 @@ AARU_EXPORT size_t AARU_CALL AARU_flac_encode_redbook_buffer(
     uint32_t application_id_len);
 
 AARU_EXPORT int32_t AARU_CALL AARU_lz4_decode_buffer(uint8_t *dst_buffer, int32_t dst_size, const uint8_t *src_buffer,
-                                                      int32_t src_size);
+                                                     int32_t src_size);
 
 AARU_EXPORT int32_t AARU_CALL AARU_lz4_encode_buffer(uint8_t *dst_buffer, int32_t dst_size, const uint8_t *src_buffer,
-                                                      int32_t src_size);
+                                                     int32_t src_size);
 
 AARU_EXPORT int32_t AARU_CALL AARU_lzip_decode_buffer(uint8_t *dst_buffer, int32_t dst_size, const uint8_t *src_buffer,
                                                       int32_t src_size);
@@ -125,16 +125,17 @@ AARU_EXPORT size_t AARU_CALL AARU_zstd_encode_buffer(void *dst_buffer, size_t ds
 /**
  * LZO Algorithm Types
  */
-typedef enum {
-    AARU_LZO_ALGORITHM_LZO1  = 0,   /* LZO1 algorithm */
-    AARU_LZO_ALGORITHM_LZO1A = 1,   /* LZO1A algorithm */
-    AARU_LZO_ALGORITHM_LZO1B = 2,   /* LZO1B algorithm (supports compression levels 1-9, 99, 999) */
-    AARU_LZO_ALGORITHM_LZO1C = 3,   /* LZO1C algorithm (supports compression levels 1-9, 99, 999) */
-    AARU_LZO_ALGORITHM_LZO1F = 4,   /* LZO1F algorithm (supports compression level 999) */
-    AARU_LZO_ALGORITHM_LZO1X = 5,   /* LZO1X algorithm (supports compression levels 11, 12, 15, 999) - most common */
-    AARU_LZO_ALGORITHM_LZO1Y = 6,   /* LZO1Y algorithm (supports compression level 999) */
-    AARU_LZO_ALGORITHM_LZO1Z = 7,   /* LZO1Z algorithm (only 999 compression level) */
-    AARU_LZO_ALGORITHM_LZO2A = 8    /* LZO2A algorithm (only 999 compression level) */
+typedef enum
+{
+    AARU_LZO_ALGORITHM_LZO1  = 0, /* LZO1 algorithm */
+    AARU_LZO_ALGORITHM_LZO1A = 1, /* LZO1A algorithm */
+    AARU_LZO_ALGORITHM_LZO1B = 2, /* LZO1B algorithm (supports compression levels 1-9, 99, 999) */
+    AARU_LZO_ALGORITHM_LZO1C = 3, /* LZO1C algorithm (supports compression levels 1-9, 99, 999) */
+    AARU_LZO_ALGORITHM_LZO1F = 4, /* LZO1F algorithm (supports compression level 999) */
+    AARU_LZO_ALGORITHM_LZO1X = 5, /* LZO1X algorithm (supports compression levels 11, 12, 15, 999) - most common */
+    AARU_LZO_ALGORITHM_LZO1Y = 6, /* LZO1Y algorithm (supports compression level 999) */
+    AARU_LZO_ALGORITHM_LZO1Z = 7, /* LZO1Z algorithm (only 999 compression level) */
+    AARU_LZO_ALGORITHM_LZO2A = 8  /* LZO2A algorithm (only 999 compression level) */
 } aaru_lzo_algorithm_t;
 
 AARU_EXPORT int32_t AARU_CALL AARU_lzo_decode_buffer(uint8_t *dst_buffer, size_t *dst_size, const uint8_t *src_buffer,
@@ -192,14 +193,17 @@ AARU_EXPORT int AARU_CALL pak_decompress_distill(const unsigned char *in_buf, si
 /**
  * HA Algorithm Types
  */
-typedef enum {
-    HA_ALGORITHM_ASC = 0,  /* ASC algorithm */
-    HA_ALGORITHM_HSC = 1   /* HSC algorithm */
+typedef enum
+{
+    HA_ALGORITHM_ASC = 0, /* ASC algorithm */
+    HA_ALGORITHM_HSC = 1  /* HSC algorithm */
 } ha_algorithm_t;
 
-AARU_EXPORT int AARU_CALL ha_asc_decompress(const unsigned char *in_buf, size_t in_len, unsigned char *out_buf, size_t *out_len);
+AARU_EXPORT int AARU_CALL ha_asc_decompress(const unsigned char *in_buf, size_t in_len, unsigned char *out_buf,
+                                            size_t *out_len);
 
-AARU_EXPORT int AARU_CALL ha_hsc_decompress(const unsigned char *in_buf, size_t in_len, unsigned char *out_buf, size_t *out_len);
+AARU_EXPORT int AARU_CALL ha_hsc_decompress(const unsigned char *in_buf, size_t in_len, unsigned char *out_buf,
+                                            size_t *out_len);
 
 // LHA -lh1- (Dynamic Huffman, 4KB window)
 AARU_EXPORT int AARU_CALL lha_decompress_lh1(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf, size_t *out_len);
@@ -235,34 +239,84 @@ AARU_EXPORT int AARU_CALL pmarc_decompress_pm1(const uint8_t *in_buf, size_t in_
 AARU_EXPORT int AARU_CALL pmarc_decompress_pm2(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf, size_t *out_len);
 
 // ACE v1 (LZ77) decompression
-AARU_EXPORT int AARU_CALL ace_decompress_lz77(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf, size_t *out_len, int dic_bits);
+AARU_EXPORT int AARU_CALL ace_decompress_lz77(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf, size_t *out_len,
+                                              int dic_bits);
 
 // ACE v2 (Blocked) decompression
-AARU_EXPORT int AARU_CALL ace_decompress_blocked(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf, size_t *out_len, int dic_bits);
+AARU_EXPORT int AARU_CALL ace_decompress_blocked(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf,
+                                                 size_t *out_len, int dic_bits);
 
 // ARJ Method 1 (LZH, most compression)
-AARU_EXPORT int AARU_CALL arj_decompress_method1(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf, size_t *out_len);
+AARU_EXPORT int AARU_CALL arj_decompress_method1(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf,
+                                                 size_t *out_len);
 
 // ARJ Method 2 (LZH, medium compression)
-AARU_EXPORT int AARU_CALL arj_decompress_method2(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf, size_t *out_len);
+AARU_EXPORT int AARU_CALL arj_decompress_method2(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf,
+                                                 size_t *out_len);
 
 // ARJ Method 3 (LZH, fast compression)
-AARU_EXPORT int AARU_CALL arj_decompress_method3(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf, size_t *out_len);
+AARU_EXPORT int AARU_CALL arj_decompress_method3(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf,
+                                                 size_t *out_len);
 
 // ARJ Method 4 (Fastest, variable-width LZSS)
-AARU_EXPORT int AARU_CALL arj_decompress_fastest(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf, size_t *out_len);
+AARU_EXPORT int AARU_CALL arj_decompress_fastest(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf,
+                                                 size_t *out_len);
 
 // ARJZ Method 1 (LZH, 64KB window)
-AARU_EXPORT int AARU_CALL arjz_decompress_method1(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf, size_t *out_len);
+AARU_EXPORT int AARU_CALL arjz_decompress_method1(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf,
+                                                  size_t *out_len);
 
 // ARJZ Method 2 (LZH, 64KB window)
-AARU_EXPORT int AARU_CALL arjz_decompress_method2(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf, size_t *out_len);
+AARU_EXPORT int AARU_CALL arjz_decompress_method2(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf,
+                                                  size_t *out_len);
 
 // ARJZ Method 3 (LZH, 64KB window)
-AARU_EXPORT int AARU_CALL arjz_decompress_method3(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf, size_t *out_len);
+AARU_EXPORT int AARU_CALL arjz_decompress_method3(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf,
+                                                  size_t *out_len);
 
 // ARJZ custom extended DEFLATE decompression
-AARU_EXPORT int AARU_CALL arjz_decompress_buffer(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf, size_t *out_len,
-                                                  size_t orig_size);
+AARU_EXPORT int AARU_CALL arjz_decompress_buffer(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf,
+                                                 size_t *out_len, size_t orig_size);
+
+// LZMA2 decode (single prop byte instead of 5-byte props blob)
+AARU_EXPORT int32_t AARU_CALL AARU_lzma2_decode_buffer(uint8_t *dst_buffer, size_t *dst_size, const uint8_t *src_buffer,
+                                                       size_t *src_size, uint8_t prop);
+
+// LZMA2 encode
+AARU_EXPORT int32_t AARU_CALL AARU_lzma2_encode_buffer(uint8_t *dst_buffer, size_t *dst_size, const uint8_t *src_buffer,
+                                                       size_t src_size, uint8_t *outProp, int32_t level,
+                                                       uint32_t dictSize, int32_t lc, int32_t lp, int32_t pb,
+                                                       int32_t fb, int32_t numThreads);
+
+// ZIP method 1: Shrink (LZW, 9-13 bit codes)
+AARU_EXPORT int AARU_CALL AARU_zip_shrink_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                        const uint8_t *src_buffer, size_t src_size);
+
+// ZIP methods 2-5: Reduce (follower sets + LZ77, compression factor 1-4)
+AARU_EXPORT int AARU_CALL AARU_zip_reduce_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                        const uint8_t *src_buffer, size_t src_size, int comp_factor);
+
+// ZIP method 6: Implode (Shannon-Fano + LZSS)
+AARU_EXPORT int AARU_CALL AARU_zip_implode_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                         const uint8_t *src_buffer, size_t src_size,
+                                                         int large_dictionary, int has_literals);
+
+// ZIP method 9: Deflate64
+AARU_EXPORT int AARU_CALL AARU_zip_deflate64_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                           const uint8_t *src_buffer, size_t src_size);
+
+// ZIP method 98: PPMd variant I
+AARU_EXPORT int AARU_CALL AARU_zip_ppmd_decode_buffer(uint8_t *dst_buffer, size_t dst_size, const uint8_t *src_buffer,
+                                                      size_t src_size, int max_order, int sub_alloc_size,
+                                                      int restoration);
+
+// ZIP method 97: WinZip WavPack
+AARU_EXPORT int AARU_CALL AARU_zip_wavpack_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                         const uint8_t *src_buffer, size_t src_size,
+                                                         uint32_t num_samples, int bits_per_sample, int num_channels);
+
+// ZIP method 96: WinZip JPEG
+AARU_EXPORT int AARU_CALL AARU_zip_winzipjpeg_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                            const uint8_t *src_buffer, size_t src_size);
 
 #endif  // AARU_COMPRESSION_NATIVE_LIBRARY_H

@@ -114,6 +114,18 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/arjz_default.bin
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/arjz_v55_new.bin
      DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data/)
 
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/zip_shrink.bin
+     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data/)
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/zip_implode.bin
+     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data/)
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/zip_deflate64.bin
+     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data/)
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/zip_ppmd.bin
+     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data/)
+
 # 'Google_Tests_run' is the target name
 # 'test1.cpp tests2.cpp' are source files with tests
 add_executable(tests_run apple_rle.cpp crc32.c crc32.h adc.cpp bzip2.cpp lzip.cpp lzfse.cpp zstd.cpp lzma.cpp flac.cpp lz4.cpp
@@ -122,5 +134,6 @@ add_executable(tests_run apple_rle.cpp crc32.c crc32.h adc.cpp bzip2.cpp lzip.cp
                lha/lh_static.cpp lha/lh1.cpp lha/larc.cpp lha/lh_old.cpp
                ace/ace.cpp
                arj/arj.cpp
-               arjz/arjz.cpp)
+               arjz/arjz.cpp
+               zip/zip.cpp)
 target_link_libraries(tests_run gtest gtest_main "Aaru.Compression.Native")

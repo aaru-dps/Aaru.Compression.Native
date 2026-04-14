@@ -29,6 +29,8 @@
 #include "3rdparty/lzfse/src/lzvn_encode_base.h"
 #include "3rdparty/lzma/C/7zCrc.h"
 #include "3rdparty/lzma/C/Alloc.h"
+#include "3rdparty/lzma/C/Lzma2Dec.h"
+#include "3rdparty/lzma/C/Lzma2Enc.h"
 #include "3rdparty/lzma/C/LzmaLib.h"
 #include "3rdparty/lzma/C/Xz.h"
 #include "3rdparty/lzma/C/XzCrc64.h"
@@ -46,6 +48,7 @@
 #include "3rdparty/lzo-2.10/include/lzo/lzodefs.h"
 #include "3rdparty/zstd/lib/zstd.h"
 #include "ace/ace.h"
+#include "zip/zip.h"
 
 AARU_EXPORT int32_t AARU_CALL AARU_bzip2_decode_buffer(uint8_t *dst_buffer, uint32_t *dst_size,
                                                        const uint8_t *src_buffer, uint32_t src_size)
@@ -469,5 +472,87 @@ AARU_EXPORT int AARU_CALL ace_decompress_blocked(const uint8_t *in_buf, size_t i
 
     return ret;
 }
+
+/* ============== LZMA2 ============== */
+
+AARU_EXPORT int32_t AARU_CALL AARU_lzma2_decode_buffer(uint8_t *dst_buffer, size_t *dst_size, const uint8_t *src_buffer,
+                                                       size_t *src_size, uint8_t prop)
+{
+    ELzmaStatus status;
+    return Lzma2Decode(dst_buffer, (SizeT *)dst_size, src_buffer, (SizeT *)src_size, prop, LZMA_FINISH_END, &status,
+                       &g_Alloc);
+}
+
+AARU_EXPORT int32_t AARU_CALL AARU_lzma2_encode_buffer(uint8_t *dst_buffer, size_t *dst_size, const uint8_t *src_buffer,
+                                                       size_t src_size, uint8_t *outProp, int32_t level,
+                                                       uint32_t dictSize, int32_t lc, int32_t lp, int32_t pb,
+                                                       int32_t fb, int32_t numThreads)
+{
+    CLzma2EncHandle enc;
+    CLzma2EncProps  props;
+    SRes            res;
+
+    enc = Lzma2Enc_Create(&g_Alloc, &g_Alloc);
+    if(!enc) return SZ_ERROR_MEM;
+
+    Lzma2EncProps_Init(&props);
+    props.lzmaProps.level      = level;
+    props.lzmaProps.dictSize   = dictSize;
+    props.lzmaProps.lc         = lc;
+    props.lzmaProps.lp         = lp;
+    props.lzmaProps.pb         = pb;
+    props.lzmaProps.fb         = fb;
+    props.lzmaProps.numThreads = numThreads;
+
+    res = Lzma2Enc_SetProps(enc, &props);
+    if(res != SZ_OK)
+    {
+        Lzma2Enc_Destroy(enc);
+        return res;
+    }
+
+    *outProp = Lzma2Enc_WriteProperties(enc);
+
+    res = Lzma2Enc_Encode2(enc, NULL, dst_buffer, dst_size, NULL, src_buffer, src_size, NULL);
+
+    Lzma2Enc_Destroy(enc);
+    return res;
+}
+
+/* ============== ZIP Wrappers ============== */
+
+AARU_EXPORT int AARU_CALL AARU_zip_shrink_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                        const uint8_t *src_buffer, size_t src_size)
+{ return zip_shrink_decompress(src_buffer, src_size, dst_buffer, dst_size); }
+
+AARU_EXPORT int AARU_CALL AARU_zip_reduce_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                        const uint8_t *src_buffer, size_t src_size, int comp_factor)
+{ return zip_reduce_decompress(src_buffer, src_size, dst_buffer, dst_size, comp_factor); }
+
+AARU_EXPORT int AARU_CALL AARU_zip_implode_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                         const uint8_t *src_buffer, size_t src_size,
+                                                         int large_dictionary, int has_literals)
+{ return zip_implode_decompress(src_buffer, src_size, dst_buffer, dst_size, large_dictionary, has_literals); }
+
+AARU_EXPORT int AARU_CALL AARU_zip_deflate64_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                           const uint8_t *src_buffer, size_t src_size)
+{ return zip_deflate64_decompress(src_buffer, src_size, dst_buffer, dst_size); }
+
+AARU_EXPORT int AARU_CALL AARU_zip_ppmd_decode_buffer(uint8_t *dst_buffer, size_t dst_size, const uint8_t *src_buffer,
+                                                      size_t src_size, int max_order, int sub_alloc_size,
+                                                      int restoration)
+{ return zip_ppmd_decompress(dst_buffer, dst_size, src_buffer, src_size, max_order, sub_alloc_size, restoration); }
+
+AARU_EXPORT int AARU_CALL AARU_zip_wavpack_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                         const uint8_t *src_buffer, size_t src_size,
+                                                         uint32_t num_samples, int bits_per_sample, int num_channels)
+{
+    return zip_wavpack_decompress(dst_buffer, dst_size, src_buffer, src_size, num_samples, bits_per_sample,
+                                  num_channels);
+}
+
+AARU_EXPORT int AARU_CALL AARU_zip_winzipjpeg_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                            const uint8_t *src_buffer, size_t src_size)
+{ return zip_winzipjpeg_decompress(dst_buffer, dst_size, src_buffer, src_size); }
 
 AARU_EXPORT uint64_t AARU_CALL AARU_get_acn_version() { return AARU_CHECKUMS_NATIVE_VERSION; }

@@ -176,7 +176,48 @@ add_library("Aaru.Compression.Native" SHARED library.c apple_rle.c apple_rle.h a
             arj/arj.h
             arj/arj_fastest.c
             arjz/arjz.c
-            arjz/arjz.h)
+            arjz/arjz.h
+            zip/shrink.c
+            zip/shrink.h
+            zip/reduce.c
+            zip/reduce.h
+            zip/implode.c
+            zip/implode.h
+            zip/deflate64.c
+            zip/deflate64.h
+            zip/zip.c
+            zip/zip.h
+            ppmd/RangeCoder.c
+            ppmd/RangeCoder.h
+            ppmd/Context.c
+            ppmd/Context.h
+            ppmd/SubAllocator.h
+            ppmd/SubAllocatorVariantI.c
+            ppmd/SubAllocatorVariantI.h
+            ppmd/VariantI.c
+            ppmd/VariantI.h
+            wavpack/common_utils.c
+            wavpack/decorr_utils.c
+            wavpack/entropy_utils.c
+            wavpack/open_legacy.c
+            wavpack/open_utils.c
+            wavpack/read_words.c
+            wavpack/tags.c
+            wavpack/unpack.c
+            wavpack/unpack_floats.c
+            wavpack/unpack_seek.c
+            wavpack/unpack_utils.c
+            wavpack/wavpack.h
+            wavpack/wavpack_local.h
+            wavpack/wavpack_version.h
+            winzipjpeg/ArithmeticDecoder.c
+            winzipjpeg/ArithmeticDecoder.h
+            winzipjpeg/Decompressor.c
+            winzipjpeg/Decompressor.h
+            winzipjpeg/JPEG.c
+            winzipjpeg/JPEG.h
+            winzipjpeg/InputStream.h
+            winzipjpeg/LZMA.h)
 
 include(3rdparty/bzip2.cmake)
 include(3rdparty/flac.cmake)
