@@ -201,4 +201,37 @@ AARU_EXPORT int AARU_CALL ha_asc_decompress(const unsigned char *in_buf, size_t 
 
 AARU_EXPORT int AARU_CALL ha_hsc_decompress(const unsigned char *in_buf, size_t in_len, unsigned char *out_buf, size_t *out_len);
 
+// LHA -lh1- (Dynamic Huffman, 4KB window)
+AARU_EXPORT int AARU_CALL lha_decompress_lh1(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf, size_t *out_len);
+
+// LHA -lh2- (Dynamic Huffman, legacy)
+AARU_EXPORT int AARU_CALL lha_decompress_lh2(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf, size_t *out_len);
+
+// LHA -lh3- (Static Huffman, legacy)
+AARU_EXPORT int AARU_CALL lha_decompress_lh3(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf, size_t *out_len);
+
+// LHA -lh4- (Block Huffman, 4KB window)
+AARU_EXPORT int AARU_CALL lha_decompress_lh4(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf, size_t *out_len);
+
+// LHA -lh5- (Block Huffman, 8KB window)
+AARU_EXPORT int AARU_CALL lha_decompress_lh5(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf, size_t *out_len);
+
+// LHA -lh6- (Block Huffman, 32KB window)
+AARU_EXPORT int AARU_CALL lha_decompress_lh6(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf, size_t *out_len);
+
+// LHA -lh7- (Block Huffman, 64KB window)
+AARU_EXPORT int AARU_CALL lha_decompress_lh7(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf, size_t *out_len);
+
+// LArc -lzs- (LZSS, 2KB window)
+AARU_EXPORT int AARU_CALL larc_decompress_lzs(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf, size_t *out_len);
+
+// LArc -lz5- (Flag-byte LZSS, 4KB window)
+AARU_EXPORT int AARU_CALL larc_decompress_lz5(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf, size_t *out_len);
+
+// PMarc -pm1- (Adaptive history + Huffman)
+AARU_EXPORT int AARU_CALL pmarc_decompress_pm1(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf, size_t *out_len);
+
+// PMarc -pm2- (Dynamic trees + history, legacy)
+AARU_EXPORT int AARU_CALL pmarc_decompress_pm2(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf, size_t *out_len);
+
 #endif  // AARU_COMPRESSION_NATIVE_LIBRARY_H
