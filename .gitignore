@@ -607,3 +607,7 @@ pkg/**/aaru
 
 build/*
 docker/*
+build-*/**/*
+docker-*/**/*
+.cache/*
+.cmake/*
