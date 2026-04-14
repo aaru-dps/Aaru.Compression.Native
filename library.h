@@ -234,4 +234,10 @@ AARU_EXPORT int AARU_CALL pmarc_decompress_pm1(const uint8_t *in_buf, size_t in_
 // PMarc -pm2- (Dynamic trees + history, legacy)
 AARU_EXPORT int AARU_CALL pmarc_decompress_pm2(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf, size_t *out_len);
 
+// ACE v1 (LZ77) decompression
+AARU_EXPORT int AARU_CALL ace_decompress_lz77(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf, size_t *out_len, int dic_bits);
+
+// ACE v2 (Blocked) decompression
+AARU_EXPORT int AARU_CALL ace_decompress_blocked(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf, size_t *out_len, int dic_bits);
+
 #endif  // AARU_COMPRESSION_NATIVE_LIBRARY_H
