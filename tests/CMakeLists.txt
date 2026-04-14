@@ -96,11 +96,31 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/ace_v1_lz77.bin
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/ace_v2_blocked.bin
      DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data/)
 
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/arj_m1.bin
+     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data/)
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/arj_m2.bin
+     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data/)
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/arj_m3.bin
+     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data/)
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/arj_m4.bin
+     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data/)
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/arjz_default.bin
+     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data/)
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/arjz_v55_new.bin
+     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data/)
+
 # 'Google_Tests_run' is the target name
 # 'test1.cpp tests2.cpp' are source files with tests
 add_executable(tests_run apple_rle.cpp crc32.c crc32.h adc.cpp bzip2.cpp lzip.cpp lzfse.cpp zstd.cpp lzma.cpp flac.cpp lz4.cpp
                zoo/lzd.cpp arc/pack.cpp lh5.cpp arc/squeeze.cpp arc/crunch.cpp arc/squash.cpp pak/crush.cpp
                pak/distill.cpp ha.cpp xz.cpp
                lha/lh_static.cpp lha/lh1.cpp lha/larc.cpp lha/lh_old.cpp
-               ace/ace.cpp)
+               ace/ace.cpp
+               arj/arj.cpp
+               arjz/arjz.cpp)
 target_link_libraries(tests_run gtest gtest_main "Aaru.Compression.Native")

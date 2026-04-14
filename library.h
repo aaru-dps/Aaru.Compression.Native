@@ -240,4 +240,29 @@ AARU_EXPORT int AARU_CALL ace_decompress_lz77(const uint8_t *in_buf, size_t in_l
 // ACE v2 (Blocked) decompression
 AARU_EXPORT int AARU_CALL ace_decompress_blocked(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf, size_t *out_len, int dic_bits);
 
+// ARJ Method 1 (LZH, most compression)
+AARU_EXPORT int AARU_CALL arj_decompress_method1(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf, size_t *out_len);
+
+// ARJ Method 2 (LZH, medium compression)
+AARU_EXPORT int AARU_CALL arj_decompress_method2(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf, size_t *out_len);
+
+// ARJ Method 3 (LZH, fast compression)
+AARU_EXPORT int AARU_CALL arj_decompress_method3(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf, size_t *out_len);
+
+// ARJ Method 4 (Fastest, variable-width LZSS)
+AARU_EXPORT int AARU_CALL arj_decompress_fastest(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf, size_t *out_len);
+
+// ARJZ Method 1 (LZH, 64KB window)
+AARU_EXPORT int AARU_CALL arjz_decompress_method1(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf, size_t *out_len);
+
+// ARJZ Method 2 (LZH, 64KB window)
+AARU_EXPORT int AARU_CALL arjz_decompress_method2(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf, size_t *out_len);
+
+// ARJZ Method 3 (LZH, 64KB window)
+AARU_EXPORT int AARU_CALL arjz_decompress_method3(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf, size_t *out_len);
+
+// ARJZ custom extended DEFLATE decompression
+AARU_EXPORT int AARU_CALL arjz_decompress_buffer(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf, size_t *out_len,
+                                                  size_t orig_size);
+
 #endif  // AARU_COMPRESSION_NATIVE_LIBRARY_H
