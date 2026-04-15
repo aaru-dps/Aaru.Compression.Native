@@ -217,7 +217,26 @@ add_library("Aaru.Compression.Native" SHARED library.c apple_rle.c apple_rle.h a
             winzipjpeg/JPEG.c
             winzipjpeg/JPEG.h
             winzipjpeg/InputStream.h
-            winzipjpeg/LZMA.h)
+            winzipjpeg/LZMA.h
+            rar/bitstream.c
+            rar/bitstream.h
+            rar/huffman.c
+            rar/huffman.h
+            rar/lzss.c
+            rar/lzss.h
+            rar/vm.c
+            rar/vm.h
+            rar/filters.c
+            rar/filters.h
+            rar/rar.h
+            rar/rar15.c
+            rar/rar20.c
+            rar/rar30.c
+            rar/rar50.c
+            ppmd/SubAllocatorVariantH.c
+            ppmd/SubAllocatorVariantH.h
+            ppmd/VariantH.c
+            ppmd/VariantH.h)
 
 include(3rdparty/bzip2.cmake)
 include(3rdparty/flac.cmake)

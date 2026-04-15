@@ -319,4 +319,17 @@ AARU_EXPORT int AARU_CALL AARU_zip_wavpack_decode_buffer(uint8_t *dst_buffer, si
 AARU_EXPORT int AARU_CALL AARU_zip_winzipjpeg_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
                                                             const uint8_t *src_buffer, size_t src_size);
 
+// RAR 1.5 (UNP_VER=15): Custom LZ77 with fixed Huffman tables, 64KB window
+AARU_EXPORT int AARU_CALL rar15_decompress(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf, size_t *out_len);
+
+// RAR 2.0 (UNP_VER=20): Block Huffman LZ77 with optional audio, 1MB window
+AARU_EXPORT int AARU_CALL rar20_decompress(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf, size_t *out_len);
+
+// RAR 3.0 (UNP_VER=29): Huffman LZ77 / PPMd Variant H + VM filters, 4MB window
+AARU_EXPORT int AARU_CALL rar30_decompress(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf, size_t *out_len);
+
+// RAR 5.0: Huffman LZ77 + native filters, variable window
+AARU_EXPORT int AARU_CALL rar50_decompress(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf, size_t *out_len,
+                                           size_t window_size);
+
 #endif  // AARU_COMPRESSION_NATIVE_LIBRARY_H
