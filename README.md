@@ -12,6 +12,7 @@ Aaru.Compression.
 
 Currently implemented algorithms are:
 
+### General-purpose codecs
 - Apple Data Compression (RLE with sliding dictionary created for Apple Disk Copy's NDIF)
 - Apple RLE (Run Length Encoding created for Apple DART)
 - [BZIP2](https://gitlab.com/bzip2/bzip2.git)
@@ -19,8 +20,22 @@ Currently implemented algorithms are:
 - [LZ4](https://github.com/lz4/lz4)
 - [LZFSE](https://github.com/lzfse/lzfse)
 - [LZIP](http://www.nongnu.org/lzip)
-- [LZMA](https://www.7-zip.org)
+- [LZMA / LZMA2 / XZ](https://www.7-zip.org)
+- [LZO](http://www.oberhumer.com/opensource/lzo/)
 - [Zstandard](https://facebook.github.io/zstd)
+
+### Archive decompressors
+- ACE v1 (LZ77) and v2 (blocked with delta/EXE/sound/picture modes)
+- ARC methods 3–9 (pack, squeeze, crunch, squash) and PAK methods 10–11 (crush, distill)
+- ARJ methods 1–4 and ARJZ (standard LZH and extended DEFLATE)
+- HA (ASC and HSC)
+- LHA (LH1–LH7, LArc LZS/LZ5, PMarc PM1/PM2)
+- RAR 1.5 (custom LZ77 with fixed Huffman tables)
+- RAR 2.0 (block Huffman LZ77 with optional multichannel audio)
+- RAR 3.0 (Huffman LZ77 / PPMd Variant H with VM-based post-filters)
+- RAR 5.0 (Huffman LZ77 with native Delta/E8/E8E9/ARM filters)
+- ZIP methods 1–6, 9, 96–98 (Shrink, Reduce, Implode, Deflate64, WinZip JPEG, WavPack, PPMd)
+- Zoo (LZD, LH5)
 
 Each of these algorithms have a corresponding license, that can be found in their corresponding folder.
 
