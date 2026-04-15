@@ -623,7 +623,7 @@ static int rar30_apply_filters(rar30_ctx_t *ctx, int64_t start, int64_t end, siz
 /* Main decompression loop                                             */
 /* ------------------------------------------------------------------ */
 
-int rar30_decompress(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf, size_t *out_len)
+AARU_EXPORT int AARU_CALL rar30_decompress(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf, size_t *out_len)
 {
     if(!in_buf || !out_buf || !out_len || *out_len == 0) return -1;
 

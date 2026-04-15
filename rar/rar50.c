@@ -461,7 +461,8 @@ static int expand_to_position(rar50_ctx_t *ctx, int64_t end)
 /* Public API                                                          */
 /* ------------------------------------------------------------------ */
 
-int rar50_decompress(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf, size_t *out_len, size_t window_size)
+AARU_EXPORT int AARU_CALL rar50_decompress(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf, size_t *out_len,
+                                            size_t window_size)
 {
     if(!in_buf || !out_buf || !out_len || *out_len == 0 || window_size == 0) return -1;
 
