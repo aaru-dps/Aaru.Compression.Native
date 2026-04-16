@@ -49,6 +49,7 @@
 #include "3rdparty/zstd/lib/zstd.h"
 #include "ace/ace.h"
 #include "cpt/cpt.h"
+#include "dd/dd.h"
 #include "zip/zip.h"
 
 AARU_EXPORT int32_t AARU_CALL AARU_bzip2_decode_buffer(uint8_t *dst_buffer, uint32_t *dst_size,
@@ -565,5 +566,31 @@ AARU_EXPORT int AARU_CALL AARU_cpt_rle_decode_buffer(uint8_t *dst_buffer, size_t
 AARU_EXPORT int AARU_CALL AARU_cpt_lzh_rle_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
                                                          const uint8_t *src_buffer, size_t src_size)
 { return cpt_lzh_rle_decode_buffer(dst_buffer, dst_size, src_buffer, src_size); }
+
+/* ============== DiskDoubler Wrappers ============== */
+
+AARU_EXPORT int AARU_CALL AARU_dd_adn_decode_buffer(uint8_t *dst_buffer, size_t *dst_size, const uint8_t *src_buffer,
+                                                    size_t src_size)
+{ return dd_adn_decode_buffer(dst_buffer, dst_size, src_buffer, src_size); }
+
+AARU_EXPORT int AARU_CALL AARU_dd_ddn_decode_buffer(uint8_t *dst_buffer, size_t *dst_size, const uint8_t *src_buffer,
+                                                    size_t src_size)
+{ return dd_ddn_decode_buffer(dst_buffer, dst_size, src_buffer, src_size); }
+
+AARU_EXPORT int AARU_CALL AARU_dd_method2_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                        const uint8_t *src_buffer, size_t src_size, int num_trees)
+{ return dd_method2_decode_buffer(dst_buffer, dst_size, src_buffer, src_size, num_trees); }
+
+AARU_EXPORT int AARU_CALL AARU_dd_stac_lzs_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                         const uint8_t *src_buffer, size_t src_size)
+{ return dd_stac_lzs_decode_buffer(dst_buffer, dst_size, src_buffer, src_size); }
+
+AARU_EXPORT int AARU_CALL AARU_dd_cpt_decode_buffer(uint8_t *dst_buffer, size_t *dst_size, const uint8_t *src_buffer,
+                                                    size_t src_size)
+{ return dd_cpt_decode_buffer(dst_buffer, dst_size, src_buffer, src_size); }
+
+AARU_EXPORT int AARU_CALL AARU_dd_lzw_decode_buffer(uint8_t *dst_buffer, size_t *dst_size, const uint8_t *src_buffer,
+                                                    size_t src_size, int flags)
+{ return dd_lzw_decode_buffer(dst_buffer, dst_size, src_buffer, src_size, flags); }
 
 AARU_EXPORT uint64_t AARU_CALL AARU_get_acn_version() { return AARU_CHECKUMS_NATIVE_VERSION; }

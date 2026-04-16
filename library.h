@@ -340,4 +340,28 @@ AARU_EXPORT int AARU_CALL AARU_cpt_rle_decode_buffer(uint8_t *dst_buffer, size_t
 AARU_EXPORT int AARU_CALL AARU_cpt_lzh_rle_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
                                                          const uint8_t *src_buffer, size_t src_size);
 
+// DiskDoubler: ADn block LZSS decompression (methods 6 and 9)
+AARU_EXPORT int AARU_CALL AARU_dd_adn_decode_buffer(uint8_t *dst_buffer, size_t *dst_size, const uint8_t *src_buffer,
+                                                    size_t src_size);
+
+// DiskDoubler: DDn block Huffman LZ77 decompression (method 10)
+AARU_EXPORT int AARU_CALL AARU_dd_ddn_decode_buffer(uint8_t *dst_buffer, size_t *dst_size, const uint8_t *src_buffer,
+                                                    size_t src_size);
+
+// DiskDoubler: Method 2 adaptive Huffman decompression (methods 2 and 5)
+AARU_EXPORT int AARU_CALL AARU_dd_method2_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                        const uint8_t *src_buffer, size_t src_size, int num_trees);
+
+// DiskDoubler: Stac LZS decompression (method 7)
+AARU_EXPORT int AARU_CALL AARU_dd_stac_lzs_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                         const uint8_t *src_buffer, size_t src_size);
+
+// DiskDoubler: Compact Pro decompression (method 8)
+AARU_EXPORT int AARU_CALL AARU_dd_cpt_decode_buffer(uint8_t *dst_buffer, size_t *dst_size, const uint8_t *src_buffer,
+                                                    size_t src_size);
+
+// DiskDoubler: LZW decompression (method 1, Unix compress variant)
+AARU_EXPORT int AARU_CALL AARU_dd_lzw_decode_buffer(uint8_t *dst_buffer, size_t *dst_size, const uint8_t *src_buffer,
+                                                    size_t src_size, int flags);
+
 #endif  // AARU_COMPRESSION_NATIVE_LIBRARY_H
