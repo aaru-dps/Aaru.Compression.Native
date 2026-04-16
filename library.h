@@ -332,4 +332,12 @@ AARU_EXPORT int AARU_CALL rar30_decompress(const uint8_t *in_buf, size_t in_len,
 AARU_EXPORT int AARU_CALL rar50_decompress(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf, size_t *out_len,
                                            size_t window_size);
 
+// Compact Pro: RLE decompression (always applied)
+AARU_EXPORT int AARU_CALL AARU_cpt_rle_decode_buffer(uint8_t *dst_buffer, size_t *dst_size, const uint8_t *src_buffer,
+                                                     size_t src_size);
+
+// Compact Pro: LZH + RLE decompression (block Huffman LZSS + RLE)
+AARU_EXPORT int AARU_CALL AARU_cpt_lzh_rle_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                         const uint8_t *src_buffer, size_t src_size);
+
 #endif  // AARU_COMPRESSION_NATIVE_LIBRARY_H

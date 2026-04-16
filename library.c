@@ -48,6 +48,7 @@
 #include "3rdparty/lzo-2.10/include/lzo/lzodefs.h"
 #include "3rdparty/zstd/lib/zstd.h"
 #include "ace/ace.h"
+#include "cpt/cpt.h"
 #include "zip/zip.h"
 
 AARU_EXPORT int32_t AARU_CALL AARU_bzip2_decode_buffer(uint8_t *dst_buffer, uint32_t *dst_size,
@@ -554,5 +555,15 @@ AARU_EXPORT int AARU_CALL AARU_zip_wavpack_decode_buffer(uint8_t *dst_buffer, si
 AARU_EXPORT int AARU_CALL AARU_zip_winzipjpeg_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
                                                             const uint8_t *src_buffer, size_t src_size)
 { return zip_winzipjpeg_decompress(dst_buffer, dst_size, src_buffer, src_size); }
+
+/* ============== Compact Pro Wrappers ============== */
+
+AARU_EXPORT int AARU_CALL AARU_cpt_rle_decode_buffer(uint8_t *dst_buffer, size_t *dst_size, const uint8_t *src_buffer,
+                                                     size_t src_size)
+{ return cpt_rle_decode_buffer(dst_buffer, dst_size, src_buffer, src_size); }
+
+AARU_EXPORT int AARU_CALL AARU_cpt_lzh_rle_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                         const uint8_t *src_buffer, size_t src_size)
+{ return cpt_lzh_rle_decode_buffer(dst_buffer, dst_size, src_buffer, src_size); }
 
 AARU_EXPORT uint64_t AARU_CALL AARU_get_acn_version() { return AARU_CHECKUMS_NATIVE_VERSION; }
