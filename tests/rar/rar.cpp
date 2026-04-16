@@ -206,3 +206,135 @@ TEST_F(rar50Fixture, rar50_decompress)
     free(outBuf);
     EXPECT_EQ(crc, (uint32_t)EXPECTED_CRC32);
 }
+
+/* ── RAR 5.0 method 3/4/5 (Calgary obj2, with filters) ── */
+
+#define RAR50_OBJ2_CRC32    0x3ae33007
+#define RAR50_OBJ2_ORIGSIZE 246814
+#define RAR50_OBJ2_WINSIZE  1048576 /* 1MB dictionary */
+
+class rar50M3Fixture : public ::testing::Test
+{
+  protected:
+    uint8_t *buffer;
+    size_t   srcLen;
+
+    void SetUp() override
+    {
+        char cwd[PATH_MAX];
+        getcwd(cwd, PATH_MAX);
+        char path[PATH_MAX];
+        snprintf(path, PATH_MAX, "%s/data/rar50_m3.bin", cwd);
+
+        FILE *f = fopen(path, "rb");
+        ASSERT_NE(f, nullptr) << "Cannot open " << path;
+        fseek(f, 0, SEEK_END);
+        srcLen = (size_t)ftell(f);
+        fseek(f, 0, SEEK_SET);
+        buffer = (uint8_t *)malloc(srcLen);
+        ASSERT_NE(buffer, nullptr);
+        fread(buffer, 1, srcLen, f);
+        fclose(f);
+    }
+
+    void TearDown() override { free(buffer); }
+};
+
+TEST_F(rar50M3Fixture, rar50_m3_decompress)
+{
+    size_t   destLen = RAR50_OBJ2_ORIGSIZE;
+    uint8_t *outBuf  = (uint8_t *)malloc(RAR50_OBJ2_ORIGSIZE);
+    ASSERT_NE(outBuf, nullptr);
+
+    int err = rar50_decompress(buffer, srcLen, outBuf, &destLen, RAR50_OBJ2_WINSIZE);
+    EXPECT_EQ(err, 0);
+    EXPECT_EQ(destLen, (size_t)RAR50_OBJ2_ORIGSIZE);
+
+    uint32_t crc = crc32_data(outBuf, RAR50_OBJ2_ORIGSIZE);
+    free(outBuf);
+    EXPECT_EQ(crc, (uint32_t)RAR50_OBJ2_CRC32);
+}
+
+class rar50M4Fixture : public ::testing::Test
+{
+  protected:
+    uint8_t *buffer;
+    size_t   srcLen;
+
+    void SetUp() override
+    {
+        char cwd[PATH_MAX];
+        getcwd(cwd, PATH_MAX);
+        char path[PATH_MAX];
+        snprintf(path, PATH_MAX, "%s/data/rar50_m4.bin", cwd);
+
+        FILE *f = fopen(path, "rb");
+        ASSERT_NE(f, nullptr) << "Cannot open " << path;
+        fseek(f, 0, SEEK_END);
+        srcLen = (size_t)ftell(f);
+        fseek(f, 0, SEEK_SET);
+        buffer = (uint8_t *)malloc(srcLen);
+        ASSERT_NE(buffer, nullptr);
+        fread(buffer, 1, srcLen, f);
+        fclose(f);
+    }
+
+    void TearDown() override { free(buffer); }
+};
+
+TEST_F(rar50M4Fixture, rar50_m4_decompress)
+{
+    size_t   destLen = RAR50_OBJ2_ORIGSIZE;
+    uint8_t *outBuf  = (uint8_t *)malloc(RAR50_OBJ2_ORIGSIZE);
+    ASSERT_NE(outBuf, nullptr);
+
+    int err = rar50_decompress(buffer, srcLen, outBuf, &destLen, RAR50_OBJ2_WINSIZE);
+    EXPECT_EQ(err, 0);
+    EXPECT_EQ(destLen, (size_t)RAR50_OBJ2_ORIGSIZE);
+
+    uint32_t crc = crc32_data(outBuf, RAR50_OBJ2_ORIGSIZE);
+    free(outBuf);
+    EXPECT_EQ(crc, (uint32_t)RAR50_OBJ2_CRC32);
+}
+
+class rar50M5Fixture : public ::testing::Test
+{
+  protected:
+    uint8_t *buffer;
+    size_t   srcLen;
+
+    void SetUp() override
+    {
+        char cwd[PATH_MAX];
+        getcwd(cwd, PATH_MAX);
+        char path[PATH_MAX];
+        snprintf(path, PATH_MAX, "%s/data/rar50_m5.bin", cwd);
+
+        FILE *f = fopen(path, "rb");
+        ASSERT_NE(f, nullptr) << "Cannot open " << path;
+        fseek(f, 0, SEEK_END);
+        srcLen = (size_t)ftell(f);
+        fseek(f, 0, SEEK_SET);
+        buffer = (uint8_t *)malloc(srcLen);
+        ASSERT_NE(buffer, nullptr);
+        fread(buffer, 1, srcLen, f);
+        fclose(f);
+    }
+
+    void TearDown() override { free(buffer); }
+};
+
+TEST_F(rar50M5Fixture, rar50_m5_decompress)
+{
+    size_t   destLen = RAR50_OBJ2_ORIGSIZE;
+    uint8_t *outBuf  = (uint8_t *)malloc(RAR50_OBJ2_ORIGSIZE);
+    ASSERT_NE(outBuf, nullptr);
+
+    int err = rar50_decompress(buffer, srcLen, outBuf, &destLen, RAR50_OBJ2_WINSIZE);
+    EXPECT_EQ(err, 0);
+    EXPECT_EQ(destLen, (size_t)RAR50_OBJ2_ORIGSIZE);
+
+    uint32_t crc = crc32_data(outBuf, RAR50_OBJ2_ORIGSIZE);
+    free(outBuf);
+    EXPECT_EQ(crc, (uint32_t)RAR50_OBJ2_CRC32);
+}

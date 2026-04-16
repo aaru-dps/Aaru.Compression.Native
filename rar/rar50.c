@@ -495,24 +495,36 @@ AARU_EXPORT int AARU_CALL rar50_decompress(const uint8_t *in_buf, size_t in_len,
     /* Main decompression loop */
     while(ctx.out_pos < ctx.out_size)
     {
-        int64_t target = (int64_t)ctx.out_size;
+        int64_t pos = (int64_t)ctx.out_pos;
 
-        /* If a filter is pending, stop expansion at its start */
-        if(ctx.filters) target = ctx.filters->start;
+        int64_t nextfilterstart = (int64_t)ctx.out_size;
+        if(ctx.filters) nextfilterstart = ctx.filters->start;
 
-        /* Also limit to out_size */
-        if(target > (int64_t)ctx.out_size) target = (int64_t)ctx.out_size;
+        if(pos == nextfilterstart)
+        {
+            /* We're at a filter boundary — expand through the filter data */
+            int64_t target = nextfilterstart + (int64_t)ctx.filters->length;
 
-        /* Expand LZSS data up to target */
-        if(expand_to_position(&ctx, target) != 0) goto fail;
+            if(expand_to_position(&ctx, target) != 0) goto fail;
+            if(flush_output(&ctx, ctx.lzss.position) != 0) goto fail;
+        }
+        else
+        {
+            /* Expand up to the next filter or end of output, with window protection */
+            int64_t target = pos + 0x40000;
+            int64_t winedge = rar_lzss_next_window_edge(&ctx.lzss, pos);
+            if(target > winedge) target = winedge;
+            if(target > nextfilterstart) target = nextfilterstart;
+            if(target > (int64_t)ctx.out_size) target = (int64_t)ctx.out_size;
 
-        /* Flush available data to out_buf (applying filters) */
-        if(flush_output(&ctx, ctx.lzss.position) != 0) goto fail;
+            if(expand_to_position(&ctx, target) != 0) goto fail;
+            if(flush_output(&ctx, ctx.lzss.position) != 0) goto fail;
 
-        /* If we're stuck (no progress), either we finished or there's an error */
-        if(ctx.lzss.position <= (int64_t)ctx.out_pos && ctx.islastblock &&
-           rar_bs_bit_offset(&ctx.bs) >= ctx.blockbitend)
-            break;
+            /* If no progress was made, check if we're truly done */
+            if(ctx.lzss.position <= pos && ctx.islastblock &&
+               rar_bs_bit_offset(&ctx.bs) >= ctx.blockbitend)
+                break;
+        }
     }
 
     *out_len = ctx.out_pos;
