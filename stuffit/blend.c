@@ -83,11 +83,13 @@ int stuffitx_blend_decode_buffer(uint8_t *dst, size_t *dst_size, const uint8_t *
             size_t dec_size = out_size;
             if(di + dec_size > limit) dec_size = limit - di;
 
-            int err =
-                stuffitx_darkhorse_decode_buffer(dst + di, &dec_size, frame_data + 1, frame_avail - 1, window_bits);
+            size_t consumed = 0;
+            int    err =
+                stuffitx_darkhorse_decode_buffer(dst + di, &dec_size, frame_data + 1, frame_avail - 1, window_bits,
+                                                 &consumed);
             if(err < 0) return err;
             di += dec_size;
-            si = src_size; /* consumed to end (no way to know exact amount) */
+            si += 1 + consumed; /* 1 byte window_bits header + compressed data */
         }
         else if(format == 2)
         {
@@ -95,10 +97,11 @@ int stuffitx_blend_decode_buffer(uint8_t *dst, size_t *dst_size, const uint8_t *
             size_t dec_size = out_size;
             if(di + dec_size > limit) dec_size = limit - di;
 
-            int err = stuffitx_cyanide_decode_buffer(dst + di, &dec_size, frame_data, frame_avail);
+            size_t consumed = 0;
+            int    err = stuffitx_cyanide_decode_buffer(dst + di, &dec_size, frame_data, frame_avail, &consumed);
             if(err < 0) return err;
             di += dec_size;
-            si = src_size;
+            si += consumed;
         }
         else if(format == 3)
         {
@@ -111,11 +114,12 @@ int stuffitx_blend_decode_buffer(uint8_t *dst, size_t *dst_size, const uint8_t *
             size_t dec_size = out_size;
             if(di + dec_size > limit) dec_size = limit - di;
 
-            int err = stuffitx_brimstone_decode_buffer(dst + di, &dec_size, frame_data + 2, frame_avail - 2, order,
-                                                       alloc_size);
+            size_t consumed = 0;
+            int    err = stuffitx_brimstone_decode_buffer(dst + di, &dec_size, frame_data + 2, frame_avail - 2, order,
+                                                          alloc_size, &consumed);
             if(err < 0) return err;
             di += dec_size;
-            si = src_size; /* consumed to end */
+            si += 2 + consumed; /* 2 byte brimstone header + compressed data */
         }
     }
 

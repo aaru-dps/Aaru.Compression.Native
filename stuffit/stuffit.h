@@ -34,10 +34,11 @@ int stuffit_arsenic_decode_buffer(uint8_t *dst, size_t *dst_size, const uint8_t 
 
 /* StuffIt X compression methods */
 int stuffitx_brimstone_decode_buffer(uint8_t *dst, size_t *dst_size, const uint8_t *src, size_t src_size, int max_order,
-                                     int sub_alloc_size);
-int stuffitx_cyanide_decode_buffer(uint8_t *dst, size_t *dst_size, const uint8_t *src, size_t src_size);
+                                     int sub_alloc_size, size_t *src_consumed);
+int stuffitx_cyanide_decode_buffer(uint8_t *dst, size_t *dst_size, const uint8_t *src, size_t src_size,
+                                   size_t *src_consumed);
 int stuffitx_darkhorse_decode_buffer(uint8_t *dst, size_t *dst_size, const uint8_t *src, size_t src_size,
-                                     int window_bits);
+                                     int window_bits, size_t *src_consumed);
 int stuffitx_deflate_decode_buffer(uint8_t *dst, size_t *dst_size, const uint8_t *src, size_t src_size);
 int stuffitx_blend_decode_buffer(uint8_t *dst, size_t *dst_size, const uint8_t *src, size_t src_size);
 int stuffitx_iron_decode_buffer(uint8_t *dst, size_t *dst_size, const uint8_t *src, size_t src_size);

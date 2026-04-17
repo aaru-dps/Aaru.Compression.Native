@@ -55,7 +55,7 @@ static const int dh_bitlen_table[64] = {0,  0,  0,  0,  1,  1,  2,  2,  3,  3,  
                                         23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 0,  0,  0,  0};
 
 int stuffitx_darkhorse_decode_buffer(uint8_t *dst, size_t *dst_size, const uint8_t *src, size_t src_size,
-                                     int window_bits)
+                                     int window_bits, size_t *src_consumed)
 {
     size_t limit       = *dst_size;
     size_t di          = 0;
@@ -229,5 +229,6 @@ int stuffitx_darkhorse_decode_buffer(uint8_t *dst, size_t *dst_size, const uint8
 
     free(window);
     *dst_size = di;
+    if(src_consumed) *src_consumed = start + coder.pos;
     return 0;
 }

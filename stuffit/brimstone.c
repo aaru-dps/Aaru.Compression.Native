@@ -38,7 +38,7 @@ static int brimstone_read(void *context)
 }
 
 int stuffitx_brimstone_decode_buffer(uint8_t *dst, size_t *dst_size, const uint8_t *src, size_t src_size, int max_order,
-                                     int sub_alloc_size)
+                                     int sub_alloc_size, size_t *src_consumed)
 {
     size_t limit = *dst_size;
     size_t di    = 0;
@@ -64,5 +64,6 @@ int stuffitx_brimstone_decode_buffer(uint8_t *dst, size_t *dst_size, const uint8
 
     FreeSubAllocatorBrimstone(alloc);
     *dst_size = di;
+    if(src_consumed) *src_consumed = ctx.pos;
     return 0;
 }

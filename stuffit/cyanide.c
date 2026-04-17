@@ -117,7 +117,8 @@ static void calc_ternary_freqs(uint32_t *outf, uint32_t *meanings, uint32_t *inf
     outf[2] = inf[meanings[2]] + 1;
 }
 
-int stuffitx_cyanide_decode_buffer(uint8_t *dst, size_t *dst_size, const uint8_t *src, size_t src_size)
+int stuffitx_cyanide_decode_buffer(uint8_t *dst, size_t *dst_size, const uint8_t *src, size_t src_size,
+                                   size_t *src_consumed)
 {
     static const int markovgroups[27] = {0, 1,  2,  3, 4, 5, 6, 7, 8, 3, 9,  10, 3, 4,
                                          5, 11, 11, 8, 6, 2, 5, 6, 7, 8, 12, 12, 13};
@@ -255,5 +256,6 @@ int stuffitx_cyanide_decode_buffer(uint8_t *dst, size_t *dst_size, const uint8_t
 
     free(block);
     *dst_size = di;
+    if(src_consumed) *src_consumed = si;
     return 0;
 }
