@@ -168,6 +168,33 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/dd_dd2.bin
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/dd_dd3.bin
      DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data/)
 
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/stuffit_compress.bin
+     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data/)
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/stuffit_method13.bin
+     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data/)
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/stuffit_method13_v5.bin
+     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data/)
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/stuffit_arsenic.bin
+     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data/)
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/stuffitx_brimstone.bin
+     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data/)
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/stuffitx_cyanide.bin
+     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data/)
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/stuffitx_darkhorse.bin
+     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data/)
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/stuffitx_deflate.bin
+     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data/)
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/stuffitx_blend.bin
+     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data/)
+
 # 'Google_Tests_run' is the target name
 # 'test1.cpp tests2.cpp' are source files with tests
 add_executable(tests_run apple_rle.cpp crc32.c crc32.h adc.cpp bzip2.cpp lzip.cpp lzfse.cpp zstd.cpp lzma.cpp flac.cpp lz4.cpp
@@ -180,5 +207,6 @@ add_executable(tests_run apple_rle.cpp crc32.c crc32.h adc.cpp bzip2.cpp lzip.cp
                zip/zip.cpp
                rar/rar.cpp
                cpt/cpt.cpp
-               dd/dd.cpp)
+               dd/dd.cpp
+               stuffit/stuffit.cpp)
 target_link_libraries(tests_run gtest gtest_main "Aaru.Compression.Native")

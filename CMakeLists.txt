@@ -237,10 +237,40 @@ add_library("Aaru.Compression.Native" SHARED library.c apple_rle.c apple_rle.h a
             ppmd/SubAllocatorVariantH.h
             ppmd/VariantH.c
             ppmd/VariantH.h
+            ppmd/VariantG.c
+            ppmd/VariantG.h
+            ppmd/SubAllocatorVariantG.c
+            ppmd/SubAllocatorVariantG.h
+            ppmd/SubAllocatorBrimstone.c
+            ppmd/SubAllocatorBrimstone.h
             cpt/cpt.c
             cpt/cpt.h
             dd/dd.c
-            dd/dd.h)
+            dd/dd.h
+            stuffit/stuffit.h
+            stuffit/stuffit_internal.h
+            stuffit/bwt.c
+            stuffit/bwt.h
+            stuffit/rangecoder.c
+            stuffit/rangecoder.h
+            stuffit/rle90.c
+            stuffit/compress.c
+            stuffit/huffman.c
+            stuffit/lzah.c
+            stuffit/mw.c
+            stuffit/method13.c
+            stuffit/method13_tables.h
+            stuffit/method14.c
+            stuffit/arsenic.c
+            stuffit/brimstone.c
+            stuffit/cyanide.c
+            stuffit/darkhorse.c
+            stuffit/deflate_sitx.c
+            stuffit/iron.c
+            stuffit/blend.c
+            stuffit/x86.c
+            stuffit/english.c
+            stuffit/english_dict.c)
 
 include(3rdparty/bzip2.cmake)
 include(3rdparty/flac.cmake)

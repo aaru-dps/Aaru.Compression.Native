@@ -593,4 +593,74 @@ AARU_EXPORT int AARU_CALL AARU_dd_lzw_decode_buffer(uint8_t *dst_buffer, size_t 
                                                     size_t src_size, int flags)
 { return dd_lzw_decode_buffer(dst_buffer, dst_size, src_buffer, src_size, flags); }
 
+/* ============== StuffIt Wrappers ============== */
+
+#include "stuffit/stuffit.h"
+
+AARU_EXPORT int AARU_CALL AARU_stuffit_rle90_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                           const uint8_t *src_buffer, size_t src_size)
+{ return stuffit_rle90_decode_buffer(dst_buffer, dst_size, src_buffer, src_size); }
+
+AARU_EXPORT int AARU_CALL AARU_stuffit_compress_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                              const uint8_t *src_buffer, size_t src_size)
+{ return stuffit_compress_decode_buffer(dst_buffer, dst_size, src_buffer, src_size); }
+
+AARU_EXPORT int AARU_CALL AARU_stuffit_huffman_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                             const uint8_t *src_buffer, size_t src_size)
+{ return stuffit_huffman_decode_buffer(dst_buffer, dst_size, src_buffer, src_size); }
+
+AARU_EXPORT int AARU_CALL AARU_stuffit_lzah_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                          const uint8_t *src_buffer, size_t src_size)
+{ return stuffit_lzah_decode_buffer(dst_buffer, dst_size, src_buffer, src_size); }
+
+AARU_EXPORT int AARU_CALL AARU_stuffit_mw_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                        const uint8_t *src_buffer, size_t src_size)
+{ return stuffit_mw_decode_buffer(dst_buffer, dst_size, src_buffer, src_size); }
+
+AARU_EXPORT int AARU_CALL AARU_stuffit_method13_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                              const uint8_t *src_buffer, size_t src_size)
+{ return stuffit_method13_decode_buffer(dst_buffer, dst_size, src_buffer, src_size); }
+
+AARU_EXPORT int AARU_CALL AARU_stuffit_method14_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                              const uint8_t *src_buffer, size_t src_size)
+{ return stuffit_method14_decode_buffer(dst_buffer, dst_size, src_buffer, src_size); }
+
+AARU_EXPORT int AARU_CALL AARU_stuffit_arsenic_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                             const uint8_t *src_buffer, size_t src_size)
+{ return stuffit_arsenic_decode_buffer(dst_buffer, dst_size, src_buffer, src_size); }
+
+AARU_EXPORT int AARU_CALL AARU_stuffitx_brimstone_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                                const uint8_t *src_buffer, size_t src_size,
+                                                                int max_order, int sub_alloc_size)
+{ return stuffitx_brimstone_decode_buffer(dst_buffer, dst_size, src_buffer, src_size, max_order, sub_alloc_size); }
+
+AARU_EXPORT int AARU_CALL AARU_stuffitx_cyanide_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                              const uint8_t *src_buffer, size_t src_size)
+{ return stuffitx_cyanide_decode_buffer(dst_buffer, dst_size, src_buffer, src_size); }
+
+AARU_EXPORT int AARU_CALL AARU_stuffitx_darkhorse_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                                const uint8_t *src_buffer, size_t src_size,
+                                                                int window_bits)
+{ return stuffitx_darkhorse_decode_buffer(dst_buffer, dst_size, src_buffer, src_size, window_bits); }
+
+AARU_EXPORT int AARU_CALL AARU_stuffitx_deflate_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                              const uint8_t *src_buffer, size_t src_size)
+{ return stuffitx_deflate_decode_buffer(dst_buffer, dst_size, src_buffer, src_size); }
+
+AARU_EXPORT int AARU_CALL AARU_stuffitx_blend_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                            const uint8_t *src_buffer, size_t src_size)
+{ return stuffitx_blend_decode_buffer(dst_buffer, dst_size, src_buffer, src_size); }
+
+AARU_EXPORT int AARU_CALL AARU_stuffitx_iron_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                           const uint8_t *src_buffer, size_t src_size)
+{ return stuffitx_iron_decode_buffer(dst_buffer, dst_size, src_buffer, src_size); }
+
+AARU_EXPORT int AARU_CALL AARU_stuffitx_english_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                              const uint8_t *src_buffer, size_t src_size)
+{ return stuffitx_english_decode_buffer(dst_buffer, dst_size, src_buffer, src_size); }
+
+AARU_EXPORT int AARU_CALL AARU_stuffitx_x86_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                          const uint8_t *src_buffer, size_t src_size)
+{ return stuffitx_x86_decode_buffer(dst_buffer, dst_size, src_buffer, src_size); }
+
 AARU_EXPORT uint64_t AARU_CALL AARU_get_acn_version() { return AARU_CHECKUMS_NATIVE_VERSION; }

@@ -364,4 +364,70 @@ AARU_EXPORT int AARU_CALL AARU_dd_cpt_decode_buffer(uint8_t *dst_buffer, size_t 
 AARU_EXPORT int AARU_CALL AARU_dd_lzw_decode_buffer(uint8_t *dst_buffer, size_t *dst_size, const uint8_t *src_buffer,
                                                     size_t src_size, int flags);
 
+// StuffIt classic method 1: RLE with 0x90 escape
+AARU_EXPORT int AARU_CALL AARU_stuffit_rle90_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                           const uint8_t *src_buffer, size_t src_size);
+
+// StuffIt classic method 2: UNIX compress (LZW)
+AARU_EXPORT int AARU_CALL AARU_stuffit_compress_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                              const uint8_t *src_buffer, size_t src_size);
+
+// StuffIt classic method 3: Static Huffman tree
+AARU_EXPORT int AARU_CALL AARU_stuffit_huffman_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                             const uint8_t *src_buffer, size_t src_size);
+
+// StuffIt classic method 5: LZAH (LZH with adaptive Huffman, 4KB window)
+AARU_EXPORT int AARU_CALL AARU_stuffit_lzah_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                          const uint8_t *src_buffer, size_t src_size);
+
+// StuffIt classic method 8: MW (LZW variant)
+AARU_EXPORT int AARU_CALL AARU_stuffit_mw_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                        const uint8_t *src_buffer, size_t src_size);
+
+// StuffIt classic method 13: Dynamic/Static Huffman LZSS (64KB window)
+AARU_EXPORT int AARU_CALL AARU_stuffit_method13_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                              const uint8_t *src_buffer, size_t src_size);
+
+// StuffIt classic method 14: Block Huffman LZSS (256KB window)
+AARU_EXPORT int AARU_CALL AARU_stuffit_method14_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                              const uint8_t *src_buffer, size_t src_size);
+
+// StuffIt classic method 15: Arsenic (BWT + arithmetic coding)
+AARU_EXPORT int AARU_CALL AARU_stuffit_arsenic_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                             const uint8_t *src_buffer, size_t src_size);
+
+// StuffIt X method 0: Brimstone (PPMd Variant G)
+AARU_EXPORT int AARU_CALL AARU_stuffitx_brimstone_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                                const uint8_t *src_buffer, size_t src_size,
+                                                                int max_order, int sub_alloc_size);
+
+// StuffIt X method 1: Cyanide (BWT + ternary range coding)
+AARU_EXPORT int AARU_CALL AARU_stuffitx_cyanide_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                              const uint8_t *src_buffer, size_t src_size);
+
+// StuffIt X method 2: Darkhorse (context-weighted LZSS + range coder)
+AARU_EXPORT int AARU_CALL AARU_stuffitx_darkhorse_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                                const uint8_t *src_buffer, size_t src_size,
+                                                                int window_bits);
+
+// StuffIt X method 3: Modified Deflate
+AARU_EXPORT int AARU_CALL AARU_stuffitx_deflate_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                              const uint8_t *src_buffer, size_t src_size);
+
+// StuffIt X method 4: Blend (Darkhorse/Cyanide/Brimstone multiplexer)
+AARU_EXPORT int AARU_CALL AARU_stuffitx_blend_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                            const uint8_t *src_buffer, size_t src_size);
+
+// StuffIt X method 6: Iron (advanced BWT/ST4 + range coder)
+AARU_EXPORT int AARU_CALL AARU_stuffitx_iron_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                           const uint8_t *src_buffer, size_t src_size);
+
+// StuffIt X preprocessor 0: English dictionary word substitution
+AARU_EXPORT int AARU_CALL AARU_stuffitx_english_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                              const uint8_t *src_buffer, size_t src_size);
+
+// StuffIt X preprocessor 2: x86 executable address transformation
+AARU_EXPORT int AARU_CALL AARU_stuffitx_x86_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                          const uint8_t *src_buffer, size_t src_size);
+
 #endif  // AARU_COMPRESSION_NATIVE_LIBRARY_H
