@@ -14,6 +14,7 @@ Currently implemented algorithms are:
 
 ### General-purpose codecs
 - Apple Data Compression (RLE with sliding dictionary created for Apple Disk Copy's NDIF)
+- Apple LZH (LH1 variant used by Apple DART's "best" compression mode)
 - Apple RLE (Run Length Encoding created for Apple DART)
 - [BZIP2](https://gitlab.com/bzip2/bzip2.git)
 - [FLAC](https://github.com/xiph/flac)
