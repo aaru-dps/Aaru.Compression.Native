@@ -60,6 +60,10 @@ AARU_EXPORT int32_t AARU_CALL AARU_adc_decode_buffer(uint8_t *dst_buffer, int32_
 AARU_EXPORT int32_t AARU_CALL AARU_apple_rle_decode_buffer(uint8_t *dst_buffer, int32_t dst_size,
                                                            const uint8_t *src_buffer, int32_t src_size);
 
+// Apple LZH decompression (DART "best" mode: LH1 variant with zero-filled window tail)
+AARU_EXPORT int AARU_CALL AARU_apple_lzh_decode_buffer(uint8_t *dst_buffer, size_t *dst_size, const uint8_t *src_buffer,
+                                                       size_t src_size);
+
 AARU_EXPORT size_t AARU_CALL AARU_flac_decode_redbook_buffer(uint8_t *dst_buffer, size_t dst_size,
                                                              const uint8_t *src_buffer, size_t src_size);
 
