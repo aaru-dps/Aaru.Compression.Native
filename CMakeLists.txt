@@ -261,6 +261,7 @@ add_library("Aaru.Compression.Native" SHARED library.c apple_rle.c apple_rle.h a
             stuffit/method13.c
             stuffit/method13_tables.h
             stuffit/method14.c
+            stuffit/shrinkwrap.c
             stuffit/arsenic.c
             stuffit/brimstone.c
             stuffit/cyanide.c

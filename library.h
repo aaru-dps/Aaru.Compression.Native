@@ -400,6 +400,10 @@ AARU_EXPORT int AARU_CALL AARU_stuffit_method14_decode_buffer(uint8_t *dst_buffe
 AARU_EXPORT int AARU_CALL AARU_stuffit_arsenic_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
                                                              const uint8_t *src_buffer, size_t src_size);
 
+// ShrinkWrap 3 SIT2 compression (NDIF chunk type 0xF0)
+AARU_EXPORT int AARU_CALL AARU_stuffit_shrinkwrap_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                               const uint8_t *src_buffer, size_t src_size);
+
 // StuffIt X method 0: Brimstone (PPMd Variant G)
 AARU_EXPORT int AARU_CALL AARU_stuffitx_brimstone_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
                                                                 const uint8_t *src_buffer, size_t src_size,

@@ -180,6 +180,9 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/stuffit_method13_v5.bin
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/stuffit_arsenic.bin
      DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data/)
 
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/stuffit_shrinkwrap.bin
+     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data/)
+
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/stuffitx_brimstone.bin
      DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data/)
 

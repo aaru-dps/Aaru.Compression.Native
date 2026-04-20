@@ -629,10 +629,17 @@ AARU_EXPORT int AARU_CALL AARU_stuffit_arsenic_decode_buffer(uint8_t *dst_buffer
                                                              const uint8_t *src_buffer, size_t src_size)
 { return stuffit_arsenic_decode_buffer(dst_buffer, dst_size, src_buffer, src_size); }
 
+AARU_EXPORT int AARU_CALL AARU_stuffit_shrinkwrap_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                                const uint8_t *src_buffer, size_t src_size)
+{ return stuffit_shrinkwrap_decode_buffer(dst_buffer, dst_size, src_buffer, src_size); }
+
 AARU_EXPORT int AARU_CALL AARU_stuffitx_brimstone_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
                                                                 const uint8_t *src_buffer, size_t src_size,
                                                                 int max_order, int sub_alloc_size)
-{ return stuffitx_brimstone_decode_buffer(dst_buffer, dst_size, src_buffer, src_size, max_order, sub_alloc_size, NULL); }
+{
+    return stuffitx_brimstone_decode_buffer(dst_buffer, dst_size, src_buffer, src_size, max_order, sub_alloc_size,
+                                            NULL);
+}
 
 AARU_EXPORT int AARU_CALL AARU_stuffitx_cyanide_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
                                                               const uint8_t *src_buffer, size_t src_size)

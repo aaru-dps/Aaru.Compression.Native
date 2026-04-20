@@ -32,6 +32,9 @@ int stuffit_method13_decode_buffer(uint8_t *dst, size_t *dst_size, const uint8_t
 int stuffit_method14_decode_buffer(uint8_t *dst, size_t *dst_size, const uint8_t *src, size_t src_size);
 int stuffit_arsenic_decode_buffer(uint8_t *dst, size_t *dst_size, const uint8_t *src, size_t src_size);
 
+/* ShrinkWrap 3 SIT2 compression (used by NDIF chunk type 0xF0) */
+int stuffit_shrinkwrap_decode_buffer(uint8_t *dst, size_t *dst_size, const uint8_t *src, size_t src_size);
+
 /* StuffIt X compression methods */
 int stuffitx_brimstone_decode_buffer(uint8_t *dst, size_t *dst_size, const uint8_t *src, size_t src_size, int max_order,
                                      int sub_alloc_size, size_t *src_consumed);

@@ -391,3 +391,36 @@ TEST_F(StuffitxBlendFixture, stuffitx_blend)
     free(outBuf);
     EXPECT_EQ(crc, EXPECTED_CRC32);
 }
+
+/* ---- ShrinkWrap 3 SIT2 (NDIF chunk type 0xF0) ---- */
+
+#define SHRINKWRAP_SIZE     27219
+#define SHRINKWRAP_ORIGSIZE 65536
+#define SHRINKWRAP_CRC32    0x93A5E340
+
+class StuffitShrinkwrapFixture : public ::testing::Test
+{
+protected:
+    uint8_t *buf = nullptr;
+
+    void SetUp() { buf = load_test_file("stuffit_shrinkwrap.bin", SHRINKWRAP_SIZE); }
+
+    void TearDown() { free(buf); }
+};
+
+TEST_F(StuffitShrinkwrapFixture, stuffit_shrinkwrap)
+{
+    ASSERT_NE(buf, nullptr);
+
+    size_t destLen = SHRINKWRAP_ORIGSIZE;
+    auto  *outBuf  = (uint8_t *)malloc(SHRINKWRAP_ORIGSIZE);
+
+    auto err = AARU_stuffit_shrinkwrap_decode_buffer(outBuf, &destLen, buf, SHRINKWRAP_SIZE);
+
+    EXPECT_EQ(err, 0);
+    EXPECT_EQ(destLen, (size_t)SHRINKWRAP_ORIGSIZE);
+
+    auto crc = crc32_data(outBuf, destLen);
+    free(outBuf);
+    EXPECT_EQ(crc, (uint32_t)SHRINKWRAP_CRC32);
+}
