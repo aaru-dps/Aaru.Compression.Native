@@ -222,6 +222,21 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/mf1dd_mfs_fast.dart.lz
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/mf1dd_mfs_best.dart.lz
      DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data/)
 
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/kencode_boot.bin
+     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data/)
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/kencode_zeros.bin
+     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data/)
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/kencode_hfs.bin
+     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data/)
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/kencode_last.bin
+     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data/)
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/kencode_large.bin
+     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data/)
+
 # 'Google_Tests_run' is the target name
 # 'test1.cpp tests2.cpp' are source files with tests
 add_executable(tests_run apple_rle.cpp crc32.c crc32.h adc.cpp bzip2.cpp lzip.cpp lzfse.cpp zstd.cpp lzma.cpp flac.cpp lz4.cpp
@@ -236,5 +251,6 @@ add_executable(tests_run apple_rle.cpp crc32.c crc32.h adc.cpp bzip2.cpp lzip.cp
                cpt/cpt.cpp
                dd/dd.cpp
                stuffit/stuffit.cpp
-               dart/dart.cpp)
+               dart/dart.cpp
+               kencode.cpp)
 target_link_libraries(tests_run gtest gtest_main "Aaru.Compression.Native")

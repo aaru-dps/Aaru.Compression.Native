@@ -57,6 +57,10 @@
 AARU_EXPORT int32_t AARU_CALL AARU_adc_decode_buffer(uint8_t *dst_buffer, int32_t dst_size, const uint8_t *src_buffer,
                                                      int32_t src_size);
 
+// KenCode decompression (NDIF chunk type 0x80)
+AARU_EXPORT int32_t AARU_CALL AARU_kencode_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
+                                                         const uint8_t *src_buffer, size_t src_size);
+
 AARU_EXPORT int32_t AARU_CALL AARU_apple_rle_decode_buffer(uint8_t *dst_buffer, int32_t dst_size,
                                                            const uint8_t *src_buffer, int32_t src_size);
 
@@ -402,7 +406,7 @@ AARU_EXPORT int AARU_CALL AARU_stuffit_arsenic_decode_buffer(uint8_t *dst_buffer
 
 // ShrinkWrap 3 SIT2 compression (NDIF chunk type 0xF0)
 AARU_EXPORT int AARU_CALL AARU_stuffit_shrinkwrap_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
-                                                               const uint8_t *src_buffer, size_t src_size);
+                                                                const uint8_t *src_buffer, size_t src_size);
 
 // StuffIt X method 0: Brimstone (PPMd Variant G)
 AARU_EXPORT int AARU_CALL AARU_stuffitx_brimstone_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
