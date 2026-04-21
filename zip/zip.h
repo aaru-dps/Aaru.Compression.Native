@@ -22,6 +22,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "blast_buf.h"
 #include "deflate64.h"
 #include "implode.h"
 #include "reduce.h"

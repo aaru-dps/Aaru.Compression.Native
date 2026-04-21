@@ -523,6 +523,10 @@ AARU_EXPORT int32_t AARU_CALL AARU_lzma2_encode_buffer(uint8_t *dst_buffer, size
 
 /* ============== ZIP Wrappers ============== */
 
+AARU_EXPORT int AARU_CALL AARU_zip_blast_decode_buffer(uint8_t *dst_buffer, size_t *dst_size, const uint8_t *src_buffer,
+                                                       size_t src_size)
+{ return zip_blast_decompress(src_buffer, src_size, dst_buffer, dst_size); }
+
 AARU_EXPORT int AARU_CALL AARU_zip_shrink_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
                                                         const uint8_t *src_buffer, size_t src_size)
 { return zip_shrink_decompress(src_buffer, src_size, dst_buffer, dst_size); }

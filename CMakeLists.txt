@@ -177,6 +177,10 @@ add_library("Aaru.Compression.Native" SHARED library.c apple_rle.c apple_rle.h a
             arj/arj_fastest.c
             arjz/arjz.c
             arjz/arjz.h
+            zip/blast.c
+            zip/blast.h
+            zip/blast_buf.c
+            zip/blast_buf.h
             zip/shrink.c
             zip/shrink.h
             zip/reduce.c

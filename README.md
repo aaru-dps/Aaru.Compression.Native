@@ -42,7 +42,7 @@ Currently implemented algorithms are:
 - StuffIt classic methods 1–3, 5, 8, 13–15 (RLE, LZW, Huffman, LZAH, MW, LZSS, Arsenic)
 - StuffIt X methods 0–4, 6 (Brimstone/PPMd, Cyanide/BWT, Darkhorse/LZSS, Deflate, Blend, Iron/BWT)
 - StuffIt X preprocessors (English dictionary, x86 executable transform)
-- ZIP methods 1–6, 9, 96–98 (Shrink, Reduce, Implode, Deflate64, WinZip JPEG, WavPack, PPMd)
+- ZIP methods 1–6, 9-10, 96–98 (Shrink, Reduce, Implode, DCL Implode, Deflate64, WinZip JPEG, WavPack, PPMd)
 - Zoo (LZD, LH5)
 
 Each of these algorithms have a corresponding license, that can be found in their corresponding folder.
