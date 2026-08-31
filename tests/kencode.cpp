@@ -87,7 +87,7 @@ TEST_F(KencodeBootFixture, kencode_boot)
     auto  *outBuf  = (uint8_t *)malloc(KC_BOOT_DECOMP_SIZE);
     size_t destLen = KC_BOOT_DECOMP_SIZE;
 
-    auto err = AARU_kencode_decode_buffer(outBuf, &destLen, kc_boot_buffer, KC_BOOT_COMP_SIZE);
+    auto err = AARU_kencode_decode_buffer(kc_boot_buffer, KC_BOOT_COMP_SIZE, outBuf, &destLen);
 
     EXPECT_EQ(err, 0);
     EXPECT_EQ(destLen, (size_t)KC_BOOT_DECOMP_SIZE);
@@ -115,7 +115,7 @@ TEST_F(KencodeZerosFixture, kencode_zeros)
     auto  *outBuf  = (uint8_t *)malloc(KC_ZEROS_DECOMP_SIZE);
     size_t destLen = KC_ZEROS_DECOMP_SIZE;
 
-    auto err = AARU_kencode_decode_buffer(outBuf, &destLen, kc_zeros_buffer, KC_ZEROS_COMP_SIZE);
+    auto err = AARU_kencode_decode_buffer(kc_zeros_buffer, KC_ZEROS_COMP_SIZE, outBuf, &destLen);
 
     EXPECT_EQ(err, 0);
     EXPECT_EQ(destLen, (size_t)KC_ZEROS_DECOMP_SIZE);
@@ -143,7 +143,7 @@ TEST_F(KencodeHfsFixture, kencode_hfs)
     auto  *outBuf  = (uint8_t *)malloc(KC_HFS_DECOMP_SIZE);
     size_t destLen = KC_HFS_DECOMP_SIZE;
 
-    auto err = AARU_kencode_decode_buffer(outBuf, &destLen, kc_hfs_buffer, KC_HFS_COMP_SIZE);
+    auto err = AARU_kencode_decode_buffer(kc_hfs_buffer, KC_HFS_COMP_SIZE, outBuf, &destLen);
 
     EXPECT_EQ(err, 0);
     EXPECT_EQ(destLen, (size_t)KC_HFS_DECOMP_SIZE);
@@ -171,7 +171,7 @@ TEST_F(KencodeLastFixture, kencode_last)
     auto  *outBuf  = (uint8_t *)malloc(KC_LAST_DECOMP_SIZE);
     size_t destLen = KC_LAST_DECOMP_SIZE;
 
-    auto err = AARU_kencode_decode_buffer(outBuf, &destLen, kc_last_buffer, KC_LAST_COMP_SIZE);
+    auto err = AARU_kencode_decode_buffer(kc_last_buffer, KC_LAST_COMP_SIZE, outBuf, &destLen);
 
     EXPECT_EQ(err, 0);
     EXPECT_EQ(destLen, (size_t)KC_LAST_DECOMP_SIZE);
@@ -199,7 +199,7 @@ TEST_F(KencodeLargeFixture, kencode_large)
     auto  *outBuf  = (uint8_t *)malloc(KC_LARGE_DECOMP_SIZE);
     size_t destLen = KC_LARGE_DECOMP_SIZE;
 
-    auto err = AARU_kencode_decode_buffer(outBuf, &destLen, kc_large_buffer, KC_LARGE_COMP_SIZE);
+    auto err = AARU_kencode_decode_buffer(kc_large_buffer, KC_LARGE_COMP_SIZE, outBuf, &destLen);
 
     EXPECT_EQ(err, 0);
     EXPECT_EQ(destLen, (size_t)KC_LARGE_DECOMP_SIZE);

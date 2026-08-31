@@ -66,7 +66,9 @@ TEST_F(lzipFixture, lzip)
 {
     auto *outBuf = (uint8_t *)malloc(1048576);
 
-    auto decoded = AARU_lzip_decode_buffer(outBuf, 1048576, buffer, 1062874);
+    size_t decoded = 1048576;
+
+    EXPECT_EQ(AARU_lzip_decode_buffer(buffer, 1062874, outBuf, &decoded), 0);
 
     EXPECT_EQ(decoded, 1048576);
 
@@ -80,8 +82,8 @@ TEST_F(lzipFixture, lzip)
 TEST_F(lzipFixture, lzipCompress)
 {
     int32_t        original_len = 8388608;
-    int32_t        cmp_len      = original_len;
-    int32_t        decmp_len    = original_len;
+    size_t         cmp_len      = original_len;
+    size_t         decmp_len    = original_len;
     char           path[PATH_MAX];
     char           filename[PATH_MAX * 2];
     FILE          *file;
@@ -89,7 +91,7 @@ TEST_F(lzipFixture, lzipCompress)
     const uint8_t *original;
     uint8_t       *cmp_buffer;
     uint8_t       *decmp_buffer;
-    int32_t        newSize;
+    size_t         newSize;
 
     // Allocate buffers
     original     = (const uint8_t *)malloc(original_len);
@@ -108,11 +110,13 @@ TEST_F(lzipFixture, lzipCompress)
     original_crc = crc32_data(original, original_len);
 
     // Compress
-    newSize = AARU_lzip_encode_buffer(cmp_buffer, cmp_len, original, original_len, 1048576, 273);
+    newSize = cmp_len;
+    EXPECT_EQ(AARU_lzip_encode_buffer(original, original_len, cmp_buffer, &newSize, 1048576, 273), 0);
     cmp_len = newSize;
 
     // Decompress
-    newSize   = AARU_lzip_decode_buffer(decmp_buffer, decmp_len, cmp_buffer, cmp_len);
+    newSize = decmp_len;
+    EXPECT_EQ(AARU_lzip_decode_buffer(cmp_buffer, cmp_len, decmp_buffer, &newSize), 0);
     decmp_len = newSize;
 
     EXPECT_EQ(decmp_len, original_len);

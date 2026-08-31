@@ -23,8 +23,7 @@
 #include "library.h"
 #include "3rdparty/lzlib/lzlib.h"
 
-AARU_EXPORT int32_t AARU_CALL AARU_lzip_decode_buffer(uint8_t *dst_buffer, int32_t dst_size, const uint8_t *src_buffer,
-                                                      int32_t src_size)
+static int32_t lzip_decode(uint8_t *dst_buffer, int32_t dst_size, const uint8_t *src_buffer, int32_t src_size)
 {
     int           max_in_size;
     void         *ctx;
@@ -81,9 +80,8 @@ AARU_EXPORT int32_t AARU_CALL AARU_lzip_decode_buffer(uint8_t *dst_buffer, int32
     return out_pos;
 }
 
-AARU_EXPORT int32_t AARU_CALL AARU_lzip_encode_buffer(uint8_t *dst_buffer, int32_t dst_size, const uint8_t *src_buffer,
-                                                      int32_t src_size, int32_t dictionary_size,
-                                                      int32_t match_len_limit)
+static int32_t lzip_encode(uint8_t *dst_buffer, int32_t dst_size, const uint8_t *src_buffer, int32_t src_size,
+                           int32_t dictionary_size, int32_t match_len_limit)
 {
     int           max_in_size;
     void         *ctx;
@@ -139,4 +137,36 @@ AARU_EXPORT int32_t AARU_CALL AARU_lzip_encode_buffer(uint8_t *dst_buffer, int32
     LZ_compress_close(ctx);
 
     return out_pos;
+}
+
+AARU_EXPORT int32_t AARU_CALL AARU_lzip_decode_buffer(const uint8_t *src_buffer, size_t src_size, uint8_t *dst_buffer,
+                                                      size_t *dst_size)
+{
+    int32_t written;
+
+    if(!src_buffer || !dst_buffer || !dst_size) return AARU_ERROR_INVALID_ARGUMENT;
+
+    written = lzip_decode(dst_buffer, (int32_t)*dst_size, src_buffer, (int32_t)src_size);
+
+    if(written <= 0) return AARU_ERROR_FAILURE;
+
+    *dst_size = (size_t)written;
+    return AARU_ERROR_NONE;
+}
+
+AARU_EXPORT int32_t AARU_CALL AARU_lzip_encode_buffer(const uint8_t *src_buffer, size_t src_size, uint8_t *dst_buffer,
+                                                      size_t *dst_size, int32_t dictionary_size,
+                                                      int32_t match_len_limit)
+{
+    int32_t written;
+
+    if(!src_buffer || !dst_buffer || !dst_size) return AARU_ERROR_INVALID_ARGUMENT;
+
+    written = lzip_encode(dst_buffer, (int32_t)*dst_size, src_buffer, (int32_t)src_size, dictionary_size,
+                          match_len_limit);
+
+    if(written <= 0) return AARU_ERROR_FAILURE;
+
+    *dst_size = (size_t)written;
+    return AARU_ERROR_NONE;
 }

@@ -59,7 +59,7 @@ TEST_F(ZipShrinkFixture, ZipShrink)
     size_t  destLen = EXPECTED_OUTPUT_SIZE;
     auto   *outBuf  = (uint8_t *)malloc(EXPECTED_OUTPUT_SIZE);
 
-    auto err = AARU_zip_shrink_decode_buffer(outBuf, &destLen, shrink_buffer, SHRINK_COMPRESSED_SIZE);
+    auto err = AARU_zip_shrink_decode_buffer(shrink_buffer, SHRINK_COMPRESSED_SIZE, outBuf, &destLen);
 
     EXPECT_EQ(err, 0);
     EXPECT_EQ(destLen, EXPECTED_OUTPUT_SIZE);
@@ -100,7 +100,7 @@ TEST_F(ZipImplodeFixture, ZipImplode)
     auto   *outBuf  = (uint8_t *)malloc(EXPECTED_OUTPUT_SIZE);
 
     /* large_dictionary=1 (8K), has_literals=1 (3 trees) from flags 0x0006 */
-    auto err = AARU_zip_implode_decode_buffer(outBuf, &destLen, implode_buffer, IMPLODE_COMPRESSED_SIZE, 1, 1);
+    auto err = AARU_zip_implode_decode_buffer(implode_buffer, IMPLODE_COMPRESSED_SIZE, outBuf, &destLen, 1, 1);
 
     EXPECT_EQ(err, 0);
     EXPECT_EQ(destLen, EXPECTED_OUTPUT_SIZE);
@@ -140,7 +140,7 @@ TEST_F(ZipDeflate64Fixture, ZipDeflate64)
     size_t  destLen = EXPECTED_OUTPUT_SIZE;
     auto   *outBuf  = (uint8_t *)malloc(EXPECTED_OUTPUT_SIZE);
 
-    auto err = AARU_zip_deflate64_decode_buffer(outBuf, &destLen, deflate64_buffer, DEFLATE64_COMPRESSED_SIZE);
+    auto err = AARU_zip_deflate64_decode_buffer(deflate64_buffer, DEFLATE64_COMPRESSED_SIZE, outBuf, &destLen);
 
     EXPECT_EQ(err, 0);
     EXPECT_EQ(destLen, EXPECTED_OUTPUT_SIZE);
@@ -181,8 +181,9 @@ TEST_F(ZipPPMdFixture, ZipPPMd)
     auto *outBuf = (uint8_t *)malloc(EXPECTED_OUTPUT_SIZE);
 
     /* maxorder=8, suballocsize=4194304 (4MB), restoration=0 (restart) */
-    auto err = AARU_zip_ppmd_decode_buffer(outBuf, EXPECTED_OUTPUT_SIZE, ppmd_buffer, PPMD_COMPRESSED_SIZE, 8,
-                                           4194304, 0);
+    size_t destLen = EXPECTED_OUTPUT_SIZE;
+
+    auto err = AARU_zip_ppmd_decode_buffer(ppmd_buffer, PPMD_COMPRESSED_SIZE, outBuf, &destLen, 8, 4194304, 0);
 
     EXPECT_EQ(err, 0);
 

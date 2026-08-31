@@ -67,7 +67,9 @@ TEST_F(flacFixture, flac)
 {
     auto *outBuf = (uint8_t *)malloc(9633792);
 
-    auto decoded = AARU_flac_decode_redbook_buffer(outBuf, 9633792, buffer, 6534197);
+    size_t decoded = 9633792;
+
+    EXPECT_EQ(AARU_flac_decode_redbook_buffer(buffer, 6534197, outBuf, &decoded), 0);
 
     EXPECT_EQ(decoded, 9633792);
 
@@ -81,8 +83,8 @@ TEST_F(flacFixture, flac)
 TEST_F(flacFixture, flacCompress)
 {
     size_t         original_len = 9633792;
-    uint           cmp_len      = original_len;
-    uint           decmp_len    = original_len;
+    size_t         cmp_len      = original_len;
+    size_t         decmp_len    = original_len;
     char           path[PATH_MAX];
     char           filename[PATH_MAX * 2];
     FILE          *file;
@@ -109,13 +111,17 @@ TEST_F(flacFixture, flacCompress)
     original_crc = crc32_data(original, original_len);
 
     // Compress
-    newSize = AARU_flac_encode_redbook_buffer(cmp_buffer, cmp_len, original, original_len, 4608, 1, 0,
+    newSize = cmp_len;
+    EXPECT_EQ(AARU_flac_encode_redbook_buffer(original, original_len, cmp_buffer, &newSize, 4608, 1, 0,
                                               "partial_tukey(0/1.0/1.0)", 12, 0, 1, false, 0, 8,
-                                              "Aaru.Compression.Native.Tests", strlen("Aaru.Compression.Native.Tests"));
+                                              "Aaru.Compression.Native.Tests",
+                                              strlen("Aaru.Compression.Native.Tests")),
+              0);
     cmp_len = newSize;
 
     // Decompress
-    newSize   = AARU_flac_decode_redbook_buffer(decmp_buffer, decmp_len, cmp_buffer, cmp_len);
+    newSize = decmp_len;
+    EXPECT_EQ(AARU_flac_decode_redbook_buffer(cmp_buffer, cmp_len, decmp_buffer, &newSize), 0);
     decmp_len = newSize;
 
     EXPECT_EQ(decmp_len, original_len);

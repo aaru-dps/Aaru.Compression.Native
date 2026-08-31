@@ -45,8 +45,7 @@ FORCE_INLINE int GetOffset(uint8_t chunk[])
     }
 }
 
-AARU_EXPORT int32_t AARU_CALL AARU_adc_decode_buffer(uint8_t *dst_buffer, int32_t dst_size, const uint8_t *src_buffer,
-                                                     int32_t src_size)
+static int32_t adc_decode(uint8_t *dst_buffer, int32_t dst_size, const uint8_t *src_buffer, int32_t src_size)
 {
     int     inputPosition = 0;
     int     chunkSize;
@@ -128,4 +127,19 @@ AARU_EXPORT int32_t AARU_CALL AARU_adc_decode_buffer(uint8_t *dst_buffer, int32_
 
 finished:
     return outPosition;
+}
+
+AARU_EXPORT int32_t AARU_CALL AARU_adc_decode_buffer(const uint8_t *src_buffer, size_t src_size, uint8_t *dst_buffer,
+                                                     size_t *dst_size)
+{
+    int32_t written;
+
+    if(!src_buffer || !dst_buffer || !dst_size) return AARU_ERROR_INVALID_ARGUMENT;
+
+    written = adc_decode(dst_buffer, (int32_t)*dst_size, src_buffer, (int32_t)src_size);
+
+    if(written < 0) return AARU_ERROR_FAILURE;
+
+    *dst_size = (size_t)written;
+    return AARU_ERROR_NONE;
 }

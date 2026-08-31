@@ -273,8 +273,8 @@ static int offset_dispatch(kc_bs *bs, int out_pos, int hash_size)
 // Main decompressor — PEF 0x01AC
 // ============================================================================
 
-AARU_EXPORT int32_t AARU_CALL AARU_kencode_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
-                                                         const uint8_t *src_buffer, size_t src_size)
+AARU_EXPORT int32_t AARU_CALL AARU_kencode_decode_buffer(const uint8_t *src_buffer, size_t src_size,
+                                                         uint8_t *dst_buffer, size_t *dst_size)
 {
     if(!dst_buffer || !dst_size || !src_buffer || src_size == 0) return -1;
 

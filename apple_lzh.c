@@ -200,8 +200,8 @@ static void apple_lzh_update(apple_lzh_tree *tree, apple_lzh_node *node)
     }
 }
 
-AARU_EXPORT int AARU_CALL AARU_apple_lzh_decode_buffer(uint8_t *dst_buffer, size_t *dst_size, const uint8_t *src_buffer,
-                                                       size_t src_size)
+AARU_EXPORT int32_t AARU_CALL AARU_apple_lzh_decode_buffer(const uint8_t *src_buffer, size_t src_size,
+                                                           uint8_t *dst_buffer, size_t *dst_size)
 {
     lha_bitio        bitio;
     lha_lzss         lzss;

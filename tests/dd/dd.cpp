@@ -59,7 +59,7 @@ TEST_F(DdAdnFixture, dd_adn)
     size_t destLen = EXPECTED_ORIGSIZE;
     auto  *outBuf  = (uint8_t *)malloc(EXPECTED_ORIGSIZE);
 
-    auto err = AARU_dd_adn_decode_buffer(outBuf, &destLen, adn_buffer, ADN_COMPRESSED_SIZE);
+    auto err = AARU_dd_adn_decode_buffer(adn_buffer, ADN_COMPRESSED_SIZE, outBuf, &destLen);
 
     EXPECT_EQ(err, 0);
     EXPECT_EQ(destLen, (size_t)EXPECTED_ORIGSIZE);
@@ -98,7 +98,7 @@ TEST_F(DdAdn2Fixture, dd_adn2)
     size_t destLen = EXPECTED_ORIGSIZE;
     auto  *outBuf  = (uint8_t *)malloc(EXPECTED_ORIGSIZE);
 
-    auto err = AARU_dd_adn_decode_buffer(outBuf, &destLen, adn2_buffer, ADN2_COMPRESSED_SIZE);
+    auto err = AARU_dd_adn_decode_buffer(adn2_buffer, ADN2_COMPRESSED_SIZE, outBuf, &destLen);
 
     EXPECT_EQ(err, 0);
     EXPECT_EQ(destLen, (size_t)EXPECTED_ORIGSIZE);
@@ -137,7 +137,7 @@ TEST_F(DdDdn1Fixture, dd_ddn1)
     size_t destLen = EXPECTED_ORIGSIZE;
     auto  *outBuf  = (uint8_t *)malloc(EXPECTED_ORIGSIZE);
 
-    auto err = AARU_dd_ddn_decode_buffer(outBuf, &destLen, ddn1_buffer, DDN1_COMPRESSED_SIZE);
+    auto err = AARU_dd_ddn_decode_buffer(ddn1_buffer, DDN1_COMPRESSED_SIZE, outBuf, &destLen);
 
     EXPECT_EQ(err, 0);
     EXPECT_EQ(destLen, (size_t)EXPECTED_ORIGSIZE);
@@ -176,7 +176,7 @@ TEST_F(DdDdn2Fixture, dd_ddn2)
     size_t destLen = EXPECTED_ORIGSIZE;
     auto  *outBuf  = (uint8_t *)malloc(EXPECTED_ORIGSIZE);
 
-    auto err = AARU_dd_ddn_decode_buffer(outBuf, &destLen, ddn2_buffer, DDN2_COMPRESSED_SIZE);
+    auto err = AARU_dd_ddn_decode_buffer(ddn2_buffer, DDN2_COMPRESSED_SIZE, outBuf, &destLen);
 
     EXPECT_EQ(err, 0);
     EXPECT_EQ(destLen, (size_t)EXPECTED_ORIGSIZE);
@@ -215,7 +215,7 @@ TEST_F(DdDdn3Fixture, dd_ddn3)
     size_t destLen = EXPECTED_ORIGSIZE;
     auto  *outBuf  = (uint8_t *)malloc(EXPECTED_ORIGSIZE);
 
-    auto err = AARU_dd_ddn_decode_buffer(outBuf, &destLen, ddn3_buffer, DDN3_COMPRESSED_SIZE);
+    auto err = AARU_dd_ddn_decode_buffer(ddn3_buffer, DDN3_COMPRESSED_SIZE, outBuf, &destLen);
 
     EXPECT_EQ(err, 0);
     EXPECT_EQ(destLen, (size_t)EXPECTED_ORIGSIZE);

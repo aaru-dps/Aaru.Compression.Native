@@ -67,7 +67,9 @@ TEST_F(apple_rleFixture, apple_rle)
 {
     auto *outBuf = (uint8_t *)malloc(32768);
 
-    auto decoded = AARU_apple_rle_decode_buffer(outBuf, 32768, buffer, 1102);
+    size_t decoded = 32768;
+
+    EXPECT_EQ(AARU_apple_rle_decode_buffer(buffer, 1102, outBuf, &decoded), 0);
 
     EXPECT_EQ(decoded, 20960);
 

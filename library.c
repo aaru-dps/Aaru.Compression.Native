@@ -52,35 +52,110 @@
 #include "dd/dd.h"
 #include "zip/zip.h"
 
-AARU_EXPORT int32_t AARU_CALL AARU_bzip2_decode_buffer(uint8_t *dst_buffer, uint32_t *dst_size,
-                                                       const uint8_t *src_buffer, uint32_t src_size)
-{ return BZ2_bzBuffToBuffDecompress((char *)dst_buffer, dst_size, (char *)src_buffer, src_size, 0, 0); }
+AARU_EXPORT int32_t AARU_CALL AARU_bzip2_decode_buffer(const uint8_t *src_buffer, size_t src_size, uint8_t *dst_buffer,
+                                                       size_t *dst_size)
+{
+    unsigned int out_len;
+    int          res;
 
-AARU_EXPORT int32_t AARU_CALL AARU_bzip2_encode_buffer(uint8_t *dst_buffer, uint32_t *dst_size,
-                                                       const uint8_t *src_buffer, uint32_t src_size,
-                                                       int32_t blockSize100k)
-{ return BZ2_bzBuffToBuffCompress((char *)dst_buffer, dst_size, (char *)src_buffer, src_size, blockSize100k, 0, 0); }
+    if(!src_buffer || !dst_buffer || !dst_size) return AARU_ERROR_INVALID_ARGUMENT;
 
-AARU_EXPORT int32_t AARU_CALL AARU_lz4_decode_buffer(uint8_t *dst_buffer, int32_t dst_size, const uint8_t *src_buffer,
-                                                     int32_t src_size)
-{ return LZ4_decompress_safe((const char *)src_buffer, (char *)dst_buffer, src_size, dst_size); }
+    out_len = (unsigned int)*dst_size;
 
-AARU_EXPORT int32_t AARU_CALL AARU_lz4_encode_buffer(uint8_t *dst_buffer, int32_t dst_size, const uint8_t *src_buffer,
-                                                     int32_t src_size)
-{ return LZ4_compress_default((const char *)src_buffer, (char *)dst_buffer, src_size, dst_size); }
+    res = BZ2_bzBuffToBuffDecompress((char *)dst_buffer, &out_len, (char *)src_buffer, (unsigned int)src_size, 0, 0);
 
-AARU_EXPORT size_t AARU_CALL AARU_lzfse_decode_buffer(uint8_t *dst_buffer, size_t dst_size, const uint8_t *src_buffer,
-                                                      size_t src_size, void *scratch_buffer)
-{ return lzfse_decode_buffer(dst_buffer, dst_size, src_buffer, src_size, scratch_buffer); }
+    if(res != BZ_OK) return res;
 
-AARU_EXPORT size_t AARU_CALL AARU_lzfse_encode_buffer(uint8_t *dst_buffer, size_t dst_size, const uint8_t *src_buffer,
-                                                      size_t src_size, void *scratch_buffer)
-{ return lzfse_encode_buffer(dst_buffer, dst_size, src_buffer, src_size, scratch_buffer); }
+    *dst_size = out_len;
+    return AARU_ERROR_NONE;
+}
 
-AARU_EXPORT size_t AARU_CALL AARU_lzvn_decode_buffer(uint8_t *dst_buffer, size_t dst_size, const uint8_t *src_buffer,
-                                                     size_t src_size)
+AARU_EXPORT int32_t AARU_CALL AARU_bzip2_encode_buffer(const uint8_t *src_buffer, size_t src_size, uint8_t *dst_buffer,
+                                                       size_t *dst_size, int32_t blockSize100k)
+{
+    unsigned int out_len;
+    int          res;
+
+    if(!src_buffer || !dst_buffer || !dst_size) return AARU_ERROR_INVALID_ARGUMENT;
+
+    out_len = (unsigned int)*dst_size;
+
+    res = BZ2_bzBuffToBuffCompress((char *)dst_buffer, &out_len, (char *)src_buffer, (unsigned int)src_size,
+                                   blockSize100k, 0, 0);
+
+    if(res != BZ_OK) return res;
+
+    *dst_size = out_len;
+    return AARU_ERROR_NONE;
+}
+
+AARU_EXPORT int32_t AARU_CALL AARU_lz4_decode_buffer(const uint8_t *src_buffer, size_t src_size, uint8_t *dst_buffer,
+                                                     size_t *dst_size)
+{
+    int res;
+
+    if(!src_buffer || !dst_buffer || !dst_size) return AARU_ERROR_INVALID_ARGUMENT;
+
+    res = LZ4_decompress_safe((const char *)src_buffer, (char *)dst_buffer, (int)src_size, (int)*dst_size);
+
+    if(res < 0) return AARU_ERROR_FAILURE;
+
+    *dst_size = (size_t)res;
+    return AARU_ERROR_NONE;
+}
+
+AARU_EXPORT int32_t AARU_CALL AARU_lz4_encode_buffer(const uint8_t *src_buffer, size_t src_size, uint8_t *dst_buffer,
+                                                     size_t *dst_size)
+{
+    int res;
+
+    if(!src_buffer || !dst_buffer || !dst_size) return AARU_ERROR_INVALID_ARGUMENT;
+
+    res = LZ4_compress_default((const char *)src_buffer, (char *)dst_buffer, (int)src_size, (int)*dst_size);
+
+    if(res <= 0) return AARU_ERROR_BUFFER_TOO_SMALL;
+
+    *dst_size = (size_t)res;
+    return AARU_ERROR_NONE;
+}
+
+AARU_EXPORT int32_t AARU_CALL AARU_lzfse_decode_buffer(const uint8_t *src_buffer, size_t src_size, uint8_t *dst_buffer,
+                                                       size_t *dst_size, void *scratch_buffer)
+{
+    size_t written;
+
+    if(!src_buffer || !dst_buffer || !dst_size) return AARU_ERROR_INVALID_ARGUMENT;
+
+    written = lzfse_decode_buffer(dst_buffer, *dst_size, src_buffer, src_size, scratch_buffer);
+
+    if(written == 0 && src_size > 0) return AARU_ERROR_FAILURE;
+
+    *dst_size = written;
+    return AARU_ERROR_NONE;
+}
+
+AARU_EXPORT int32_t AARU_CALL AARU_lzfse_encode_buffer(const uint8_t *src_buffer, size_t src_size, uint8_t *dst_buffer,
+                                                       size_t *dst_size, void *scratch_buffer)
+{
+    size_t written;
+
+    if(!src_buffer || !dst_buffer || !dst_size) return AARU_ERROR_INVALID_ARGUMENT;
+
+    written = lzfse_encode_buffer(dst_buffer, *dst_size, src_buffer, src_size, scratch_buffer);
+
+    if(written == 0 && src_size > 0) return AARU_ERROR_BUFFER_TOO_SMALL;
+
+    *dst_size = written;
+    return AARU_ERROR_NONE;
+}
+
+AARU_EXPORT int32_t AARU_CALL AARU_lzvn_decode_buffer(const uint8_t *src_buffer, size_t src_size, uint8_t *dst_buffer,
+                                                      size_t *dst_size)
 {
     lzvn_decoder_state state;
+
+    if(!src_buffer || !dst_buffer || !dst_size) return AARU_ERROR_INVALID_ARGUMENT;
+
     memset(&state, 0, sizeof(state));
 
     state.src     = src_buffer;
@@ -88,17 +163,21 @@ AARU_EXPORT size_t AARU_CALL AARU_lzvn_decode_buffer(uint8_t *dst_buffer, size_t
 
     state.dst       = dst_buffer;
     state.dst_begin = dst_buffer;
-    state.dst_end   = dst_buffer + dst_size;
+    state.dst_end   = dst_buffer + *dst_size;
 
     lzvn_decode(&state);
 
-    return (size_t)(state.dst - dst_buffer);
+    *dst_size = (size_t)(state.dst - dst_buffer);
+    return AARU_ERROR_NONE;
 }
 
-AARU_EXPORT size_t AARU_CALL AARU_lzvn_encode_buffer(uint8_t *dst_buffer, size_t dst_size, const uint8_t *src_buffer,
-                                                     size_t src_size, void *scratch_buffer)
+AARU_EXPORT int32_t AARU_CALL AARU_lzvn_encode_buffer(const uint8_t *src_buffer, size_t src_size, uint8_t *dst_buffer,
+                                                      size_t *dst_size, void *scratch_buffer)
 {
     lzvn_encoder_state state;
+
+    if(!src_buffer || !dst_buffer || !dst_size) return AARU_ERROR_INVALID_ARGUMENT;
+
     memset(&state, 0, sizeof(state));
 
     state.src             = src_buffer;
@@ -110,26 +189,48 @@ AARU_EXPORT size_t AARU_CALL AARU_lzvn_encode_buffer(uint8_t *dst_buffer, size_t
 
     state.dst       = dst_buffer;
     state.dst_begin = dst_buffer;
-    state.dst_end   = dst_buffer + dst_size;
+    state.dst_end   = dst_buffer + *dst_size;
 
     state.table = (lzvn_encode_entry_type *)scratch_buffer;
 
     lzvn_encode(&state);
 
-    return (size_t)(state.dst - dst_buffer);
+    *dst_size = (size_t)(state.dst - dst_buffer);
+    return AARU_ERROR_NONE;
 }
 
-AARU_EXPORT int32_t AARU_CALL AARU_lzma_decode_buffer(uint8_t *dst_buffer, size_t *dst_size, const uint8_t *src_buffer,
-                                                      size_t *srcLen, const uint8_t *props, size_t propsSize)
-{ return LzmaUncompress(dst_buffer, dst_size, src_buffer, srcLen, props, propsSize); }
+AARU_EXPORT int32_t AARU_CALL AARU_lzma_decode_buffer(const uint8_t *src_buffer, size_t src_size, uint8_t *dst_buffer,
+                                                      size_t *dst_size, const uint8_t *props, size_t propsSize)
+{
+    size_t consumed;
+    int    res;
 
-AARU_EXPORT int32_t AARU_CALL AARU_lzma_encode_buffer(uint8_t *dst_buffer, size_t *dst_size, const uint8_t *src_buffer,
-                                                      size_t srcLen, uint8_t *outProps, size_t *outPropsSize,
+    if(!src_buffer || !dst_buffer || !dst_size) return AARU_ERROR_INVALID_ARGUMENT;
+
+    consumed = src_size;
+
+    res = LzmaUncompress(dst_buffer, dst_size, src_buffer, &consumed, props, propsSize);
+
+    if(res != SZ_OK) return res;
+
+    return AARU_ERROR_NONE;
+}
+
+AARU_EXPORT int32_t AARU_CALL AARU_lzma_encode_buffer(const uint8_t *src_buffer, size_t src_size, uint8_t *dst_buffer,
+                                                      size_t *dst_size, uint8_t *outProps, size_t *outPropsSize,
                                                       int32_t level, uint32_t dictSize, int32_t lc, int32_t lp,
                                                       int32_t pb, int32_t fb, int32_t numThreads)
 {
-    return LzmaCompress(dst_buffer, dst_size, src_buffer, srcLen, outProps, outPropsSize, level, dictSize, lc, lp, pb,
-                        fb, numThreads);
+    int res;
+
+    if(!src_buffer || !dst_buffer || !dst_size) return AARU_ERROR_INVALID_ARGUMENT;
+
+    res = LzmaCompress(dst_buffer, dst_size, src_buffer, src_size, outProps, outPropsSize, level, dictSize, lc, lp, pb,
+                       fb, numThreads);
+
+    if(res != SZ_OK) return res;
+
+    return AARU_ERROR_NONE;
 }
 
 // XZ buffer stream structures
@@ -180,14 +281,19 @@ static void xz_init_crc_tables(void)
     }
 }
 
-AARU_EXPORT int32_t AARU_CALL AARU_xz_decode_buffer(uint8_t *dst_buffer, size_t *dst_size, const uint8_t *src_buffer,
-                                                    size_t src_size)
+AARU_EXPORT int32_t AARU_CALL AARU_xz_decode_buffer(const uint8_t *src_buffer, size_t src_size, uint8_t *dst_buffer,
+                                                    size_t *dst_size)
 {
     CXzUnpacker  state;
-    SizeT        destLen = (SizeT)*dst_size;
+    SizeT        destLen;
     SizeT        srcLen  = (SizeT)src_size;
     ECoderStatus status;
     SRes         res;
+
+    if(!src_buffer || !dst_buffer || !dst_size) return AARU_ERROR_INVALID_ARGUMENT;
+
+    destLen = (SizeT)*dst_size;
+    srcLen  = (SizeT)src_size;
 
     xz_init_crc_tables();
 
@@ -196,20 +302,24 @@ AARU_EXPORT int32_t AARU_CALL AARU_xz_decode_buffer(uint8_t *dst_buffer, size_t 
 
     res = XzUnpacker_CodeFull(&state, dst_buffer, &destLen, src_buffer, &srcLen, CODER_FINISH_END, &status);
 
-    *dst_size = destLen;
-
     XzUnpacker_Free(&state);
 
-    return res;
+    if(res != SZ_OK) return res;
+
+    *dst_size = destLen;
+
+    return AARU_ERROR_NONE;
 }
 
-AARU_EXPORT int32_t AARU_CALL AARU_xz_encode_buffer(uint8_t *dst_buffer, size_t *dst_size, const uint8_t *src_buffer,
-                                                    size_t src_size, uint32_t preset, uint32_t checkType)
+AARU_EXPORT int32_t AARU_CALL AARU_xz_encode_buffer(const uint8_t *src_buffer, size_t src_size, uint8_t *dst_buffer,
+                                                    size_t *dst_size, uint32_t preset, uint32_t checkType)
 {
     CXzProps         props;
     CBufferInStream  inStream;
     CBufferOutStream outStream;
     SRes             res;
+
+    if(!src_buffer || !dst_buffer || !dst_size) return AARU_ERROR_INVALID_ARGUMENT;
 
     xz_init_crc_tables();
 
@@ -229,23 +339,51 @@ AARU_EXPORT int32_t AARU_CALL AARU_xz_encode_buffer(uint8_t *dst_buffer, size_t 
 
     res = Xz_Encode(&outStream.vt, &inStream.vt, &props, NULL);
 
+    if(res != SZ_OK) return res;
+
     *dst_size = outStream.pos;
 
-    return res;
+    return AARU_ERROR_NONE;
 }
 
-AARU_EXPORT size_t AARU_CALL AARU_zstd_decode_buffer(void *dst_buffer, size_t dst_size, const void *src_buffer,
-                                                     size_t src_size)
-{ return ZSTD_decompress(dst_buffer, dst_size, src_buffer, src_size); }
-
-AARU_EXPORT size_t AARU_CALL AARU_zstd_encode_buffer(void *dst_buffer, size_t dst_size, const void *src_buffer,
-                                                     size_t src_size, int32_t compressionLevel)
-{ return ZSTD_compress(dst_buffer, dst_size, src_buffer, src_size, compressionLevel); }
-
-AARU_EXPORT int32_t AARU_CALL AARU_lzo_decode_buffer(uint8_t *dst_buffer, size_t *dst_size, const uint8_t *src_buffer,
-                                                     size_t src_size, int32_t algorithm)
+AARU_EXPORT int32_t AARU_CALL AARU_zstd_decode_buffer(const uint8_t *src_buffer, size_t src_size, uint8_t *dst_buffer,
+                                                      size_t *dst_size)
 {
-    lzo_uint out_len = *dst_size;
+    size_t res;
+
+    if(!src_buffer || !dst_buffer || !dst_size) return AARU_ERROR_INVALID_ARGUMENT;
+
+    res = ZSTD_decompress(dst_buffer, *dst_size, src_buffer, src_size);
+
+    if(ZSTD_isError(res)) return AARU_ERROR_FAILURE;
+
+    *dst_size = res;
+    return AARU_ERROR_NONE;
+}
+
+AARU_EXPORT int32_t AARU_CALL AARU_zstd_encode_buffer(const uint8_t *src_buffer, size_t src_size, uint8_t *dst_buffer,
+                                                      size_t *dst_size, int32_t compressionLevel)
+{
+    size_t res;
+
+    if(!src_buffer || !dst_buffer || !dst_size) return AARU_ERROR_INVALID_ARGUMENT;
+
+    res = ZSTD_compress(dst_buffer, *dst_size, src_buffer, src_size, compressionLevel);
+
+    if(ZSTD_isError(res)) return AARU_ERROR_FAILURE;
+
+    *dst_size = res;
+    return AARU_ERROR_NONE;
+}
+
+AARU_EXPORT int32_t AARU_CALL AARU_lzo_decode_buffer(const uint8_t *src_buffer, size_t src_size, uint8_t *dst_buffer,
+                                                     size_t *dst_size, int32_t algorithm)
+{
+    lzo_uint out_len;
+
+    if(!src_buffer || !dst_buffer || !dst_size) return AARU_ERROR_INVALID_ARGUMENT;
+
+    out_len = *dst_size;
 
     int result = lzo_init();
     if(result != LZO_E_OK) return result;  // Initialization failed
@@ -287,12 +425,16 @@ AARU_EXPORT int32_t AARU_CALL AARU_lzo_decode_buffer(uint8_t *dst_buffer, size_t
     return result;
 }
 
-AARU_EXPORT int32_t AARU_CALL AARU_lzo_encode_buffer(uint8_t *dst_buffer, size_t *dst_size, const uint8_t *src_buffer,
-                                                     size_t src_size, int32_t algorithm, int32_t compression_level)
+AARU_EXPORT int32_t AARU_CALL AARU_lzo_encode_buffer(const uint8_t *src_buffer, size_t src_size, uint8_t *dst_buffer,
+                                                     size_t *dst_size, int32_t algorithm, int32_t compression_level)
 {
-    lzo_uint out_len     = *dst_size;
+    lzo_uint out_len;
     void    *wrkmem      = NULL;
     size_t   wrkmem_size = 0;
+
+    if(!src_buffer || !dst_buffer || !dst_size) return AARU_ERROR_INVALID_ARGUMENT;
+
+    out_len = *dst_size;
 
     // Determine work memory size based on algorithm and compression level
     switch(algorithm)
@@ -447,29 +589,33 @@ AARU_EXPORT int32_t AARU_CALL AARU_lzo_encode_buffer(uint8_t *dst_buffer, size_t
 // This is required if BZ_NO_STDIO
 void bz_internal_error(int errcode) {}
 
-AARU_EXPORT int AARU_CALL ace_decompress_lz77(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf, size_t *out_len,
-                                              int dic_bits)
+AARU_EXPORT int32_t AARU_CALL ace_decompress_lz77(const uint8_t *src_buffer, size_t src_size, uint8_t *dst_buffer,
+                                                  size_t *dst_size, int32_t dic_bits)
 {
     ace_decompress_ctx_t ctx;
     int                  ret;
 
-    if(ace_decompress_init(&ctx, dic_bits) != 0) return -1;
+    if(!src_buffer || !dst_buffer || !dst_size) return AARU_ERROR_INVALID_ARGUMENT;
 
-    ret = ace_decompress_v1(&ctx, in_buf, in_len, out_buf, out_len);
+    if(ace_decompress_init(&ctx, dic_bits) != 0) return AARU_ERROR_FAILURE;
+
+    ret = ace_decompress_v1(&ctx, src_buffer, src_size, dst_buffer, dst_size);
     ace_decompress_free(&ctx);
 
     return ret;
 }
 
-AARU_EXPORT int AARU_CALL ace_decompress_blocked(const uint8_t *in_buf, size_t in_len, uint8_t *out_buf,
-                                                 size_t *out_len, int dic_bits)
+AARU_EXPORT int32_t AARU_CALL ace_decompress_blocked(const uint8_t *src_buffer, size_t src_size, uint8_t *dst_buffer,
+                                                     size_t *dst_size, int32_t dic_bits)
 {
     ace_decompress_ctx_t ctx;
     int                  ret;
 
-    if(ace_decompress_init(&ctx, dic_bits) != 0) return -1;
+    if(!src_buffer || !dst_buffer || !dst_size) return AARU_ERROR_INVALID_ARGUMENT;
 
-    ret = ace_decompress_v2(&ctx, in_buf, in_len, out_buf, out_len);
+    if(ace_decompress_init(&ctx, dic_bits) != 0) return AARU_ERROR_FAILURE;
+
+    ret = ace_decompress_v2(&ctx, src_buffer, src_size, dst_buffer, dst_size);
     ace_decompress_free(&ctx);
 
     return ret;
@@ -477,22 +623,37 @@ AARU_EXPORT int AARU_CALL ace_decompress_blocked(const uint8_t *in_buf, size_t i
 
 /* ============== LZMA2 ============== */
 
-AARU_EXPORT int32_t AARU_CALL AARU_lzma2_decode_buffer(uint8_t *dst_buffer, size_t *dst_size, const uint8_t *src_buffer,
-                                                       size_t *src_size, uint8_t prop)
+AARU_EXPORT int32_t AARU_CALL AARU_lzma2_decode_buffer(const uint8_t *src_buffer, size_t src_size, uint8_t *dst_buffer,
+                                                       size_t *dst_size, uint8_t prop)
 {
     ELzmaStatus status;
-    return Lzma2Decode(dst_buffer, (SizeT *)dst_size, src_buffer, (SizeT *)src_size, prop, LZMA_FINISH_END, &status,
-                       &g_Alloc);
+    SizeT       destLen;
+    SizeT       srcLen;
+    SRes        res;
+
+    if(!src_buffer || !dst_buffer || !dst_size) return AARU_ERROR_INVALID_ARGUMENT;
+
+    destLen = (SizeT)*dst_size;
+    srcLen  = (SizeT)src_size;
+
+    res = Lzma2Decode(dst_buffer, &destLen, src_buffer, &srcLen, prop, LZMA_FINISH_END, &status, &g_Alloc);
+
+    if(res != SZ_OK) return res;
+
+    *dst_size = destLen;
+    return AARU_ERROR_NONE;
 }
 
-AARU_EXPORT int32_t AARU_CALL AARU_lzma2_encode_buffer(uint8_t *dst_buffer, size_t *dst_size, const uint8_t *src_buffer,
-                                                       size_t src_size, uint8_t *outProp, int32_t level,
+AARU_EXPORT int32_t AARU_CALL AARU_lzma2_encode_buffer(const uint8_t *src_buffer, size_t src_size, uint8_t *dst_buffer,
+                                                       size_t *dst_size, uint8_t *outProp, int32_t level,
                                                        uint32_t dictSize, int32_t lc, int32_t lp, int32_t pb,
                                                        int32_t fb, int32_t numThreads)
 {
     CLzma2EncHandle enc;
     CLzma2EncProps  props;
     SRes            res;
+
+    if(!src_buffer || !dst_buffer || !dst_size) return AARU_ERROR_INVALID_ARGUMENT;
 
     enc = Lzma2Enc_Create(&g_Alloc, &g_Alloc);
     if(!enc) return SZ_ERROR_MEM;
@@ -518,160 +679,175 @@ AARU_EXPORT int32_t AARU_CALL AARU_lzma2_encode_buffer(uint8_t *dst_buffer, size
     res = Lzma2Enc_Encode2(enc, NULL, dst_buffer, dst_size, NULL, src_buffer, src_size, NULL);
 
     Lzma2Enc_Destroy(enc);
-    return res;
+
+    if(res != SZ_OK) return res;
+
+    return AARU_ERROR_NONE;
 }
 
 /* ============== ZIP Wrappers ============== */
 
-AARU_EXPORT int AARU_CALL AARU_zip_blast_decode_buffer(uint8_t *dst_buffer, size_t *dst_size, const uint8_t *src_buffer,
-                                                       size_t src_size)
+AARU_EXPORT int32_t AARU_CALL AARU_zip_blast_decode_buffer(const uint8_t *src_buffer, size_t src_size,
+                                                           uint8_t *dst_buffer, size_t *dst_size)
 { return zip_blast_decompress(src_buffer, src_size, dst_buffer, dst_size); }
 
-AARU_EXPORT int AARU_CALL AARU_zip_shrink_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
-                                                        const uint8_t *src_buffer, size_t src_size)
+AARU_EXPORT int32_t AARU_CALL AARU_zip_shrink_decode_buffer(const uint8_t *src_buffer, size_t src_size,
+                                                            uint8_t *dst_buffer, size_t *dst_size)
 { return zip_shrink_decompress(src_buffer, src_size, dst_buffer, dst_size); }
 
-AARU_EXPORT int AARU_CALL AARU_zip_reduce_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
-                                                        const uint8_t *src_buffer, size_t src_size, int comp_factor)
+AARU_EXPORT int32_t AARU_CALL AARU_zip_reduce_decode_buffer(const uint8_t *src_buffer, size_t src_size,
+                                                            uint8_t *dst_buffer, size_t *dst_size, int32_t comp_factor)
 { return zip_reduce_decompress(src_buffer, src_size, dst_buffer, dst_size, comp_factor); }
 
-AARU_EXPORT int AARU_CALL AARU_zip_implode_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
-                                                         const uint8_t *src_buffer, size_t src_size,
-                                                         int large_dictionary, int has_literals)
+AARU_EXPORT int32_t AARU_CALL AARU_zip_implode_decode_buffer(const uint8_t *src_buffer, size_t src_size,
+                                                             uint8_t *dst_buffer, size_t *dst_size,
+                                                             int32_t large_dictionary, int32_t has_literals)
 { return zip_implode_decompress(src_buffer, src_size, dst_buffer, dst_size, large_dictionary, has_literals); }
 
-AARU_EXPORT int AARU_CALL AARU_zip_deflate64_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
-                                                           const uint8_t *src_buffer, size_t src_size)
+AARU_EXPORT int32_t AARU_CALL AARU_zip_deflate64_decode_buffer(const uint8_t *src_buffer, size_t src_size,
+                                                               uint8_t *dst_buffer, size_t *dst_size)
 { return zip_deflate64_decompress(src_buffer, src_size, dst_buffer, dst_size); }
 
-AARU_EXPORT int AARU_CALL AARU_zip_ppmd_decode_buffer(uint8_t *dst_buffer, size_t dst_size, const uint8_t *src_buffer,
-                                                      size_t src_size, int max_order, int sub_alloc_size,
-                                                      int restoration)
-{ return zip_ppmd_decompress(dst_buffer, dst_size, src_buffer, src_size, max_order, sub_alloc_size, restoration); }
+AARU_EXPORT int32_t AARU_CALL AARU_zip_ppmd_decode_buffer(const uint8_t *src_buffer, size_t src_size,
+                                                          uint8_t *dst_buffer, size_t *dst_size, int32_t max_order,
+                                                          int32_t sub_alloc_size, int32_t restoration)
+{
+    int res;
 
-AARU_EXPORT int AARU_CALL AARU_zip_wavpack_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
-                                                         const uint8_t *src_buffer, size_t src_size,
-                                                         uint32_t num_samples, int bits_per_sample, int num_channels)
+    if(!src_buffer || !dst_buffer || !dst_size) return AARU_ERROR_INVALID_ARGUMENT;
+
+    // PPMd produces exactly the requested amount of output, there is no short read to report.
+    res = zip_ppmd_decompress(dst_buffer, *dst_size, src_buffer, src_size, max_order, sub_alloc_size, restoration);
+
+    if(res != 0) return res;
+
+    return AARU_ERROR_NONE;
+}
+
+AARU_EXPORT int32_t AARU_CALL AARU_zip_wavpack_decode_buffer(const uint8_t *src_buffer, size_t src_size,
+                                                             uint8_t *dst_buffer, size_t *dst_size,
+                                                             uint32_t num_samples, int32_t bits_per_sample,
+                                                             int32_t num_channels)
 {
     return zip_wavpack_decompress(dst_buffer, dst_size, src_buffer, src_size, num_samples, bits_per_sample,
                                   num_channels);
 }
 
-AARU_EXPORT int AARU_CALL AARU_zip_winzipjpeg_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
-                                                            const uint8_t *src_buffer, size_t src_size)
+AARU_EXPORT int32_t AARU_CALL AARU_zip_winzipjpeg_decode_buffer(const uint8_t *src_buffer, size_t src_size,
+                                                                uint8_t *dst_buffer, size_t *dst_size)
 { return zip_winzipjpeg_decompress(dst_buffer, dst_size, src_buffer, src_size); }
 
 /* ============== Compact Pro Wrappers ============== */
 
-AARU_EXPORT int AARU_CALL AARU_cpt_rle_decode_buffer(uint8_t *dst_buffer, size_t *dst_size, const uint8_t *src_buffer,
-                                                     size_t src_size)
+AARU_EXPORT int32_t AARU_CALL AARU_cpt_rle_decode_buffer(const uint8_t *src_buffer, size_t src_size,
+                                                         uint8_t *dst_buffer, size_t *dst_size)
 { return cpt_rle_decode_buffer(dst_buffer, dst_size, src_buffer, src_size); }
 
-AARU_EXPORT int AARU_CALL AARU_cpt_lzh_rle_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
-                                                         const uint8_t *src_buffer, size_t src_size)
+AARU_EXPORT int32_t AARU_CALL AARU_cpt_lzh_rle_decode_buffer(const uint8_t *src_buffer, size_t src_size,
+                                                             uint8_t *dst_buffer, size_t *dst_size)
 { return cpt_lzh_rle_decode_buffer(dst_buffer, dst_size, src_buffer, src_size); }
 
 /* ============== DiskDoubler Wrappers ============== */
 
-AARU_EXPORT int AARU_CALL AARU_dd_adn_decode_buffer(uint8_t *dst_buffer, size_t *dst_size, const uint8_t *src_buffer,
-                                                    size_t src_size)
+AARU_EXPORT int32_t AARU_CALL AARU_dd_adn_decode_buffer(const uint8_t *src_buffer, size_t src_size,
+                                                        uint8_t *dst_buffer, size_t *dst_size)
 { return dd_adn_decode_buffer(dst_buffer, dst_size, src_buffer, src_size); }
 
-AARU_EXPORT int AARU_CALL AARU_dd_ddn_decode_buffer(uint8_t *dst_buffer, size_t *dst_size, const uint8_t *src_buffer,
-                                                    size_t src_size)
+AARU_EXPORT int32_t AARU_CALL AARU_dd_ddn_decode_buffer(const uint8_t *src_buffer, size_t src_size,
+                                                        uint8_t *dst_buffer, size_t *dst_size)
 { return dd_ddn_decode_buffer(dst_buffer, dst_size, src_buffer, src_size); }
 
-AARU_EXPORT int AARU_CALL AARU_dd_method2_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
-                                                        const uint8_t *src_buffer, size_t src_size, int num_trees)
+AARU_EXPORT int32_t AARU_CALL AARU_dd_method2_decode_buffer(const uint8_t *src_buffer, size_t src_size,
+                                                            uint8_t *dst_buffer, size_t *dst_size, int32_t num_trees)
 { return dd_method2_decode_buffer(dst_buffer, dst_size, src_buffer, src_size, num_trees); }
 
-AARU_EXPORT int AARU_CALL AARU_dd_stac_lzs_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
-                                                         const uint8_t *src_buffer, size_t src_size)
+AARU_EXPORT int32_t AARU_CALL AARU_dd_stac_lzs_decode_buffer(const uint8_t *src_buffer, size_t src_size,
+                                                             uint8_t *dst_buffer, size_t *dst_size)
 { return dd_stac_lzs_decode_buffer(dst_buffer, dst_size, src_buffer, src_size); }
 
-AARU_EXPORT int AARU_CALL AARU_dd_cpt_decode_buffer(uint8_t *dst_buffer, size_t *dst_size, const uint8_t *src_buffer,
-                                                    size_t src_size)
+AARU_EXPORT int32_t AARU_CALL AARU_dd_cpt_decode_buffer(const uint8_t *src_buffer, size_t src_size,
+                                                        uint8_t *dst_buffer, size_t *dst_size)
 { return dd_cpt_decode_buffer(dst_buffer, dst_size, src_buffer, src_size); }
 
-AARU_EXPORT int AARU_CALL AARU_dd_lzw_decode_buffer(uint8_t *dst_buffer, size_t *dst_size, const uint8_t *src_buffer,
-                                                    size_t src_size, int flags)
+AARU_EXPORT int32_t AARU_CALL AARU_dd_lzw_decode_buffer(const uint8_t *src_buffer, size_t src_size,
+                                                        uint8_t *dst_buffer, size_t *dst_size, int32_t flags)
 { return dd_lzw_decode_buffer(dst_buffer, dst_size, src_buffer, src_size, flags); }
 
 /* ============== StuffIt Wrappers ============== */
 
 #include "stuffit/stuffit.h"
 
-AARU_EXPORT int AARU_CALL AARU_stuffit_rle90_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
-                                                           const uint8_t *src_buffer, size_t src_size)
+AARU_EXPORT int32_t AARU_CALL AARU_stuffit_rle90_decode_buffer(const uint8_t *src_buffer, size_t src_size,
+                                                               uint8_t *dst_buffer, size_t *dst_size)
 { return stuffit_rle90_decode_buffer(dst_buffer, dst_size, src_buffer, src_size); }
 
-AARU_EXPORT int AARU_CALL AARU_stuffit_compress_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
-                                                              const uint8_t *src_buffer, size_t src_size)
+AARU_EXPORT int32_t AARU_CALL AARU_stuffit_compress_decode_buffer(const uint8_t *src_buffer, size_t src_size,
+                                                                  uint8_t *dst_buffer, size_t *dst_size)
 { return stuffit_compress_decode_buffer(dst_buffer, dst_size, src_buffer, src_size); }
 
-AARU_EXPORT int AARU_CALL AARU_stuffit_huffman_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
-                                                             const uint8_t *src_buffer, size_t src_size)
+AARU_EXPORT int32_t AARU_CALL AARU_stuffit_huffman_decode_buffer(const uint8_t *src_buffer, size_t src_size,
+                                                                 uint8_t *dst_buffer, size_t *dst_size)
 { return stuffit_huffman_decode_buffer(dst_buffer, dst_size, src_buffer, src_size); }
 
-AARU_EXPORT int AARU_CALL AARU_stuffit_lzah_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
-                                                          const uint8_t *src_buffer, size_t src_size)
+AARU_EXPORT int32_t AARU_CALL AARU_stuffit_lzah_decode_buffer(const uint8_t *src_buffer, size_t src_size,
+                                                              uint8_t *dst_buffer, size_t *dst_size)
 { return stuffit_lzah_decode_buffer(dst_buffer, dst_size, src_buffer, src_size); }
 
-AARU_EXPORT int AARU_CALL AARU_stuffit_mw_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
-                                                        const uint8_t *src_buffer, size_t src_size)
+AARU_EXPORT int32_t AARU_CALL AARU_stuffit_mw_decode_buffer(const uint8_t *src_buffer, size_t src_size,
+                                                            uint8_t *dst_buffer, size_t *dst_size)
 { return stuffit_mw_decode_buffer(dst_buffer, dst_size, src_buffer, src_size); }
 
-AARU_EXPORT int AARU_CALL AARU_stuffit_method13_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
-                                                              const uint8_t *src_buffer, size_t src_size)
+AARU_EXPORT int32_t AARU_CALL AARU_stuffit_method13_decode_buffer(const uint8_t *src_buffer, size_t src_size,
+                                                                  uint8_t *dst_buffer, size_t *dst_size)
 { return stuffit_method13_decode_buffer(dst_buffer, dst_size, src_buffer, src_size); }
 
-AARU_EXPORT int AARU_CALL AARU_stuffit_method14_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
-                                                              const uint8_t *src_buffer, size_t src_size)
+AARU_EXPORT int32_t AARU_CALL AARU_stuffit_method14_decode_buffer(const uint8_t *src_buffer, size_t src_size,
+                                                                  uint8_t *dst_buffer, size_t *dst_size)
 { return stuffit_method14_decode_buffer(dst_buffer, dst_size, src_buffer, src_size); }
 
-AARU_EXPORT int AARU_CALL AARU_stuffit_arsenic_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
-                                                             const uint8_t *src_buffer, size_t src_size)
+AARU_EXPORT int32_t AARU_CALL AARU_stuffit_arsenic_decode_buffer(const uint8_t *src_buffer, size_t src_size,
+                                                                 uint8_t *dst_buffer, size_t *dst_size)
 { return stuffit_arsenic_decode_buffer(dst_buffer, dst_size, src_buffer, src_size); }
 
-AARU_EXPORT int AARU_CALL AARU_stuffit_shrinkwrap_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
-                                                                const uint8_t *src_buffer, size_t src_size)
+AARU_EXPORT int32_t AARU_CALL AARU_stuffit_shrinkwrap_decode_buffer(const uint8_t *src_buffer, size_t src_size,
+                                                                    uint8_t *dst_buffer, size_t *dst_size)
 { return stuffit_shrinkwrap_decode_buffer(dst_buffer, dst_size, src_buffer, src_size); }
 
-AARU_EXPORT int AARU_CALL AARU_stuffitx_brimstone_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
-                                                                const uint8_t *src_buffer, size_t src_size,
-                                                                int max_order, int sub_alloc_size)
+AARU_EXPORT int32_t AARU_CALL AARU_stuffitx_brimstone_decode_buffer(const uint8_t *src_buffer, size_t src_size,
+                                                                    uint8_t *dst_buffer, size_t *dst_size,
+                                                                    int32_t max_order, int32_t sub_alloc_size)
 {
     return stuffitx_brimstone_decode_buffer(dst_buffer, dst_size, src_buffer, src_size, max_order, sub_alloc_size,
                                             NULL);
 }
 
-AARU_EXPORT int AARU_CALL AARU_stuffitx_cyanide_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
-                                                              const uint8_t *src_buffer, size_t src_size)
+AARU_EXPORT int32_t AARU_CALL AARU_stuffitx_cyanide_decode_buffer(const uint8_t *src_buffer, size_t src_size,
+                                                                  uint8_t *dst_buffer, size_t *dst_size)
 { return stuffitx_cyanide_decode_buffer(dst_buffer, dst_size, src_buffer, src_size, NULL); }
 
-AARU_EXPORT int AARU_CALL AARU_stuffitx_darkhorse_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
-                                                                const uint8_t *src_buffer, size_t src_size,
-                                                                int window_bits)
+AARU_EXPORT int32_t AARU_CALL AARU_stuffitx_darkhorse_decode_buffer(const uint8_t *src_buffer, size_t src_size,
+                                                                    uint8_t *dst_buffer, size_t *dst_size,
+                                                                    int32_t window_bits)
 { return stuffitx_darkhorse_decode_buffer(dst_buffer, dst_size, src_buffer, src_size, window_bits, NULL); }
 
-AARU_EXPORT int AARU_CALL AARU_stuffitx_deflate_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
-                                                              const uint8_t *src_buffer, size_t src_size)
+AARU_EXPORT int32_t AARU_CALL AARU_stuffitx_deflate_decode_buffer(const uint8_t *src_buffer, size_t src_size,
+                                                                  uint8_t *dst_buffer, size_t *dst_size)
 { return stuffitx_deflate_decode_buffer(dst_buffer, dst_size, src_buffer, src_size); }
 
-AARU_EXPORT int AARU_CALL AARU_stuffitx_blend_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
-                                                            const uint8_t *src_buffer, size_t src_size)
+AARU_EXPORT int32_t AARU_CALL AARU_stuffitx_blend_decode_buffer(const uint8_t *src_buffer, size_t src_size,
+                                                                uint8_t *dst_buffer, size_t *dst_size)
 { return stuffitx_blend_decode_buffer(dst_buffer, dst_size, src_buffer, src_size); }
 
-AARU_EXPORT int AARU_CALL AARU_stuffitx_iron_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
-                                                           const uint8_t *src_buffer, size_t src_size)
+AARU_EXPORT int32_t AARU_CALL AARU_stuffitx_iron_decode_buffer(const uint8_t *src_buffer, size_t src_size,
+                                                               uint8_t *dst_buffer, size_t *dst_size)
 { return stuffitx_iron_decode_buffer(dst_buffer, dst_size, src_buffer, src_size); }
 
-AARU_EXPORT int AARU_CALL AARU_stuffitx_english_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
-                                                              const uint8_t *src_buffer, size_t src_size)
+AARU_EXPORT int32_t AARU_CALL AARU_stuffitx_english_decode_buffer(const uint8_t *src_buffer, size_t src_size,
+                                                                  uint8_t *dst_buffer, size_t *dst_size)
 { return stuffitx_english_decode_buffer(dst_buffer, dst_size, src_buffer, src_size); }
 
-AARU_EXPORT int AARU_CALL AARU_stuffitx_x86_decode_buffer(uint8_t *dst_buffer, size_t *dst_size,
-                                                          const uint8_t *src_buffer, size_t src_size)
+AARU_EXPORT int32_t AARU_CALL AARU_stuffitx_x86_decode_buffer(const uint8_t *src_buffer, size_t src_size,
+                                                              uint8_t *dst_buffer, size_t *dst_size)
 { return stuffitx_x86_decode_buffer(dst_buffer, dst_size, src_buffer, src_size); }
 
 AARU_EXPORT uint64_t AARU_CALL AARU_get_acn_version() { return AARU_CHECKUMS_NATIVE_VERSION; }

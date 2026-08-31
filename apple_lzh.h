@@ -23,7 +23,7 @@
 #include <stdint.h>
 #include "library.h"
 
-AARU_EXPORT int AARU_CALL AARU_apple_lzh_decode_buffer(uint8_t *dst_buffer, size_t *dst_size, const uint8_t *src_buffer,
-                                                       size_t src_size);
+AARU_EXPORT int32_t AARU_CALL AARU_apple_lzh_decode_buffer(const uint8_t *src_buffer, size_t src_size,
+                                                           uint8_t *dst_buffer, size_t *dst_size);
 
 #endif /* AARU_COMPRESSION_NATIVE__APPLE_LZH_H_ */

@@ -67,7 +67,7 @@ TEST_F(xzFixture, xz)
     auto *outBuf = (uint8_t *)malloc(1048576);
 
     size_t decoded = 1048576;
-    auto res = AARU_xz_decode_buffer(outBuf, &decoded, buffer, 1048696);
+    auto res = AARU_xz_decode_buffer(buffer, 1048696, outBuf, &decoded);
 
     EXPECT_EQ(res, 0);
     EXPECT_EQ(decoded, 1048576);
@@ -82,8 +82,8 @@ TEST_F(xzFixture, xz)
 TEST_F(xzFixture, xzCompress)
 {
     size_t         original_len = 8388608;
-    uint           cmp_len      = original_len;
-    uint           decmp_len    = original_len;
+    size_t         cmp_len      = original_len;
+    size_t         decmp_len    = original_len;
     char           path[PATH_MAX];
     char           filename[PATH_MAX * 2];
     FILE          *file;
@@ -111,14 +111,14 @@ TEST_F(xzFixture, xzCompress)
 
     // Compress
     newSize = cmp_len;
-    int32_t res = AARU_xz_encode_buffer(cmp_buffer, &newSize, original, original_len, 9, 10);
+    int32_t res = AARU_xz_encode_buffer(original, original_len, cmp_buffer, &newSize, 9, 10);
     cmp_len = newSize;
 
     EXPECT_EQ(res, 0);
 
     // Decompress
     newSize   = decmp_len;
-    res   = AARU_xz_decode_buffer(decmp_buffer, &newSize, cmp_buffer, cmp_len);
+    res       = AARU_xz_decode_buffer(cmp_buffer, cmp_len, decmp_buffer, &newSize);
     decmp_len = newSize;
 
     EXPECT_EQ(res, 0);

@@ -67,8 +67,9 @@ TEST_F(adcFixture, adc)
 {
     auto *outBuf = (uint8_t *)malloc(327680);
 
-    auto decoded = AARU_adc_decode_buffer(outBuf, 327680, buffer, 34367);
+    size_t decoded = 327680;
 
+    EXPECT_EQ(AARU_adc_decode_buffer(buffer, 34367, outBuf, &decoded), 0);
     EXPECT_EQ(decoded, 262144);
 
     auto crc = crc32_data(outBuf, 262144);

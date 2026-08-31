@@ -26,10 +26,7 @@ static void error_callback(const FLAC__StreamDecoder *    decoder,
                            FLAC__StreamDecoderErrorStatus status,
                            void *                         client_data);
 
-AARU_EXPORT size_t AARU_CALL AARU_flac_decode_redbook_buffer(uint8_t *      dst_buffer,
-                                                             size_t         dst_size,
-                                                             const uint8_t *src_buffer,
-                                                             size_t         src_size)
+static size_t flac_decode_redbook(uint8_t *dst_buffer, size_t dst_size, const uint8_t *src_buffer, size_t src_size)
 {
     FLAC__StreamDecoder *         decoder;
     FLAC__StreamDecoderInitStatus init_status;
@@ -150,7 +147,7 @@ static FLAC__StreamEncoderWriteStatus encoder_write_callback(const FLAC__StreamE
                                                              uint32_t                   current_frame,
                                                              void *                     client_data);
 
-AARU_EXPORT size_t AARU_CALL AARU_flac_encode_redbook_buffer(uint8_t *      dst_buffer,
+static size_t flac_encode_redbook(uint8_t *      dst_buffer,
                                                              size_t         dst_size,
                                                              const uint8_t *src_buffer,
                                                              size_t         src_size,
@@ -276,4 +273,41 @@ static FLAC__StreamEncoderWriteStatus encoder_write_callback(const FLAC__StreamE
     ctx->dst_pos += bytes;
 
     return FLAC__STREAM_ENCODER_WRITE_STATUS_OK;
+}
+
+AARU_EXPORT int32_t AARU_CALL AARU_flac_decode_redbook_buffer(const uint8_t *src_buffer, size_t src_size,
+                                                              uint8_t *dst_buffer, size_t *dst_size)
+{
+    size_t written;
+
+    if(!src_buffer || !dst_buffer || !dst_size) return AARU_ERROR_INVALID_ARGUMENT;
+
+    written = flac_decode_redbook(dst_buffer, *dst_size, src_buffer, src_size);
+
+    if(written == (size_t)-1) return AARU_ERROR_FAILURE;
+
+    *dst_size = written;
+    return AARU_ERROR_NONE;
+}
+
+AARU_EXPORT int32_t AARU_CALL AARU_flac_encode_redbook_buffer(
+    const uint8_t *src_buffer, size_t src_size, uint8_t *dst_buffer, size_t *dst_size, uint32_t blocksize,
+    int32_t do_mid_side_stereo, int32_t loose_mid_side_stereo, const char *apodization, uint32_t max_lpc_order,
+    uint32_t qlp_coeff_precision, int32_t do_qlp_coeff_prec_search, int32_t do_exhaustive_model_search,
+    uint32_t min_residual_partition_order, uint32_t max_residual_partition_order, const char *application_id,
+    uint32_t application_id_len)
+{
+    size_t written;
+
+    if(!src_buffer || !dst_buffer || !dst_size) return AARU_ERROR_INVALID_ARGUMENT;
+
+    written = flac_encode_redbook(dst_buffer, *dst_size, src_buffer, src_size, blocksize, do_mid_side_stereo,
+                                  loose_mid_side_stereo, apodization, max_lpc_order, qlp_coeff_precision,
+                                  do_qlp_coeff_prec_search, do_exhaustive_model_search, min_residual_partition_order,
+                                  max_residual_partition_order, application_id, application_id_len);
+
+    if(written == (size_t)-1) return AARU_ERROR_FAILURE;
+
+    *dst_size = written;
+    return AARU_ERROR_NONE;
 }

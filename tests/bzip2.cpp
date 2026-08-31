@@ -64,10 +64,10 @@ protected:
 
 TEST_F(bzip2Fixture, bzip2)
 {
-    uint  real_size = 1048576;
-    auto *outBuf    = (uint8_t *)malloc(1048576);
+    size_t real_size = 1048576;
+    auto  *outBuf     = (uint8_t *)malloc(1048576);
 
-    auto bz_err = AARU_bzip2_decode_buffer(outBuf, &real_size, buffer, 1053934);
+    auto bz_err = AARU_bzip2_decode_buffer(buffer, 1053934, outBuf, &real_size);
 
     EXPECT_EQ(bz_err, 0);
 
@@ -83,8 +83,8 @@ TEST_F(bzip2Fixture, bzip2)
 TEST_F(bzip2Fixture, bzip2Compress)
 {
     size_t         original_len = 8388608;
-    uint           cmp_len      = original_len;
-    uint           decmp_len    = original_len;
+    size_t         cmp_len      = original_len;
+    size_t         decmp_len    = original_len;
     char           path[PATH_MAX];
     char           filename[PATH_MAX * 2];
     FILE          *file;
@@ -111,12 +111,12 @@ TEST_F(bzip2Fixture, bzip2Compress)
     original_crc = crc32_data(original, original_len);
 
     // Compress
-    bz_err = AARU_bzip2_encode_buffer(cmp_buffer, &cmp_len, original, original_len, 9);
+    bz_err = AARU_bzip2_encode_buffer(original, original_len, cmp_buffer, &cmp_len, 9);
 
     EXPECT_EQ(bz_err, 0);
 
     // Decompress
-    bz_err = AARU_bzip2_decode_buffer(decmp_buffer, &decmp_len, cmp_buffer, cmp_len);
+    bz_err = AARU_bzip2_decode_buffer(cmp_buffer, cmp_len, decmp_buffer, &decmp_len);
 
     EXPECT_EQ(bz_err, 0);
 

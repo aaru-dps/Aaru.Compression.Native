@@ -81,8 +81,20 @@ AARU_EXPORT return_type AARU_CALL function_name(parameters);
 ```
 
 ### Function Patterns
-- Decode functions: `AARU_<algorithm>_decode_buffer(dst_buffer, dst_size, src_buffer, src_size)`
-- Encode functions: `AARU_<algorithm>_encode_buffer(dst_buffer, dst_size, src_buffer, src_size, ...options)`
+Every exported buffer transform has the same shape:
+
+```c
+int32_t AARU_<algorithm>_decode_buffer(const uint8_t *src_buffer, size_t src_size,
+                                       uint8_t *dst_buffer, size_t *dst_size, ...options);
+int32_t AARU_<algorithm>_encode_buffer(const uint8_t *src_buffer, size_t src_size,
+                                       uint8_t *dst_buffer, size_t *dst_size, ...options);
+```
+
+- On entry `*dst_size` is the capacity of `dst_buffer`; on success it holds the number of bytes written.
+- The return value is `0` (`AARU_ERROR_NONE`) on success, non-zero on error — either an `AARU_ERROR_*`
+  constant from `library.h` or the underlying library's own error code when it is propagated.
+- The only exceptions are the streaming LZD context API (`CreateLZDContext`, `LZD_FeedNative`,
+  `LZD_DrainNative`, `DestroyLZDContext`) and `AARU_get_acn_version`.
 
 ## Adding New Compression Algorithms
 

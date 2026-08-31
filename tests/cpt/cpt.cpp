@@ -59,7 +59,7 @@ TEST_F(CptRleFixture, cpt_rle)
     size_t destLen = EXPECTED_ORIGSIZE;
     auto  *outBuf  = (uint8_t *)malloc(EXPECTED_ORIGSIZE);
 
-    auto err = AARU_cpt_rle_decode_buffer(outBuf, &destLen, rle_buffer, RLE_COMPRESSED_SIZE);
+    auto err = AARU_cpt_rle_decode_buffer(rle_buffer, RLE_COMPRESSED_SIZE, outBuf, &destLen);
 
     EXPECT_EQ(err, 0);
     EXPECT_EQ(destLen, (size_t)EXPECTED_ORIGSIZE);
@@ -98,7 +98,7 @@ TEST_F(CptLzhRleFixture, cpt_lzh_rle)
     size_t destLen = EXPECTED_ORIGSIZE;
     auto  *outBuf  = (uint8_t *)malloc(EXPECTED_ORIGSIZE);
 
-    auto err = AARU_cpt_lzh_rle_decode_buffer(outBuf, &destLen, lzh_rle_buffer, LZH_RLE_COMPRESSED_SIZE);
+    auto err = AARU_cpt_lzh_rle_decode_buffer(lzh_rle_buffer, LZH_RLE_COMPRESSED_SIZE, outBuf, &destLen);
 
     EXPECT_EQ(err, 0);
     EXPECT_EQ(destLen, (size_t)EXPECTED_ORIGSIZE);

@@ -59,7 +59,7 @@ TEST_F(StuffitCompressFixture, stuffit_compress)
     size_t destLen = EXPECTED_ORIGSIZE;
     auto  *outBuf  = (uint8_t *)malloc(EXPECTED_ORIGSIZE);
 
-    auto err = AARU_stuffit_compress_decode_buffer(outBuf, &destLen, compress_buffer, COMPRESS_SIZE);
+    auto err = AARU_stuffit_compress_decode_buffer(compress_buffer, COMPRESS_SIZE, outBuf, &destLen);
 
     EXPECT_EQ(err, 0);
     EXPECT_EQ(destLen, (size_t)EXPECTED_ORIGSIZE);
@@ -97,7 +97,7 @@ TEST_F(StuffitMethod13Fixture, stuffit_method13)
     size_t destLen = EXPECTED_ORIGSIZE;
     auto  *outBuf  = (uint8_t *)malloc(EXPECTED_ORIGSIZE);
 
-    auto err = AARU_stuffit_method13_decode_buffer(outBuf, &destLen, method13_buffer, METHOD13_SIZE);
+    auto err = AARU_stuffit_method13_decode_buffer(method13_buffer, METHOD13_SIZE, outBuf, &destLen);
 
     EXPECT_EQ(err, 0);
     EXPECT_EQ(destLen, (size_t)EXPECTED_ORIGSIZE);
@@ -135,7 +135,7 @@ TEST_F(StuffitMethod13V5Fixture, stuffit_method13_v5)
     size_t destLen = EXPECTED_ORIGSIZE;
     auto  *outBuf  = (uint8_t *)malloc(EXPECTED_ORIGSIZE);
 
-    auto err = AARU_stuffit_method13_decode_buffer(outBuf, &destLen, method13_v5_buffer, METHOD13_V5_SIZE);
+    auto err = AARU_stuffit_method13_decode_buffer(method13_v5_buffer, METHOD13_V5_SIZE, outBuf, &destLen);
 
     EXPECT_EQ(err, 0);
     EXPECT_EQ(destLen, (size_t)EXPECTED_ORIGSIZE);
@@ -173,7 +173,7 @@ TEST_F(StuffitArsenicFixture, stuffit_arsenic)
     size_t destLen = EXPECTED_ORIGSIZE;
     auto  *outBuf  = (uint8_t *)malloc(EXPECTED_ORIGSIZE);
 
-    auto err = AARU_stuffit_arsenic_decode_buffer(outBuf, &destLen, arsenic_buffer, ARSENIC_SIZE);
+    auto err = AARU_stuffit_arsenic_decode_buffer(arsenic_buffer, ARSENIC_SIZE, outBuf, &destLen);
 
     EXPECT_EQ(err, 0);
     EXPECT_EQ(destLen, (size_t)EXPECTED_ORIGSIZE);
@@ -224,7 +224,7 @@ TEST_F(StuffitxBrimstoneFixture, stuffitx_brimstone)
     size_t midLen = EXPECTED_ORIGSIZE * 2;
     auto  *midBuf = (uint8_t *)malloc(midLen);
 
-    auto err = AARU_stuffitx_brimstone_decode_buffer(midBuf, &midLen, buf + 2, BRIMSTONE_SIZE - 2, order, allocsize);
+    auto err = AARU_stuffitx_brimstone_decode_buffer(buf + 2, BRIMSTONE_SIZE - 2, midBuf, &midLen, order, allocsize);
     EXPECT_EQ(err, 0);
     EXPECT_GT(midLen, (size_t)0);
 
@@ -232,7 +232,7 @@ TEST_F(StuffitxBrimstoneFixture, stuffitx_brimstone)
     size_t destLen = EXPECTED_ORIGSIZE;
     auto  *outBuf  = (uint8_t *)malloc(destLen);
 
-    err = AARU_stuffitx_english_decode_buffer(outBuf, &destLen, midBuf, midLen);
+    err = AARU_stuffitx_english_decode_buffer(midBuf, midLen, outBuf, &destLen);
     free(midBuf);
     EXPECT_EQ(err, 0);
     EXPECT_EQ(destLen, (size_t)EXPECTED_ORIGSIZE);
@@ -262,14 +262,14 @@ TEST_F(StuffitxCyanideFixture, stuffitx_cyanide)
     size_t midLen = EXPECTED_ORIGSIZE * 2;
     auto  *midBuf = (uint8_t *)malloc(midLen);
 
-    auto err = AARU_stuffitx_cyanide_decode_buffer(midBuf, &midLen, buf, CYANIDE_SIZE);
+    auto err = AARU_stuffitx_cyanide_decode_buffer(buf, CYANIDE_SIZE, midBuf, &midLen);
     EXPECT_EQ(err, 0);
     EXPECT_GT(midLen, (size_t)0);
 
     size_t destLen = EXPECTED_ORIGSIZE;
     auto  *outBuf  = (uint8_t *)malloc(destLen);
 
-    err = AARU_stuffitx_english_decode_buffer(outBuf, &destLen, midBuf, midLen);
+    err = AARU_stuffitx_english_decode_buffer(midBuf, midLen, outBuf, &destLen);
     free(midBuf);
     EXPECT_EQ(err, 0);
     EXPECT_EQ(destLen, (size_t)EXPECTED_ORIGSIZE);
@@ -301,14 +301,14 @@ TEST_F(StuffitxDarkhorseFixture, stuffitx_darkhorse)
     size_t midLen = EXPECTED_ORIGSIZE * 2;
     auto  *midBuf = (uint8_t *)malloc(midLen);
 
-    auto err = AARU_stuffitx_darkhorse_decode_buffer(midBuf, &midLen, buf + 1, DARKHORSE_SIZE - 1, window_bits);
+    auto err = AARU_stuffitx_darkhorse_decode_buffer(buf + 1, DARKHORSE_SIZE - 1, midBuf, &midLen, window_bits);
     EXPECT_EQ(err, 0);
     EXPECT_GT(midLen, (size_t)0);
 
     size_t destLen = EXPECTED_ORIGSIZE;
     auto  *outBuf  = (uint8_t *)malloc(destLen);
 
-    err = AARU_stuffitx_english_decode_buffer(outBuf, &destLen, midBuf, midLen);
+    err = AARU_stuffitx_english_decode_buffer(midBuf, midLen, outBuf, &destLen);
     free(midBuf);
     EXPECT_EQ(err, 0);
     EXPECT_EQ(destLen, (size_t)EXPECTED_ORIGSIZE);
@@ -338,14 +338,14 @@ TEST_F(StuffitxDeflateFixture, stuffitx_deflate)
     size_t midLen = EXPECTED_ORIGSIZE * 2;
     auto  *midBuf = (uint8_t *)malloc(midLen);
 
-    auto err = AARU_stuffitx_deflate_decode_buffer(midBuf, &midLen, buf + 1, SITX_DEFLATE_SIZE - 1);
+    auto err = AARU_stuffitx_deflate_decode_buffer(buf + 1, SITX_DEFLATE_SIZE - 1, midBuf, &midLen);
     EXPECT_EQ(err, 0);
     EXPECT_GT(midLen, (size_t)0);
 
     size_t destLen = EXPECTED_ORIGSIZE;
     auto  *outBuf  = (uint8_t *)malloc(destLen);
 
-    err = AARU_stuffitx_english_decode_buffer(outBuf, &destLen, midBuf, midLen);
+    err = AARU_stuffitx_english_decode_buffer(midBuf, midLen, outBuf, &destLen);
     free(midBuf);
     EXPECT_EQ(err, 0);
     EXPECT_EQ(destLen, (size_t)EXPECTED_ORIGSIZE);
@@ -375,14 +375,14 @@ TEST_F(StuffitxBlendFixture, stuffitx_blend)
     size_t midLen = EXPECTED_ORIGSIZE * 2;
     auto  *midBuf = (uint8_t *)malloc(midLen);
 
-    auto err = AARU_stuffitx_blend_decode_buffer(midBuf, &midLen, buf, BLEND_SIZE);
+    auto err = AARU_stuffitx_blend_decode_buffer(buf, BLEND_SIZE, midBuf, &midLen);
     EXPECT_EQ(err, 0);
     EXPECT_GT(midLen, (size_t)0);
 
     size_t destLen = EXPECTED_ORIGSIZE;
     auto  *outBuf  = (uint8_t *)malloc(destLen);
 
-    err = AARU_stuffitx_english_decode_buffer(outBuf, &destLen, midBuf, midLen);
+    err = AARU_stuffitx_english_decode_buffer(midBuf, midLen, outBuf, &destLen);
     free(midBuf);
     EXPECT_EQ(err, 0);
     EXPECT_EQ(destLen, (size_t)EXPECTED_ORIGSIZE);
@@ -415,7 +415,7 @@ TEST_F(StuffitShrinkwrapFixture, stuffit_shrinkwrap)
     size_t destLen = SHRINKWRAP_ORIGSIZE;
     auto  *outBuf  = (uint8_t *)malloc(SHRINKWRAP_ORIGSIZE);
 
-    auto err = AARU_stuffit_shrinkwrap_decode_buffer(outBuf, &destLen, buf, SHRINKWRAP_SIZE);
+    auto err = AARU_stuffit_shrinkwrap_decode_buffer(buf, SHRINKWRAP_SIZE, outBuf, &destLen);
 
     EXPECT_EQ(err, 0);
     EXPECT_EQ(destLen, (size_t)SHRINKWRAP_ORIGSIZE);

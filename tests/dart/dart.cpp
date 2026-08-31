@@ -78,12 +78,13 @@ static size_t lzip_decompress_file(const char *path, uint8_t **out)
     size_t try_sizes[] = {512 * 1024, 1024 * 1024, 2 * 1024 * 1024};
     for(int i = 0; i < 3; i++)
     {
-        *out           = (uint8_t *)malloc(try_sizes[i]);
-        int32_t result = AARU_lzip_decode_buffer(*out, (int32_t)try_sizes[i], lz_buf, (int32_t)lz_size);
-        if(result > 0)
+        *out             = (uint8_t *)malloc(try_sizes[i]);
+        size_t  out_len  = try_sizes[i];
+        int32_t result   = AARU_lzip_decode_buffer(lz_buf, lz_size, *out, &out_len);
+        if(result == 0 && out_len > 0)
         {
             free(lz_buf);
-            return (size_t)result;
+            return out_len;
         }
         free(*out);
         *out = NULL;
@@ -135,8 +136,8 @@ static bool load_dart_image(const char *path, dart_image_t *img)
                 size_t comp_size = (size_t)img->block_lengths[i] * 2;
                 if(in_pos + comp_size <= img->raw_size)
                 {
-                    AARU_apple_rle_decode_buffer(img->data + out_pos, DART_BUFFER_SIZE, img->raw + in_pos,
-                                                 (int32_t)comp_size);
+                    size_t rle_out_len = DART_BUFFER_SIZE;
+                    AARU_apple_rle_decode_buffer(img->raw + in_pos, comp_size, img->data + out_pos, &rle_out_len);
                 }
                 in_pos += comp_size;
             }
@@ -217,7 +218,7 @@ static bool verify_dart_pair(const char *fast_name, const char *best_name)
 
             memset(out, 0, DART_BUFFER_SIZE);
 
-            int ret = AARU_apple_lzh_decode_buffer(out, &out_len, best_img.raw + in_pos, comp_size);
+            int ret = AARU_apple_lzh_decode_buffer(best_img.raw + in_pos, comp_size, out, &out_len);
             if(ret == 0 && out_len == DART_BUFFER_SIZE && memcmp(out, reference, DART_BUFFER_SIZE) == 0)
                 blocks_ok++;
             else
