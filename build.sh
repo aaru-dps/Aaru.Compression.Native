@@ -19,8 +19,29 @@
 OS_NAME=$(uname)
 export OCI_EXE=docker
 
+usage() {
+    echo "Usage: $0 [--mac-only]"
+    echo "  -m, --mac-only  Build only the macOS targets"
+    echo "  -h, --help      Show this help"
+}
+
+MAC_ONLY=0
+for arg in "$@"; do
+    case "$arg" in
+        -m|--mac-only) MAC_ONLY=1 ;;
+        -h|--help) usage; exit 0 ;;
+        *) echo "Unknown option: $arg" >&2; usage >&2; exit 1 ;;
+    esac
+done
+
+if [[ ${MAC_ONLY} == 1 && ${OS_NAME} != Darwin ]]; then
+    echo "--mac-only requires running on macOS" >&2
+    exit 1
+fi
+
 mkdir -p docker
 
+if [[ ${MAC_ONLY} == 0 ]]; then
 ## Android (ARM)
 # Detected system processor: armv7-a
 rm -rf build/android-arm
@@ -232,6 +253,7 @@ chmod +x docker/dockcross-win-x86
 docker/dockcross-win-x86 bash -c "cd build/win-x86 && cmake -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 ../.."
 docker/dockcross-win-x86 bash -c "cd build/win-x86 && make Aaru.Compression.Native"
 mv build/win-x86/libAaru.Compression.Native.dll runtimes/win-x86/native/
+fi
 
 ## Mac OS X (arm64 and x64)
 if [[ ${OS_NAME} == Darwin ]]; then
