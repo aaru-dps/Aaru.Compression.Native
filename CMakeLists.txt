@@ -308,18 +308,16 @@ target_link_libraries_whole_archive("Aaru.Compression.Native" libzstd_static lz4
 # Add LZO include directories for library.c to resolve <lzo/...> includes
 target_include_directories("Aaru.Compression.Native" PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/lzo-2.10/include)
 
-check_include_file("semaphore.h" HAVE_SEMAPHORE_H)
-
-if(HAVE_SEMAPHORE_H)
-  set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
-  set(THREADS_PREFER_PTHREAD_FLAG TRUE)
+# LZMA SDK and Zstandard are built multithreaded: they use Win32 threads on Windows and pthreads elsewhere
+set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
+set(THREADS_PREFER_PTHREAD_FLAG TRUE)
+if(WIN32)
   find_package(Threads)
-  if(CMAKE_USE_PTHREADS_INIT)
-    set(HAVE_PTHREAD 1)
-  endif()
+else()
+  find_package(Threads REQUIRED)
 endif()
 
-if(HAVE_PTHREAD)
+if(Threads_FOUND)
   target_link_libraries_whole_archive("Aaru.Compression.Native" Threads::Threads)
 endif()
 

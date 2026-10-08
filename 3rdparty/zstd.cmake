@@ -177,12 +177,8 @@ else()
   add_definitions(-DZSTD_LEGACY_SUPPORT=0)
 endif()
 
-# Multi-threading support
-if(ANDROID)
-  option(ZSTD_MULTITHREAD_SUPPORT "MULTITHREADING SUPPORT" OFF)
-else()
-  option(ZSTD_MULTITHREAD_SUPPORT "MULTITHREADING SUPPORT" ON)
-endif()
+# Multi-threading support (Android's bionic provides pthreads in libc)
+option(ZSTD_MULTITHREAD_SUPPORT "MULTITHREADING SUPPORT" ON)
 
 #-----------------------------------------------------------------------------
 # External dependencies
