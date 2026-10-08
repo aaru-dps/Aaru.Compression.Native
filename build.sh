@@ -238,7 +238,8 @@ if [[ ${OS_NAME} == Darwin ]]; then
     rm -rf build/osx-x64
     mkdir -p build/osx-x64
     cd build/osx-x64
-    cmake -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 -DAARU_MACOS_TARGET_ARCH=x86_64 ../..
+    cmake -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 -DAARU_MACOS_TARGET_ARCH=x86_64 \
+          -DCMAKE_SYSTEM_NAME=Darwin -DCMAKE_SYSTEM_PROCESSOR=x86_64 ../..
     make Aaru.Compression.Native
     cd ../..
     mkdir -p runtimes/osx-x64/native
@@ -247,7 +248,8 @@ if [[ ${OS_NAME} == Darwin ]]; then
     rm -rf build/osx-arm64
     mkdir -p build/osx-arm64
     cd build/osx-arm64
-    cmake -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 -DAARU_MACOS_TARGET_ARCH=arm64 ../..
+    cmake -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 -DAARU_MACOS_TARGET_ARCH=arm64 \
+          -DCMAKE_SYSTEM_NAME=Darwin -DCMAKE_SYSTEM_PROCESSOR=arm64 ../..
     make Aaru.Compression.Native
     cd ../..
     mkdir -p runtimes/osx-arm64/native
