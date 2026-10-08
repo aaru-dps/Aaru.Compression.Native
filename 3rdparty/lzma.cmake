@@ -45,6 +45,11 @@ endif()
 if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "armv7" OR (${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm" AND NOT ${CMAKE_SYSTEM_PROCESSOR} MATCHES "aarch64"))
   # 32-bit ARM
   set_source_files_properties(${LZMA_C_DIRECTORY}/Sha256Opt.c PROPERTIES COMPILE_FLAGS "-D__clang_major__=0 -D__GNUC__=0")
+  # 7zCrc.c switches functions to arch=armv8-a+crc. With GCC's default -mfpu=auto that arch resolves
+  # to no FPU, which is rejected under -mfloat-abi=hard. Pin the FPU to VFPv2 (the toolchain baseline).
+  if("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
+    set_source_files_properties(${LZMA_C_DIRECTORY}/7zCrc.c PROPERTIES COMPILE_FLAGS "-mfpu=vfp")
+  endif()
 elseif("${CMAKE_C_PLATFORM_ID}" MATCHES "MinGW" AND (${CMAKE_SYSTEM_PROCESSOR} MATCHES "aarch64" OR ${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm"))
   # Windows ARM64/ARM with MinGW - crypto intrinsics not available
   set_source_files_properties(${LZMA_C_DIRECTORY}/Sha256Opt.c PROPERTIES COMPILE_FLAGS "-D__clang_major__=0 -D__GNUC__=0")
