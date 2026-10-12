@@ -95,6 +95,10 @@ AARU_EXPORT int32_t AARU_CALL AARU_apple_lzh_decode_buffer(const uint8_t *src_bu
 AARU_EXPORT int32_t AARU_CALL AARU_flac_decode_redbook_buffer(const uint8_t *src_buffer, size_t src_size,
                                                               uint8_t *dst_buffer, size_t *dst_size);
 
+AARU_EXPORT int32_t AARU_CALL AARU_flac_decode_redbook_frames(const uint8_t *src_buffer, size_t src_size,
+                                                              uint8_t *dst_buffer, size_t *dst_size,
+                                                              uint32_t block_size, size_t *src_consumed);
+
 AARU_EXPORT int32_t AARU_CALL AARU_flac_encode_redbook_buffer(
     const uint8_t *src_buffer, size_t src_size, uint8_t *dst_buffer, size_t *dst_size, uint32_t blocksize,
     int32_t do_mid_side_stereo, int32_t loose_mid_side_stereo, const char *apodization, uint32_t max_lpc_order,

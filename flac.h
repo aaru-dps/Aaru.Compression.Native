@@ -5,8 +5,13 @@
 #ifndef AARU_COMPRESSION_NATIVE__FLAC_H_
 #define AARU_COMPRESSION_NATIVE__FLAC_H_
 
+#define FLAC_SYNTHETIC_HEADER_LEN 0x2A
+
 typedef struct
 {
+    const uint8_t *hdr_buffer;
+    size_t         hdr_len;
+    size_t         hdr_pos;
     const uint8_t *src_buffer;
     size_t         src_len;
     size_t         src_pos;

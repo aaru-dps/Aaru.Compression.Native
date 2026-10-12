@@ -26,6 +26,10 @@ static void error_callback(const FLAC__StreamDecoder *    decoder,
                            FLAC__StreamDecoderErrorStatus status,
                            void *                         client_data);
 
+static FLAC__StreamDecoderTellStatus tell_callback(const FLAC__StreamDecoder *decoder,
+                                                   FLAC__uint64 *             absolute_byte_offset,
+                                                   void *                     client_data);
+
 static size_t flac_decode_redbook(uint8_t *dst_buffer, size_t dst_size, const uint8_t *src_buffer, size_t src_size)
 {
     FLAC__StreamDecoder *         decoder;
@@ -70,12 +74,11 @@ static size_t flac_decode_redbook(uint8_t *dst_buffer, size_t dst_size, const ui
         return -1;
     }
 
-    // TODO: Return error somehow
     FLAC__stream_decoder_process_until_end_of_stream(decoder);
 
     FLAC__stream_decoder_delete(decoder);
 
-    ret_size = ctx->dst_pos;
+    ret_size = ctx->error ? (size_t)-1 : ctx->dst_pos;
 
     free(ctx);
 
@@ -87,16 +90,47 @@ static FLAC__StreamDecoderReadStatus read_callback(const FLAC__StreamDecoder *de
                                                    size_t *                   bytes,
                                                    void *                     client_data)
 {
-    aaru_flac_ctx *ctx = (aaru_flac_ctx *)client_data;
+    aaru_flac_ctx *ctx       = (aaru_flac_ctx *)client_data;
+    size_t         requested = *bytes;
+    size_t         copied    = 0;
+    size_t         chunk;
 
-    if(ctx->src_len - ctx->src_pos < *bytes) *bytes = ctx->src_len - ctx->src_pos;
+    // Synthesized header, if any, goes before the source data
+    if(ctx->hdr_pos < ctx->hdr_len)
+    {
+        chunk = ctx->hdr_len - ctx->hdr_pos;
 
-    if(*bytes == 0) return FLAC__STREAM_DECODER_READ_STATUS_END_OF_STREAM;
+        if(chunk > requested) chunk = requested;
 
-    memcpy(buffer, ctx->src_buffer + ctx->src_pos, *bytes);
-    ctx->src_pos += *bytes;
+        memcpy(buffer, ctx->hdr_buffer + ctx->hdr_pos, chunk);
+        ctx->hdr_pos += chunk;
+        copied += chunk;
+    }
+
+    chunk = ctx->src_len - ctx->src_pos;
+
+    if(chunk > requested - copied) chunk = requested - copied;
+
+    memcpy(buffer + copied, ctx->src_buffer + ctx->src_pos, chunk);
+    ctx->src_pos += chunk;
+    copied += chunk;
+
+    *bytes = copied;
+
+    if(copied == 0) return FLAC__STREAM_DECODER_READ_STATUS_END_OF_STREAM;
 
     return FLAC__STREAM_DECODER_READ_STATUS_CONTINUE;
+}
+
+static FLAC__StreamDecoderTellStatus tell_callback(const FLAC__StreamDecoder *decoder,
+                                                   FLAC__uint64 *             absolute_byte_offset,
+                                                   void *                     client_data)
+{
+    aaru_flac_ctx *ctx = (aaru_flac_ctx *)client_data;
+
+    *absolute_byte_offset = ctx->hdr_pos + ctx->src_pos;
+
+    return FLAC__STREAM_DECODER_TELL_STATUS_OK;
 }
 
 static FLAC__StreamDecoderWriteStatus write_callback(const FLAC__StreamDecoder *decoder,
@@ -134,8 +168,6 @@ static FLAC__StreamDecoderWriteStatus write_callback(const FLAC__StreamDecoder *
 static void error_callback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorStatus status, void *client_data)
 {
     aaru_flac_ctx *ctx = (aaru_flac_ctx *)client_data;
-
-    fprintf(stderr, "Got error callback: %s\n", FLAC__StreamDecoderErrorStatusString[status]);
 
     ctx->error = 1;
 }
@@ -288,6 +320,85 @@ AARU_EXPORT int32_t AARU_CALL AARU_flac_decode_redbook_buffer(const uint8_t *src
 
     *dst_size = written;
     return AARU_ERROR_NONE;
+}
+
+// Decodes a stream of FLAC frames that has no "fLaC" marker nor STREAMINFO, as stored by MAME's CHD. A STREAMINFO for
+// 44100Hz, 2 channels, 16-bit samples and the given block size is synthesized in front of the frames. Decoding stops
+// as soon as the destination buffer is full, so any data following the frames is left untouched, and the number of
+// source bytes used by the frames is returned in src_consumed.
+AARU_EXPORT int32_t AARU_CALL AARU_flac_decode_redbook_frames(const uint8_t *src_buffer, size_t src_size,
+                                                              uint8_t *dst_buffer, size_t *dst_size,
+                                                              uint32_t block_size, size_t *src_consumed)
+{
+    static const uint8_t header_template[FLAC_SYNTHETIC_HEADER_LEN] = {
+        0x66, 0x4C, 0x61, 0x43,                         // "fLaC"
+        0x80,                                           // STREAMINFO, last metadata block
+        0x00, 0x00, 0x22,                               // Metadata block length
+        0x00, 0x00,                                     // Minimum block size
+        0x00, 0x00,                                     // Maximum block size
+        0x00, 0x00, 0x00,                               // Minimum frame size (unknown)
+        0x00, 0x00, 0x00,                               // Maximum frame size (unknown)
+        0x0A, 0xC4, 0x42, 0xF0, 0x00, 0x00, 0x00, 0x00, // 44100Hz, 2 channels, 16 bits, unknown samples
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // MD5 (none)
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    uint8_t                       header[FLAC_SYNTHETIC_HEADER_LEN];
+    aaru_flac_ctx                 ctx;
+    FLAC__StreamDecoder          *decoder;
+    FLAC__StreamDecoderInitStatus init_status;
+    FLAC__uint64                  position = 0;
+    int32_t                       ret      = AARU_ERROR_NONE;
+
+    if(!src_buffer || !dst_buffer || !dst_size || !src_consumed) return AARU_ERROR_INVALID_ARGUMENT;
+
+    if(block_size < 16 || block_size > 65535) return AARU_ERROR_INVALID_ARGUMENT;
+
+    memcpy(header, header_template, sizeof(header));
+    header[0x08] = header[0x0A] = (uint8_t)(block_size >> 8);
+    header[0x09] = header[0x0B] = (uint8_t)(block_size & 0xFF);
+
+    memset(&ctx, 0, sizeof(ctx));
+    ctx.hdr_buffer = header;
+    ctx.hdr_len    = sizeof(header);
+    ctx.src_buffer = src_buffer;
+    ctx.src_len    = src_size;
+    ctx.dst_buffer = dst_buffer;
+    ctx.dst_len    = *dst_size;
+
+    decoder = FLAC__stream_decoder_new();
+
+    if(!decoder) return AARU_ERROR_FAILURE;
+
+    FLAC__stream_decoder_set_md5_checking(decoder, false);
+
+    init_status = FLAC__stream_decoder_init_stream(decoder, read_callback, NULL, tell_callback, NULL, NULL,
+                                                   write_callback, NULL, error_callback, &ctx);
+
+    if(init_status != FLAC__STREAM_DECODER_INIT_STATUS_OK)
+    {
+        FLAC__stream_decoder_delete(decoder);
+        return AARU_ERROR_FAILURE;
+    }
+
+    while(ctx.dst_pos < ctx.dst_len)
+    {
+        if(!FLAC__stream_decoder_process_single(decoder) || ctx.error ||
+           FLAC__stream_decoder_get_state(decoder) == FLAC__STREAM_DECODER_END_OF_STREAM)
+            break;
+    }
+
+    if(ctx.error || ctx.dst_pos < ctx.dst_len ||
+       !FLAC__stream_decoder_get_decode_position(decoder, &position) || position < sizeof(header))
+        ret = AARU_ERROR_FAILURE;
+    else
+    {
+        *src_consumed = (size_t)(position - sizeof(header));
+        *dst_size     = ctx.dst_pos;
+    }
+
+    FLAC__stream_decoder_finish(decoder);
+    FLAC__stream_decoder_delete(decoder);
+
+    return ret;
 }
 
 AARU_EXPORT int32_t AARU_CALL AARU_flac_encode_redbook_buffer(
