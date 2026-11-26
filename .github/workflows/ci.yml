@@ -58,7 +58,9 @@ jobs:
         env:
           CMAKE_EXTRA: ${{ matrix.cmake }}
           LINK_FIX: ${{ matrix.link_fix }}
-        run: .github/scripts/dockcross-test.sh "${{ matrix.image }}" "ci-${{ matrix.target }}" "${{ matrix.run }}"
+          # Passed through the environment so the runner's shell does not expand variables in it.
+          RUN: ${{ matrix.run }}
+        run: .github/scripts/dockcross-test.sh "${{ matrix.image }}" "ci-${{ matrix.target }}" "$RUN"
 
   linux:
     name: ${{ matrix.target }} (native)
