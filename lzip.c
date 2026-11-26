@@ -52,9 +52,21 @@ static int32_t lzip_decode(uint8_t *dst_buffer, int32_t dst_size, const uint8_t 
 
         in_size = LZ_decompress_write(ctx, src_buffer + in_pos, max_in_size);
 
+        if(in_size < 0)
+        {
+            LZ_decompress_close(ctx);
+            return 0;
+        }
+
         in_pos += in_size;
 
-        rd = LZ_decompress_read(ctx, dst_buffer + out_pos, dst_size);
+        rd = LZ_decompress_read(ctx, dst_buffer + out_pos, dst_size - out_pos);
+
+        if(rd < 0)
+        {
+            LZ_decompress_close(ctx);
+            return 0;
+        }
 
         out_pos += rd;
 
@@ -66,11 +78,17 @@ static int32_t lzip_decode(uint8_t *dst_buffer, int32_t dst_size, const uint8_t 
     if(out_pos < dst_size)
     {
         do {
-            rd = LZ_decompress_read(ctx, dst_buffer + out_pos, dst_size);
+            rd = LZ_decompress_read(ctx, dst_buffer + out_pos, dst_size - out_pos);
+
+            if(rd < 0)
+            {
+                LZ_decompress_close(ctx);
+                return 0;
+            }
 
             out_pos += rd;
 
-            if(LZ_compress_finished(ctx) == 1) break;
+            if(LZ_decompress_finished(ctx) == 1) break;
         } while(rd > 0 && out_pos < dst_size);
     }
 
@@ -111,9 +129,21 @@ static int32_t lzip_encode(uint8_t *dst_buffer, int32_t dst_size, const uint8_t 
 
         in_size = LZ_compress_write(ctx, src_buffer + in_pos, max_in_size);
 
+        if(in_size < 0)
+        {
+            LZ_compress_close(ctx);
+            return 0;
+        }
+
         in_pos += in_size;
 
-        rd = LZ_compress_read(ctx, dst_buffer + out_pos, dst_size);
+        rd = LZ_compress_read(ctx, dst_buffer + out_pos, dst_size - out_pos);
+
+        if(rd < 0)
+        {
+            LZ_compress_close(ctx);
+            return 0;
+        }
 
         out_pos += rd;
 
@@ -125,7 +155,13 @@ static int32_t lzip_encode(uint8_t *dst_buffer, int32_t dst_size, const uint8_t 
     if(out_pos < dst_size)
     {
         do {
-            rd = LZ_compress_read(ctx, dst_buffer + out_pos, dst_size);
+            rd = LZ_compress_read(ctx, dst_buffer + out_pos, dst_size - out_pos);
+
+            if(rd < 0)
+            {
+                LZ_compress_close(ctx);
+                return 0;
+            }
 
             out_pos += rd;
 
