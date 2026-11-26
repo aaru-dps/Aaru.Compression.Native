@@ -11,7 +11,7 @@ configure_file(
         ${PROJECT_SOURCE_DIR}/3rdparty/bzip2/bz_version.h.in
         ${PROJECT_BINARY_DIR}/3rdparty/bzip2/bz_version.h
 )
-include_directories(${PROJECT_BINARY_DIR})
+include_directories(${PROJECT_BINARY_DIR}/3rdparty/bzip2)
 
 message(STATUS "BZIP2 VERSION: ${BZ_VERSION}")
 

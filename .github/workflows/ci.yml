@@ -129,10 +129,11 @@ jobs:
         with:
           msystem: ${{ matrix.msystem }}
           update: true
+          # "MSYS Makefiles" needs MSYS's own make, not the MinGW one.
+          install: make
           pacboy: >-
             toolchain:p
             cmake:p
-            make:p
 
       - name: Configure
         run: cmake -S . -B build -G "MSYS Makefiles" -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_BUILD_TYPE=Release
