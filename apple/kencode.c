@@ -37,7 +37,7 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "library.h"
+#include "../library.h"
 #include "kencode.h"
 
 // ============================================================================

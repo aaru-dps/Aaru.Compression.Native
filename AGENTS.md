@@ -10,8 +10,6 @@ Aaru.Compression.Native is a C library providing compression and decompression a
 
 ```
 ├── library.c/h          # Main library exports and entry points
-├── adc.c/h              # Apple Data Compression implementation
-├── apple_rle.c/h        # Apple RLE implementation
 ├── flac.c/h             # FLAC wrapper
 ├── lzip.c               # LZIP wrapper
 ├── 3rdparty/            # Third-party compression libraries (submodules)
@@ -22,6 +20,7 @@ Aaru.Compression.Native is a C library providing compression and decompression a
 │   ├── lzlib/           # LZIP library
 │   ├── lzma/            # LZMA/7-Zip SDK
 │   └── zstd/            # Zstandard library
+├── apple/               # Apple algorithms (ADC, Apple RLE, Apple LZH, KenCode)
 ├── arc/                 # ARC archive compression methods
 ├── ha/                  # HA archive compression methods
 ├── pak/                 # PAK archive compression methods

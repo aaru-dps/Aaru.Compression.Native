@@ -20,9 +20,9 @@
 #include <cstdint>
 #include <cstring>
 
-#include "../library.h"
-#include "../adc.h"
-#include "crc32.h"
+#include "../../library.h"
+#include "../../apple/adc.h"
+#include "../crc32.h"
 #include "gtest/gtest.h"
 
 #define EXPECTED_CRC32 0x5a5a7388

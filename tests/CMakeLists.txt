@@ -239,7 +239,7 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/kencode_large.bin
 
 # 'Google_Tests_run' is the target name
 # 'test1.cpp tests2.cpp' are source files with tests
-add_executable(tests_run apple_rle.cpp crc32.c crc32.h adc.cpp bzip2.cpp lzip.cpp lzfse.cpp zstd.cpp lzma.cpp flac.cpp lz4.cpp
+add_executable(tests_run apple/adc.cpp apple/apple_rle.cpp apple/kencode.cpp crc32.c crc32.h bzip2.cpp lzip.cpp lzfse.cpp zstd.cpp lzma.cpp flac.cpp lz4.cpp
                zoo/lzd.cpp arc/pack.cpp lh5.cpp arc/squeeze.cpp arc/crunch.cpp arc/squash.cpp pak/crush.cpp
                pak/distill.cpp ha.cpp xz.cpp
                lha/lh_static.cpp lha/lh1.cpp lha/larc.cpp lha/lh_old.cpp
@@ -251,6 +251,5 @@ add_executable(tests_run apple_rle.cpp crc32.c crc32.h adc.cpp bzip2.cpp lzip.cp
                cpt/cpt.cpp
                dd/dd.cpp
                stuffit/stuffit.cpp
-               dart/dart.cpp
-               kencode.cpp)
+               dart/dart.cpp)
 target_link_libraries(tests_run gtest gtest_main "Aaru.Compression.Native")

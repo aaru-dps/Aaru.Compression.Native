@@ -21,7 +21,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "library.h"
+#include "../library.h"
 #include "apple_rle.h"
 
 static int32_t apple_rle_decode(uint8_t *dst_buffer, int32_t dst_size, const uint8_t *src_buffer, int32_t src_size)

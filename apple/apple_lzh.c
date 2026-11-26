@@ -28,9 +28,9 @@
  */
 
 #include "apple_lzh.h"
-#include "lha/bitio.h"
-#include "lha/huffman.h"
-#include "lha/lzss.h"
+#include "../lha/bitio.h"
+#include "../lha/huffman.h"
+#include "../lha/lzss.h"
 
 #include <string.h>
 

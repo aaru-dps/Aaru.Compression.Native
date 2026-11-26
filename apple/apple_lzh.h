@@ -21,7 +21,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
-#include "library.h"
+#include "../library.h"
 
 AARU_EXPORT int32_t AARU_CALL AARU_apple_lzh_decode_buffer(const uint8_t *src_buffer, size_t src_size,
                                                            uint8_t *dst_buffer, size_t *dst_size);

@@ -23,9 +23,9 @@
 #include <cstdio>
 #include <cstdlib>
 
-#include "../library.h"
-#include "../kencode.h"
-#include "crc32.h"
+#include "../../library.h"
+#include "../../apple/kencode.h"
+#include "../crc32.h"
 #include "gtest/gtest.h"
 
 // DOS_720.img chunk 0: boot sector with mixed data/matches (2495 → 10240)

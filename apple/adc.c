@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "library.h"
+#include "../library.h"
 #include "adc.h"
 
 FORCE_INLINE int GetChunkType(uint8_t byt)

@@ -20,9 +20,9 @@
 #include <cstdint>
 #include <cstring>
 
-#include "../library.h"
-#include "../apple_rle.h"
-#include "crc32.h"
+#include "../../library.h"
+#include "../../apple/apple_rle.h"
+#include "../crc32.h"
 #include "gtest/gtest.h"
 
 #define EXPECTED_CRC32 0x3525ef06
