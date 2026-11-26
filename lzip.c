@@ -23,6 +23,28 @@
 #include "library.h"
 #include "3rdparty/lzlib/lzlib.h"
 
+// Reads decoded data into dst_buffer. Once dst_buffer is full, probes for one more byte: if the stream
+// still produces data, the output would be truncated. Returns bytes read (>= 0) or an AARU_ERROR_* code.
+static int lzip_drain(void *ctx, uint8_t *dst_buffer, int32_t dst_size, int32_t *out_pos)
+{
+    uint8_t probe;
+    int     rd;
+
+    if(*out_pos < dst_size)
+    {
+        rd = LZ_decompress_read(ctx, dst_buffer + *out_pos, dst_size - *out_pos);
+        if(rd < 0) return AARU_ERROR_FAILURE;
+        *out_pos += rd;
+        return rd;
+    }
+
+    rd = LZ_decompress_read(ctx, &probe, 1);
+    if(rd < 0) return AARU_ERROR_FAILURE;
+    if(rd > 0) return AARU_ERROR_BUFFER_TOO_SMALL;
+    return 0;
+}
+
+// Returns the number of decoded bytes, or a negative AARU_ERROR_* code.
 static int32_t lzip_decode(uint8_t *dst_buffer, int32_t dst_size, const uint8_t *src_buffer, int32_t src_size)
 {
     int           max_in_size;
@@ -30,6 +52,7 @@ static int32_t lzip_decode(uint8_t *dst_buffer, int32_t dst_size, const uint8_t 
     enum LZ_Errno lz_err;
     int32_t       in_pos = 0, out_pos = 0, in_size;
     int           rd;
+
     // Initialize the decoder
     ctx    = LZ_decompress_open();
     lz_err = LZ_decompress_errno(ctx);
@@ -38,15 +61,15 @@ static int32_t lzip_decode(uint8_t *dst_buffer, int32_t dst_size, const uint8_t 
     {
         // Ensure freed
         LZ_decompress_close(ctx);
-        return 0;
+        return lz_err == LZ_mem_error ? AARU_ERROR_NO_MEMORY : AARU_ERROR_FAILURE;
     }
 
     // Check maximum lzip buffer input size
     max_in_size = LZ_decompress_write_size(ctx);
     if(src_size < max_in_size) max_in_size = src_size;
 
-    // Decompress buffer
-    while(in_pos < src_size && out_pos < dst_size)
+    // Feed all the input, draining decoded data as it becomes available
+    while(in_pos < src_size)
     {
         if(src_size - in_pos < max_in_size) max_in_size = src_size - in_pos;
 
@@ -55,41 +78,46 @@ static int32_t lzip_decode(uint8_t *dst_buffer, int32_t dst_size, const uint8_t 
         if(in_size < 0)
         {
             LZ_decompress_close(ctx);
-            return 0;
+            return AARU_ERROR_FAILURE;
         }
 
         in_pos += in_size;
 
-        rd = LZ_decompress_read(ctx, dst_buffer + out_pos, dst_size - out_pos);
+        rd = lzip_drain(ctx, dst_buffer, dst_size, &out_pos);
 
         if(rd < 0)
         {
             LZ_decompress_close(ctx);
-            return 0;
+            return rd;
         }
 
-        out_pos += rd;
-
-        if(LZ_decompress_finished(ctx) == 1) break;
+        // Neither input accepted nor output produced: the decoder cannot make progress
+        if(in_size == 0 && rd == 0)
+        {
+            LZ_decompress_close(ctx);
+            return AARU_ERROR_FAILURE;
+        }
     }
 
     LZ_decompress_finish(ctx);
 
-    if(out_pos < dst_size)
+    // Drain what is left until the decoder reports the whole stream has been read
+    while(LZ_decompress_finished(ctx) != 1)
     {
-        do {
-            rd = LZ_decompress_read(ctx, dst_buffer + out_pos, dst_size - out_pos);
+        rd = lzip_drain(ctx, dst_buffer, dst_size, &out_pos);
 
-            if(rd < 0)
-            {
-                LZ_decompress_close(ctx);
-                return 0;
-            }
+        if(rd < 0)
+        {
+            LZ_decompress_close(ctx);
+            return rd;
+        }
 
-            out_pos += rd;
-
-            if(LZ_decompress_finished(ctx) == 1) break;
-        } while(rd > 0 && out_pos < dst_size);
+        // No more data but not finished: the compressed stream is incomplete
+        if(rd == 0 && LZ_decompress_finished(ctx) != 1)
+        {
+            LZ_decompress_close(ctx);
+            return AARU_ERROR_FAILURE;
+        }
     }
 
     // Free buffers
@@ -184,7 +212,8 @@ AARU_EXPORT int32_t AARU_CALL AARU_lzip_decode_buffer(const uint8_t *src_buffer,
 
     written = lzip_decode(dst_buffer, (int32_t)*dst_size, src_buffer, (int32_t)src_size);
 
-    if(written <= 0) return AARU_ERROR_FAILURE;
+    if(written < 0) return written;
+    if(written == 0) return AARU_ERROR_FAILURE;
 
     *dst_size = (size_t)written;
     return AARU_ERROR_NONE;

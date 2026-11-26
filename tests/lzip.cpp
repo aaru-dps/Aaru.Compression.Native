@@ -79,6 +79,45 @@ TEST_F(lzipFixture, lzip)
     EXPECT_EQ(crc, EXPECTED_CRC32);
 }
 
+TEST_F(lzipFixture, lzipOutputTooSmall)
+{
+    auto *outBuf = (uint8_t *)malloc(1048576);
+
+    size_t decoded = 1048575;
+
+    EXPECT_EQ(AARU_lzip_decode_buffer(buffer, 1062874, outBuf, &decoded), AARU_ERROR_BUFFER_TOO_SMALL);
+
+    free(outBuf);
+}
+
+TEST_F(lzipFixture, lzipOutputLarger)
+{
+    auto *outBuf = (uint8_t *)malloc(2097152);
+
+    size_t decoded = 2097152;
+
+    EXPECT_EQ(AARU_lzip_decode_buffer(buffer, 1062874, outBuf, &decoded), 0);
+
+    EXPECT_EQ(decoded, 1048576);
+
+    auto crc = crc32_data(outBuf, 1048576);
+
+    free(outBuf);
+
+    EXPECT_EQ(crc, EXPECTED_CRC32);
+}
+
+TEST_F(lzipFixture, lzipTruncatedInput)
+{
+    auto *outBuf = (uint8_t *)malloc(1048576);
+
+    size_t decoded = 1048576;
+
+    EXPECT_NE(AARU_lzip_decode_buffer(buffer, 1062874 / 2, outBuf, &decoded), 0);
+
+    free(outBuf);
+}
+
 TEST_F(lzipFixture, lzipCompress)
 {
     int32_t        original_len = 8388608;
