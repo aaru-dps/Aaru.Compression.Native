@@ -8,7 +8,7 @@
 #    set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo")
 #endif()
 
-set(FLAC_VERSION 1.4.3) # HOMEPAGE_URL "https://www.xiph.org/flac/")
+set(FLAC_VERSION 1.5.0) # HOMEPAGE_URL "https://www.xiph.org/flac/")
 
 message(STATUS "FLAC VERSION: ${FLAC_VERSION}")
 set(BUILD_SHARED_LIBS BOOL OFF)
