@@ -71,11 +71,6 @@ endif()
 
 check_c_compiler_flag(-mstackrealign HAVE_STACKREALIGN_FLAG)
 
-if(CMAKE_SYSTEM_PROCESSOR STREQUAL "i686" AND HAVE_STACKREALIGN_FLAG)
-  add_compile_options(-mstackrealign)
-  add_compile_options($<$<OR:$<COMPILE_LANGUAGE:C>,$<COMPILE_LANGUAGE:CXX>>:-mstackrealign>)
-endif()
-
 include_directories("3rdparty/flac/include")
 
 include_directories("${CMAKE_CURRENT_BINARY_DIR}/3rdparty/flac")
@@ -99,6 +94,22 @@ include(CheckCSourceCompiles)
 include(CheckCPUArch)
 include(CheckA64NEON)
 
+set(FLAC_AVX_SOURCES
+    3rdparty/flac/src/libFLAC/fixed_intrin_avx2.c
+    3rdparty/flac/src/libFLAC/lpc_intrin_avx2.c
+    3rdparty/flac/src/libFLAC/lpc_intrin_fma.c
+    3rdparty/flac/src/libFLAC/stream_encoder_intrin_avx2.c)
+
+set(FLAC_SIMD_SOURCES
+    ${FLAC_AVX_SOURCES}
+    3rdparty/flac/src/libFLAC/fixed_intrin_sse2.c
+    3rdparty/flac/src/libFLAC/fixed_intrin_ssse3.c
+    3rdparty/flac/src/libFLAC/fixed_intrin_sse42.c
+    3rdparty/flac/src/libFLAC/lpc_intrin_sse2.c
+    3rdparty/flac/src/libFLAC/lpc_intrin_sse41.c
+    3rdparty/flac/src/libFLAC/stream_encoder_intrin_sse2.c
+    3rdparty/flac/src/libFLAC/stream_encoder_intrin_ssse3.c)
+
 check_cpu_arch_x64(FLAC__CPU_X86_64)
 if(NOT FLAC__CPU_X86_64)
   check_cpu_arch_x86(FLAC__CPU_IA32)
@@ -106,15 +117,32 @@ endif()
 
 if(FLAC__CPU_X86_64 OR FLAC__CPU_IA32)
   set(FLAC__ALIGN_MALLOC_DATA 1)
-  option(WITH_AVX "Enable AVX, AVX2 optimizations (with runtime detection, resulting binary does not require AVX2, so only necessary when a compiler doesn't know about AVX)" ON)
-  if(WITH_AVX AND MSVC)
-    set_source_files_properties(fixed_intrin_avx2.c lpc_intrin_avx2.c stream_encoder_intrin_avx2.c PROPERTIES COMPILE_FLAGS /arch:AVX2)
-    set_source_files_properties(lpc_intrin_fma.c PROPERTIES COMPILE_FLAGS "/arch:AVX2 /fp:fast")
+  option(WITH_AVX "Enable AVX, AVX2 optimizations (runtime detected, binary does not require AVX2)" ON)
+
+  # MinGW GCC cannot align the stack to 32 bytes (GCC bug 54412), so spills of __m256 locals with
+  # aligned moves would crash. Ask the assembler to emit unaligned moves instead, or drop AVX.
+  if(WITH_AVX AND MINGW AND CMAKE_C_COMPILER_ID STREQUAL "GNU")
+    check_c_compiler_flag(-Wa,-muse-unaligned-vector-move HAVE_UNALIGNED_VECTOR_MOVE_FLAG)
+    if(HAVE_UNALIGNED_VECTOR_MOVE_FLAG)
+      # LTO defers code generation to link time and drops per-file assembler options, so these
+      # sources must be compiled without it for the flag to take effect.
+      set_property(SOURCE ${FLAC_AVX_SOURCES} APPEND PROPERTY COMPILE_OPTIONS -Wa,-muse-unaligned-vector-move -fno-lto)
+    else()
+      message(STATUS "FLAC: assembler lacks -muse-unaligned-vector-move, disabling AVX for MinGW GCC")
+      set(WITH_AVX OFF CACHE BOOL "Enable AVX, AVX2 optimizations" FORCE)
+    endif()
   endif()
-  if(WITH_AVX AND (CMAKE_C_COMPILER_ID MATCHES "Clang"))
-    set_source_files_properties(lpc_intrin_fma.c PROPERTIES COMPILE_FLAGS "-ffast-math")
+
+  if(WITH_AVX AND MSVC)
+    set_property(SOURCE ${FLAC_AVX_SOURCES} APPEND PROPERTY COMPILE_OPTIONS /arch:AVX2)
+  endif()
+
+  # 32-bit x86 callers (Win32 ABI, some JITs) may only guarantee 4-byte stack alignment
+  if(FLAC__CPU_IA32 AND HAVE_STACKREALIGN_FLAG)
+    set_property(SOURCE ${FLAC_SIMD_SOURCES} APPEND PROPERTY COMPILE_OPTIONS -mstackrealign)
   endif()
 else()
+  check_cpu_arch_arm64(FLAC__CPU_ARM64)
   if(FLAC__CPU_ARM64)
     check_a64neon(FLAC__HAS_A64NEONINTRIN)
   endif()
@@ -122,6 +150,16 @@ endif()
 
 if(NOT WITH_ASM)
   add_definitions(-DFLAC__NO_ASM)
+endif()
+
+if(FLAC__CPU_IA32)
+  option(WITH_SSE "Enable SSE2 optimizations" ON)
+  check_c_compiler_flag(-msse2 HAVE_MSSE2_FLAG)
+  if(WITH_SSE)
+    add_compile_options(
+            $<$<BOOL:${HAVE_MSSE2_FLAG}>:-msse2>
+            $<$<BOOL:${MSVC}>:/arch:SSE2>)
+  endif()
 endif()
 
 if(HAVE_SEMAPHORE_H)
