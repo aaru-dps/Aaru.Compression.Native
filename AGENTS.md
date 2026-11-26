@@ -112,11 +112,24 @@ int32_t AARU_<algorithm>_encode_buffer(const uint8_t *src_buffer, size_t src_siz
 - Tests verify both compression and decompression where applicable
 - Use CRC32 validation for data integrity checks
 
+### Continuous Integration
+
+`.github/workflows/ci.yml` builds the library and runs `tests_run` for every target in `build.sh`
+(Release build, without `AARU_BUILD_PACKAGE`, so the tests are built):
+
+- **Native runner and toolchain**: linux-x64, linux-arm64, linux-musl-arm64 (Alpine), win-x64/x86/arm64
+  (MSYS2 MinGW), osx-x64, osx-arm64.
+- **dockcross toolchain + qemu-user**: linux-arm, linux-musl-arm, linux-ppc64le.
+  linux-x86 uses dockcross but runs directly on the x64 host.
+- **Build only**: Android (all) and win-arm.
+
+`.github/scripts/dockcross-test.sh <image> <build-dir> [run-command]` reproduces a dockcross job locally.
+
 ## Platform Support
 
 The library targets:
 - **Windows**: x86, x64, ARM, ARM64
-- **Linux**: x86, x64, ARM, ARM64, MIPS64, PowerPC64, RISC-V, s390x, musl variants
+- **Linux**: x86, x64, ARM, ARM64, PowerPC64 (little-endian), musl variants (big-endian targets such as MIPS and s390x are disabled)
 - **macOS**: x64, ARM64 (minimum deployment target: 10.15)
 - **Android**: x86, x64, ARM, ARM64
 

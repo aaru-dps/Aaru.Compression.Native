@@ -1,4 +1,4 @@
-if("${CMAKE_C_PLATFORM_ID}" MATCHES "MinGW" OR "${AARU_BUILD_PACKAGE}" MATCHES 1)
+if("${AARU_BUILD_PACKAGE}" MATCHES 1)
   return()
 endif()
 

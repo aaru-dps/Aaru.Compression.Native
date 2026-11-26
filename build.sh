@@ -120,17 +120,18 @@ docker/dockcross-linux-arm64 bash -c "cd build/linux-arm64 && make Aaru.Compress
 docker/dockcross-linux-arm64 aarch64-unknown-linux-gnu-strip -s -w -K "AARU*" build/linux-arm64/libAaru.Compression.Native.so
 mv build/linux-arm64/libAaru.Compression.Native.so runtimes/linux-arm64/native/
 
-## Linux (MIPS64)
-# Detected system processor: mips
-rm -rf build/linux-mips64
-mkdir -p build/linux-mips64
-mkdir -p runtimes/linux-mips64/native
-docker run --rm dockcross/linux-mips > docker/dockcross-linux-mips64
-chmod +x docker/dockcross-linux-mips64
-docker/dockcross-linux-mips64 bash -c "cd build/linux-mips64 && cmake -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 ../.."
-docker/dockcross-linux-mips64 bash -c "cd build/linux-mips64 && make Aaru.Compression.Native"
-docker/dockcross-linux-mips64 mips-unknown-linux-gnu-strip -s -w -K "AARU*" build/linux-mips64/libAaru.Compression.Native.so
-mv build/linux-mips64/libAaru.Compression.Native.so runtimes/linux-mips64/native/
+## Linux (MIPS64) -- disabled: big-endian targets are not supported
+## (lzfse and flac fail their tests there).
+# # Detected system processor: mips
+# rm -rf build/linux-mips64
+# mkdir -p build/linux-mips64
+# mkdir -p runtimes/linux-mips64/native
+# docker run --rm dockcross/linux-mips > docker/dockcross-linux-mips64
+# chmod +x docker/dockcross-linux-mips64
+# docker/dockcross-linux-mips64 bash -c "cd build/linux-mips64 && cmake -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 ../.."
+# docker/dockcross-linux-mips64 bash -c "cd build/linux-mips64 && make Aaru.Compression.Native"
+# docker/dockcross-linux-mips64 mips-unknown-linux-gnu-strip -s -w -K "AARU*" build/linux-mips64/libAaru.Compression.Native.so
+# mv build/linux-mips64/libAaru.Compression.Native.so runtimes/linux-mips64/native/
 
 ## Linux (PPC64LE)
 # Detected system processor: ppc64le
@@ -168,17 +169,17 @@ docker/dockcross-linux-musl-arm64 bash -c "cd build/linux-musl-arm64 && make Aar
 docker/dockcross-linux-musl-arm64 aarch64-linux-musl-strip -s -w -K "AARU*" build/linux-musl-arm64/libAaru.Compression.Native.so
 mv build/linux-musl-arm64/libAaru.Compression.Native.so runtimes/linux-musl-arm64/native/
 
-## Linux (s390x)
-# Detected system processor: s390x
-rm -rf build/linux-s390x
-mkdir -p build/linux-s390x
-mkdir -p runtimes/linux-s390x/native
-docker run --rm dockcross/linux-s390x > docker/dockcross-linux-s390x
-chmod +x docker/dockcross-linux-s390x
-docker/dockcross-linux-s390x bash -c "cd build/linux-s390x && cmake -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 ../.."
-docker/dockcross-linux-s390x bash -c "cd build/linux-s390x && make Aaru.Compression.Native"
-docker/dockcross-linux-s390x s390x-ibm-linux-gnu-strip -s -w -K "AARU*" build/linux-s390x/libAaru.Compression.Native.so
-mv build/linux-s390x/libAaru.Compression.Native.so runtimes/linux-s390x/native/
+## Linux (s390x) -- disabled: big-endian targets are not supported.
+# # Detected system processor: s390x
+# rm -rf build/linux-s390x
+# mkdir -p build/linux-s390x
+# mkdir -p runtimes/linux-s390x/native
+# docker run --rm dockcross/linux-s390x > docker/dockcross-linux-s390x
+# chmod +x docker/dockcross-linux-s390x
+# docker/dockcross-linux-s390x bash -c "cd build/linux-s390x && cmake -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_BUILD_TYPE=Release -DAARU_BUILD_PACKAGE=1 ../.."
+# docker/dockcross-linux-s390x bash -c "cd build/linux-s390x && make Aaru.Compression.Native"
+# docker/dockcross-linux-s390x s390x-ibm-linux-gnu-strip -s -w -K "AARU*" build/linux-s390x/libAaru.Compression.Native.so
+# mv build/linux-s390x/libAaru.Compression.Native.so runtimes/linux-s390x/native/
 
 ## Linux (amd64)
 # Detected system processor: x86_64
@@ -277,6 +278,9 @@ if [[ ${OS_NAME} == Darwin ]]; then
     mkdir -p runtimes/osx-arm64/native
     mv build/osx-arm64/libAaru.Compression.Native.dylib runtimes/osx-arm64/native
 fi
+
+# Big-endian targets are disabled; make sure binaries from earlier builds are not packaged.
+rm -rf runtimes/linux-mips64 runtimes/linux-s390x
 
 # TODO: "linux-musl-x64"
 # TODO: "linux-musl-x86"

@@ -1,0 +1,172 @@
+name: CI
+
+# Builds the library and runs the test suite for every target build.sh produces.
+# Targets with a GitHub-hosted runner of the same architecture build and run natively with that
+# runner's toolchain. The rest build with the same dockcross toolchain as build.sh and run under
+# qemu-user. Android and Windows ARM (32-bit) are build-only: nothing here can execute them.
+# Big-endian targets (MIPS, s390x) are disabled in build.sh and therefore not tested.
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  dockcross:
+    name: ${{ matrix.target }} (${{ matrix.run && 'dockcross' || 'dockcross, build only' }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { target: linux-x86,      image: linux-x86,          run: './tests_run' }
+          - { target: linux-arm,      image: linux-armv7a-lts,   run: 'qemu-arm ./tests_run' }
+          - { target: linux-ppc64le,  image: linux-ppc64le,      run: 'qemu-ppc64le ./tests_run' }
+          # The musl image ships no qemu: the host registers binfmt handlers instead. The
+          # toolchain's ld-musl-armhf.so.1 is an absolute symlink to /lib/libc.so (which does
+          # not exist in the container), so musl's libc.so is invoked directly as the loader.
+          - target: linux-musl-arm
+            image: linux-armv7l-musl
+            cmake: -DAARU_MUSL=1
+            binfmt: arm
+            run: 'P=/usr/xcc/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/lib && LD_LIBRARY_PATH=$P $P/libc.so ./tests_run'
+          - { target: android-arm,    image: android-arm }
+          - { target: android-arm64,  image: android-arm64,      link_fix: gold }
+          - { target: android-x64,    image: android-x86_64,     link_fix: gold }
+          - { target: android-x86,    image: android-x86,        link_fix: gold }
+          - { target: win-arm,        image: windows-armv7,      link_fix: soname }
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Register qemu binfmt handlers
+        if: matrix.binfmt
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: ${{ matrix.binfmt }}
+
+      - name: Build and test
+        env:
+          CMAKE_EXTRA: ${{ matrix.cmake }}
+          LINK_FIX: ${{ matrix.link_fix }}
+        run: .github/scripts/dockcross-test.sh "${{ matrix.image }}" "ci-${{ matrix.target }}" "${{ matrix.run }}"
+
+  linux:
+    name: ${{ matrix.target }} (native)
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { target: linux-x64,   os: ubuntu-latest }
+          - { target: linux-arm64, os: ubuntu-24.04-arm }
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Configure
+        run: cmake -S . -B build -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build --target Aaru.Compression.Native tests_run -j "$(nproc)"
+
+      - name: Test
+        working-directory: build/tests
+        run: ./tests_run
+
+  linux-musl-arm64:
+    name: linux-musl-arm64 (native, Alpine)
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      # JavaScript actions cannot run inside Alpine job containers on arm64 runners, so the
+      # checkout happens on the host and only the build runs in the container.
+      - name: Build and test
+        run: |
+          docker run --rm -v "$PWD:/src" -w /src alpine:latest sh -euc '
+            apk add --no-cache build-base cmake linux-headers
+            cmake -S . -B build -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_BUILD_TYPE=Release -DAARU_MUSL=1
+            cmake --build build --target Aaru.Compression.Native tests_run -j "$(nproc)"
+            cd build/tests
+            ./tests_run
+          '
+
+  windows:
+    name: ${{ matrix.target }} (native, MSYS2 ${{ matrix.msystem }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { target: win-x64,   os: windows-latest, msystem: MINGW64 }
+          - { target: win-x86,   os: windows-latest, msystem: MINGW32 }
+          - { target: win-arm64, os: windows-11-arm, msystem: CLANGARM64 }
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: ${{ matrix.msystem }}
+          update: true
+          pacboy: >-
+            toolchain:p
+            cmake:p
+            make:p
+
+      - name: Configure
+        run: cmake -S . -B build -G "MSYS Makefiles" -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build --target Aaru.Compression.Native tests_run -j "$(nproc)"
+
+      - name: Test
+        run: |
+          cp build/libAaru.Compression.Native.dll build/tests/
+          cd build/tests
+          ./tests_run.exe
+
+  macos:
+    name: ${{ matrix.target }} (native)
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { target: osx-arm64, os: macos-latest,   arch: arm64 }
+          - { target: osx-x64,   os: macos-15-intel, arch: x86_64 }
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Configure
+        run: cmake -S . -B build -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_BUILD_TYPE=Release -DAARU_MACOS_TARGET_ARCH=${{ matrix.arch }}
+
+      - name: Build
+        run: cmake --build build --target Aaru.Compression.Native tests_run -j "$(sysctl -n hw.ncpu)"
+
+      - name: Test
+        working-directory: build/tests
+        run: ./tests_run
